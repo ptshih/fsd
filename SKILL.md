@@ -35,6 +35,8 @@ instructions; do not impose a language, repository layout or release process.
    and normal harness tools. Do not add custom tool allowlists, shell bans or permission
    checkpoints unless the owner or project requires them. Preserve required guards,
    read-only roles and task boundaries; auto-approval is not extra authority.
+   Honor recorded owner consent for startup prompts under the Herdr reference:
+   covered session-only Pi project-trust prompts do not need repeated confirmation.
    Give each assignment a short ID, outcome, owned paths, required checks and an
    explicit completion-report expectation. Verify effective tools and settings.
    Parallelize independent work; keep one implementation writer per working directory
@@ -55,6 +57,16 @@ supplies initial mission approval or expands it. Only confirmation behavior chan
 - **Unsupervised:** use best judgment within the approved scope; do not wait for
   confirmations. Record important decisions. Defer anything requiring new authority
   and continue other authorized work—never bypass a guard or permission prompt.
+
+The saved `startupPromptApprovals.piProjectTrust` policy is standing owner consent
+in **both modes**, not permission to disable trust checks. When enabled, automatically
+select **Trust (this session only)** for a verified, mission-owned worktree in an
+already authorized mission. Verify the live owned Pi agent, displayed canonical
+path and selected option; record the decision. Never extend this to permanent or
+parent-folder trust, unrelated/unverified paths, other approval prompts, or a
+previously denied action. Ambiguity or a conflicting project/mission guard still
+requires asking in supervised mode or deferring in unsupervised mode. Editing this
+policy does not start a mission, launch workers or extend authority/budgets.
 
 For **ongoing unsupervised work**, choose the next useful task from the agreed
 project/backlog by default. Respect priorities, non-goals and deferred scope; no

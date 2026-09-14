@@ -6,6 +6,17 @@
   "workerHarnesses": ["pi", "claude", "codex", "agy"],
   "autoLaunch": false,
   "nativeSubagents": false,
+  "startupPromptApprovals": {
+    "piProjectTrust": {
+      "approved": true,
+      "approvedOn": "2026-09-14",
+      "choice": "Trust (this session only)",
+      "scope": "verified-mission-owned-worktrees",
+      "persistentTrust": false,
+      "parentFolderTrust": false,
+      "otherPrompts": false
+    }
+  },
   "executionAgentDefaults": {
     "approvalMode": "yolo",
     "tools": "harness-defaults"

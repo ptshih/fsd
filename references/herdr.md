@@ -60,11 +60,22 @@ and relevant CLI help when needed; don't invent commands or substitute another r
   than reissuing the work. Resubmit only after establishing non-delivery or reconciling
   partial work into an authorized replacement. If uncertainty persists, stop affected
   dispatch and hand off the blocker; do not switch routes or force receipt.
-- For `blocked`, inspect the approval/question UI; answering it requires owner
-  approval for that prompt under the installed Herdr guidance. If approval is missing,
-  ask in supervised mode; in unsupervised mode, record and defer the blocker rather
-  than answering it or waiting for confirmation. While blocked, continue only
-  independent authorized work. Do not let a successful wait hide a blocker.
+- For `blocked` (or a native approval UI despite an `idle` lifecycle), inspect the
+  actual prompt. Answer only with current or recorded standing owner approval.
+  The saved `startupPromptApprovals.piProjectTrust` policy covers exactly Pi's
+  **Trust (this session only)** choice for verified mission-owned worktrees in an
+  already approved mission. When enabled, do not ask again: reverify the live owned
+  Pi agent and that the prompt's canonical path equals its authorized worktree,
+  navigate using supported `herdr agent send-keys`, read back the selected option,
+  then confirm and verify startup. Record the path, choice and standing-consent
+  basis. This accepts the native prompt, including its stated project-resource
+  loading consequences; it does not disable a guard or change persistent trust.
+  Never choose permanent/parent-folder trust, edit trust configuration, cover an
+  unrelated/unverified path or another prompt, or reverse an explicit denial under
+  this policy. Pause if a project/mission guard conflicts or identity/choice is unclear.
+  Otherwise, if approval is missing, ask in supervised mode; in unsupervised mode,
+  record and defer rather than answer or wait for confirmation. While blocked,
+  continue only independent authorized work. A successful wait never hides a blocker.
 
 ## Recover incomplete reports
 
