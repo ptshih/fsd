@@ -9,6 +9,23 @@ compatibility: "Uses Herdr and project-authorized agents. Work continues in the 
 Delegate the work, coordinate the agents and own the result. Follow the project's
 instructions; do not impose a language, repository layout or release process.
 
+## Orchestrator startup
+
+When first activating FSD as the orchestrator—not merely reading or editing this
+skill—name your own Herdr tab and agent. After verifying `HERDR_ENV=1`, follow
+[Herdr](references/herdr.md) to discover the calling pane with `herdr pane current
+--current`, its tab ID, and existing agent names. Never infer ownership from UI focus.
+
+Use owner-specified names when supplied; otherwise choose a readable project/role
+label such as `FSD <project> Orchestrator` for the tab and a unique CLI-valid name
+such as `fsd-<project>-orchestrator` for the agent. Use the supported `herdr tab rename`
+and `herdr agent rename` commands, targeting only your own discovered tab and agent.
+Verify both names afterward and record them in mission continuity when a mission
+exists. Preserve focus and do not rename unrelated agents or tabs. On resume, reuse
+appropriate existing names rather than repeatedly renaming them.
+
+Naming the coordinator does not authorize a mission or worker launch.
+
 ## Work
 
 1. Establish the goal, scope and what counts as done. Saved preferences are not
