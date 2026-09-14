@@ -114,3 +114,38 @@ work and service dependencies, preserve a concise handoff and verify quiescence.
 Use supported controls and rediscover the resulting identity. Never reset or retire
 the human coordinator, unrelated agents or shared services. Reconcile in-flight work
 before an approved model fallback; record and disclose the switch without duplicates.
+
+## Prune finished workers
+
+Cleanup is part of coordinator completion, not an optional housekeeping task. Prune
+workers once accepted work and necessary follow-ups are finished; also reconcile and
+clean up on cancellation or wind-down. A lifecycle `idle`/`done` state alone is not
+permission to prune. Do not keep unused workers around just because they might be
+useful later; retain only explicitly planned reuse or an owner-directed handoff.
+
+1. Save the ID-matched report, acceptance/check outcomes and any partial-work handoff
+   under the recorded mission directory before closing anything. Preserve code,
+   worktrees, reports and continuity files; pruning Herdr agents does not authorize
+   deleting them. Cancellation must remain recorded as interrupted, not completed.
+2. Rediscover the caller with `herdr pane current --current`, and inspect live agents,
+   panes and tabs against recorded mission ownership. Inspect each target's output
+   and `herdr pane process-info --pane <pane_id>` for unfinished work or service
+   dependencies. Settle bounded operations first; on cancellation use supported
+   interruption controls only on owned operations and verify they have stopped.
+   Uncertain identity, human drafts or shared dependencies block that target's cleanup.
+3. Close disposable worker panes with `herdr pane close <pane_id>`. Use
+   `herdr tab close <tab_id>` only when the entire tab is disposable and every pane
+   in it has been verified safe to close. Targets must have been created for this
+   mission or explicitly authorized for closure; reusing an existing worker does not
+   grant ownership of its pane/tab. Never target the calling coordinator pane/tab,
+   unrelated agents, shared services or resources retained for reuse/handoff. Preserve
+   user focus; do not close whole workspaces/sessions or stop the Herdr server.
+4. Re-list agents, panes and tabs to verify the targets are gone. Record removed IDs,
+   retained workers and their reason/owner/next action, and any cleanup failures in
+   `state.md`. Report unresolved cleanup in the final handoff rather than claiming it
+   succeeded. On failure, preserve evidence and reconcile through supported controls;
+   do not force-kill processes or broaden closure scope to make the list look clean.
+
+Check the installed CLI help if syntax or behavior differs. Pruning here means closing
+verified disposable worker panes/tabs; do not invent an `agent prune` command or treat
+clearing lifecycle metadata as terminating an agent.

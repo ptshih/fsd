@@ -70,6 +70,14 @@ Naming the coordinator does not authorize a mission or worker launch.
    work and executed evidence before accepting an assignment. Route real defects
    back for repair, refresh affected checks and accept only what meets the agreed
    criteria. Report check exits, failures, skips and unknowns honestly; avoid filler work.
+6. **Prune workers from Herdr when they are no longer needed**, including at mission
+   completion, cancellation or wind-down. First retain their reports, check evidence
+   and any partial-work handoff; settle in-flight work and verify ownership and
+   quiescence. Follow [Herdr cleanup](references/herdr.md#prune-finished-workers)
+   to close disposable mission-owned worker panes/tabs, not merely leave idle agents.
+   This routine cleanup needs no separate confirmation. Never close the coordinator,
+   unrelated/shared resources or workers explicitly retained for reuse/handoff.
+   Verify removal and record cleanup results or blockers in mission continuity.
 
 ## Supervision
 
