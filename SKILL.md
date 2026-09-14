@@ -41,7 +41,10 @@ Naming the coordinator does not authorize a mission or worker launch.
    run at **xhigh**; pause if this is unavailable or cannot be verified.
    Preserve mission selections. Reconcile and disclose only approved fallbacks—no
    silent model, effort, tool-scope or task-authority changes. Native approval-mode
-   handling follows step 4.
+   handling follows step 4. Establish the completion-delivery mode using
+   [nonblocking coordination](references/async-coordination.md). Unattended work
+   requires a verified wakeup path; unavailable delivery needs explicitly approved
+   manual resumption or a pause before affected dispatch, never a silent blocking fallback.
 3. Choose the smallest useful roster and review depth. Project/mission-required
    review and gates are mandatory; otherwise **the coordinator makes the call** on
    whether and how much independent review is needed. Builder → Reviewer → Judge
@@ -66,11 +69,15 @@ Naming the coordinator does not authorize a mission or worker launch.
    Parallelize independent work; keep one implementation writer per working directory
    and hand off dependencies before work that relies on them. Delegate implementation
    rather than taking over when a worker is unavailable.
-5. Use finite waits, inspect the result and decide the next action; a Herdr lifecycle
-   completion is not assignment completion. Inspect the ID-matched report, current
-   work and executed evidence before accepting an assignment. Route real defects
-   back for repair, refresh affected checks and accept only what meets the agreed
-   criteria. Report check exits, failures, skips and unknowns honestly; avoid filler work.
+5. **Coordinate asynchronously:** for automatic delivery, register completion observation
+   before dispatch. Confirm startup with a short bounded acknowledgment, then do independent
+   work or yield. Do not keep the model turn open on worker completion waits, sleeps or repeated
+   status polling. Resume on a verified completion, blocker, failure or deadline event,
+   or an explicitly approved manual resumption. A Herdr lifecycle completion is only
+   a cue to inspect, not assignment completion. Inspect the ID-matched report, current
+   work and executed evidence before accepting an assignment. Route real defects back
+   for repair within the approved envelope, refresh affected checks and accept only
+   what meets the agreed criteria. Report failures, skips and unknowns honestly.
 6. **Prune workers from Herdr when they are no longer needed**, including at mission
    completion, cancellation or wind-down. First retain their reports, check evidence
    and any partial-work handoff; settle in-flight work and verify ownership and
@@ -110,9 +117,11 @@ For **ongoing unsupervised work**, choose the next useful task from the agreed
 project/backlog by default. Respect priorities, non-goals and deferred scope; no
 prewritten task queue is required. Stop at the agreed limit, on owner request, or
 when no authorized work can progress. For a single outcome, stop when it is done.
-Active coordination requires the host session to remain active. Herdr may preserve
-worker processes across client detach, but that is not autonomous FSD continuation.
-Do not promise crash-proof execution or automatic continuation after the coordinator stops.
+Automatic resumption requires a running coordinator host with a verified delivery
+adapter, not a continuously active model turn. When only workers are running, yield.
+Herdr may preserve worker processes across client detach, but that alone does not
+resume FSD. A toast, detached watcher or saved preference is not proof of assistant
+wakeup. Do not promise crash-proof execution or continuation after the host stops.
 
 ## Keep continuity
 
@@ -140,8 +149,10 @@ implementation ownership.
 
 Record goal/done criteria, approved scope and roster/worker authority, required review,
 limits and usage so far (mark unknowns), effective agent selections, Herdr host/session,
-owned pane/cwd/worktree/paths, assignment IDs/status (including uncertain delivery or
-supersession), material decisions, evidence/check outcomes, blockers and next action.
+owned pane/cwd/worktree/paths, assignment IDs and dispatch attempts (including uncertain
+delivery or supersession), completion-delivery mode, verified adapter/watch identity,
+pending/acknowledged notifications, material decisions, evidence/check outcomes,
+blockers and next action. Mark unavailable delivery explicitly; do not invent a watcher.
 Update after dispatch, material results or authority/ownership changes, and at handoff.
 Keep it compact: evidence paths and concise summaries, not secrets, raw reasoning
 or a transcript archive. This is a coordinator-maintained handoff, not a durable

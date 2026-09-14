@@ -6,6 +6,13 @@
   "workerHarnesses": ["pi", "claude", "codex", "agy"],
   "autoLaunch": false,
   "nativeSubagents": false,
+  "coordinationDefaults": {
+    "mode": "event-driven",
+    "startupAckTimeoutMs": 10000,
+    "unattendedRequiresVerifiedWakeup": true,
+    "manualResume": "explicit-owner-approval",
+    "foregroundCompletionWait": "explicit-owner-request-only"
+  },
   "startupPromptApprovals": {
     "projectTrust": {
       "approved": true,

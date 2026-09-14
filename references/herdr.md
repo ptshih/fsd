@@ -42,29 +42,44 @@ and relevant CLI help when needed; don't invent commands or substitute another r
   exits/results; skips/unknowns; remaining work/blockers. A worker's `complete` report
   requests coordinator acceptance; it is not acceptance by itself.
 
-## Wait, inspect, decide
+## Dispatch, yield, inspect
 
-- Send any prompt, including status/report follow-ups, only to a verified owned
-  agent ready for input with no human draft. Resolve or explicitly supersede the
-  prior assignment before submitting new work; same-assignment follow-ups may
-  resolve an incomplete report or request repairs. Use
-  `herdr agent prompt <target> <assignment> --wait --timeout <ms>` for work and follow-ups.
-  Use finite, task-appropriate timeouts within remaining mission limits. A successful
-  submission or settled `idle`/`done` state is lifecycle evidence, not ID-matched
-  assignment completion; a wait can otherwise reflect an earlier active turn.
-- After each wait, inspect `herdr agent get <target>` and
-  `herdr agent read <target> --source recent-unwrapped --lines <n>`.
-  Decide explicitly: accept verified results, request missing information/repair,
-  wait again, defer a blocker or wind down. If still working, use
-  `herdr agent wait <target> --timeout <ms>` and repeat inspection within the limits;
-  do not resend the assignment or reset its budget merely because a wait expired.
-- A timeout, `agent_prompt_stalled`, transport error or `unknown` state proves neither
-  completion nor non-delivery. Record uncertain delivery, inspect live identity,
-  output and relevant work before retrying. If activity is visible, wait for it; if
-  ready but receipt remains unclear, ask a short ID-specific status question rather
-  than reissuing the work. Resubmit only after establishing non-delivery or reconciling
-  partial work into an authorized replacement. If uncertainty persists, stop affected
-  dispatch and hand off the blocker; do not switch routes or force receipt.
+Use the [nonblocking coordination contract](async-coordination.md). Register the
+assignment/attempt watcher before submitting work when automatic delivery is used.
+A background non-model watcher may use Herdr events or bounded `agent wait` calls;
+the coordinator must not occupy its model turn doing those completion waits.
+
+- Send prompts only to a verified owned agent ready for input with no human draft.
+  Resolve or explicitly supersede prior work first; same-assignment follow-ups may
+  request a missing report or repairs. Give each actual submission a distinct attempt
+  identity so an old report/event cannot satisfy a newer dispatch.
+- Use only a short startup acknowledgment in the foreground. The current CLI supports:
+
+  ```sh
+  herdr agent prompt <target> "<assignment>" \
+    --wait --until working --until done --until idle --until blocked \
+    --timeout 10000
+  ```
+
+  The settled states handle fast completion or a prompt; Herdr's post-submission
+  activity check must still establish that this submission started. A previous idle
+  state or a successful input write alone is not proof. Use the configured acknowledgment
+  limit, capped by remaining mission time, and verify installed CLI semantics.
+- After acknowledgment, do independent authorized work or yield. Do not chain long
+  `agent wait` calls, sleep loops or repeated status reads in the coordinator. A foreground
+  completion wait is an explicit owner-requested exception, not an automatic fallback.
+- On a completion/blocker/failure/deadline event or explicit manual resumption, inspect
+  `herdr agent get <target>` and the ID-matched output. Use `recent-unwrapped` when idle;
+  use `visible` for a working agent whose alternate-screen history cannot be scrolled.
+  Inspect artifacts/checks before accepting. If still working, update continuity and
+  yield rather than re-enter a wait loop. A lifecycle completion is not assignment completion.
+- A startup timeout, `agent_prompt_stalled`, transport error or `unknown` state proves
+  neither completion nor nondelivery. Record uncertainty and make a bounded identity/
+  output inspection. Confirmed activity means keep observing the existing attempt, not
+  resend it. If ready but receipt remains unclear, ask a short ID-specific status question.
+  Resubmit only after establishing nondelivery or reconciling partial work into an
+  authorized replacement. Persistent uncertainty blocks affected dispatch; do not switch
+  routes, force receipt, or reset limits.
 - A native YOLO/bypass-mode indicator is not an approval blocker. For a real `blocked`
   state (or a native approval UI despite an `idle` lifecycle), inspect the actual
   prompt. Answer only with current or recorded standing owner approval.
@@ -91,10 +106,11 @@ and relevant CLI help when needed; don't invent commands or substitute another r
 ## Recover incomplete reports
 
 If a report is missing or truncated, increase the read window/use supported available
-history first. If that cannot recover it, wait for a verified ready agent and request
-only the missing ID-matched report, not another implementation pass. Ask for a concise
-text report or short numbered chunks, reading each before requesting the next. Bound
-recovery by remaining mission limits; mark evidence incomplete if it cannot be recovered.
+history first. If that cannot recover it, request only the missing ID-matched report
+once the owned agent is verified ready, not another implementation pass. If it is still
+working, yield until a readiness event or approved manual resumption; do not block on
+completion. Ask for concise text or short numbered chunks, reading each before requesting
+the next. Bound recovery by remaining mission limits; mark unrecovered evidence incomplete.
 
 Read-only workers return text and never write report files. The coordinator may save
 collected text under `reports/` in the recorded absolute mission directory. Herdr's

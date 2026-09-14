@@ -9,6 +9,8 @@ is not a standalone application or an autonomous background service.
 - [`SKILL.md`](SKILL.md) — the skill entry point and coordination workflow.
 - [`references/herdr.md`](references/herdr.md) — Herdr assignment, collection,
   recovery, and ownership guidance.
+- [`references/async-coordination.md`](references/async-coordination.md) — nonblocking
+  dispatch and the completion-delivery adapter contract.
 - [`config/herdr-defaults.json`](config/herdr-defaults.json) — saved owner
   preferences, including harness/model selections and approved fallback rules.
 
@@ -47,6 +49,13 @@ authenticated separately on each device. Use it inside an active Herdr session
 (`HERDR_ENV=1`); setting the variable alone does not establish a session. The
 coordinator must support the skill's required `xhigh` effort setting.
 
+Coordination defaults to short startup acknowledgments followed by yielding, not
+foreground completion waits. Automatic unattended resumption additionally requires a
+verified coordinator-harness delivery adapter. This repository currently documents
+that adapter contract; it does **not** ship or install an adapter. Without one, use
+explicitly approved manual resumption rather than claiming automatic continuation.
+Herdr notifications/toasts alone do not wake an assistant turn.
+
 ## Sync changes
 
 Before editing on a device:
@@ -61,7 +70,8 @@ your changes):
 ```sh
 cd ~/.agents/skills/fsd
 git diff
-git add SKILL.md references/herdr.md config/herdr-defaults.json
+git add SKILL.md README.md references/herdr.md \
+  references/async-coordination.md config/herdr-defaults.json
 git diff --cached
 git commit -m "Update FSD skill"
 git push origin main
