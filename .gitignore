@@ -1,0 +1,11 @@
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Local secrets (never commit credentials)
+.env
+.env.*
+!.env.example
+
+# Mission data belongs outside this skill repository
+/.agents/fsd/
