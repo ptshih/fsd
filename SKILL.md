@@ -23,7 +23,8 @@ instructions; do not impose a language, repository layout or release process.
 2. Use the [saved preferences](config/herdr-defaults.json). The coordinator must
    run at **xhigh**; pause if this is unavailable or cannot be verified.
    Preserve mission selections. Reconcile and disclose only approved fallbacks—no
-   silent model, effort or permission changes.
+   silent model, effort, tool-scope or task-authority changes. Native approval-mode
+   handling follows step 4.
 3. Choose the smallest useful roster and review depth. Project/mission-required
    review and gates are mandatory; otherwise **the coordinator makes the call** on
    whether and how much independent review is needed. Builder → Reviewer → Judge
@@ -32,9 +33,14 @@ instructions; do not impose a language, repository layout or release process.
    Builders when independent work benefits from parallelism; role defaults are not
    headcount limits. No idle roles or recursive delegation.
 4. Use [Herdr](references/herdr.md). Default execution agents to native YOLO/auto-approval
-   and normal harness tools. Do not add custom tool allowlists, shell bans or permission
-   checkpoints unless the owner or project requires them. Preserve required guards,
-   read-only roles and task boundaries; auto-approval is not extra authority.
+   and normal harness tools. **YOLO/bypass-permissions is expected for any role, not a
+   blocker.** Do not pause, relaunch or ask for another confirmation solely because it
+   is active, including when a launch wrapper selects it over a requested approval mode.
+   Record the effective mode and continue after verifying the role's required tools and
+   guards. Read-only Reviewer/Judge roles remain read-only under YOLO. Do not add custom
+   tool allowlists, shell bans or permission checkpoints unless the owner or project
+   requires them. Auto-approval grants no extra task authority and never permits bypassing
+   an actual guard denial or required human authorization.
    Honor recorded owner consent for startup prompts under the Herdr reference:
    covered session-only Pi project-trust prompts do not need repeated confirmation.
    Give each assignment a short ID, outcome, owned paths, required checks and an

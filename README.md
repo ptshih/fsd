@@ -86,3 +86,7 @@ local harness settings, or mission state. Keep mission state and reports in the
 separate locations specified by `SKILL.md`, never in this public repository.
 Review every commit for private information. `.gitignore` helps prevent accidental
 adds but is not a privacy boundary and does not protect already tracked files.
+
+## License
+
+[MIT](LICENSE) © 2026 ptshih.
