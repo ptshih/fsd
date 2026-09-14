@@ -14,19 +14,24 @@ and relevant CLI help when needed; don't invent commands or substitute another r
   launches from skill activation, not launches explicitly authorized by the mission.
   Replacement/additional workers need authority within that envelope, not just an
   available role default. This owner prefers separate **tabs** and preserved
-  coordinator focus. Use supported `herdr agent start` with verified native flags,
-  never permission-bypassing aliases.
+  coordinator focus. Use supported `herdr agent start` with verified native flags
+  and inspect the effective executable/arguments, not just the requested launch.
 - For execution agents, use the saved YOLO/auto-approval preference and normal
   harness tools; do not invent a restrictive profile just to launch a worker.
-  Resolve native flags from installed help and disclose the selected mode. This
-  removes routine permission prompts, not project guards, read-only role contracts
-  or scope/spending/release limits. If a mode disables a required guard, do not use
-  it; report that specific conflict instead. Do not relax a denial as a retry.
+  Native YOLO/bypass-permissions is expected for any role, including Reviewer/Judge.
+  A wrapper or alias that merely selects that native mode, or a mismatch with a
+  requested approval-mode flag, is not by itself a blocker or reason to relaunch.
+  Record the effective mode; no additional owner confirmation is needed solely for it.
+  Verify the role's required tools and guards, then continue. Read-only roles remain
+  read-only; native auto-approval does not expand tool/task authority, spending or
+  release limits. If a mode actually disables a required guard or violates a role
+  constraint, report that specific conflict. Never use it to evade an actual denial.
 - Verify effective harness/model/effort, approval mode and tool availability using
   native session/settings evidence before assigning work. Herdr's recognized kind,
   requested launch flags and lifecycle hooks do not establish all those settings.
   Record what was verified and any unknowns; pause affected dispatch if a required
-  setting cannot be verified. Keep mission selections and approved fallback rules.
+  setting cannot be verified. Native bypass mode alone is not such a failure.
+  Keep mission selections and approved fallback rules.
 - Use short mission-local assignment IDs (`A1`, `A2`, …). Include the ID, outcome,
   owned cwd/worktree/paths, read-only or writer role, required checks and report
   expectation in each assignment. Retain the ID on status/report follow-ups;
@@ -60,8 +65,9 @@ and relevant CLI help when needed; don't invent commands or substitute another r
   than reissuing the work. Resubmit only after establishing non-delivery or reconciling
   partial work into an authorized replacement. If uncertainty persists, stop affected
   dispatch and hand off the blocker; do not switch routes or force receipt.
-- For `blocked`, inspect the approval/question UI; answering it requires owner
-  approval for that prompt under the installed Herdr guidance. If approval is missing,
+- A native YOLO/bypass-mode indicator is not an approval blocker. For a real `blocked`
+  state, inspect the approval/question UI; answering it requires owner approval for
+  that prompt under the installed Herdr guidance. If approval is missing,
   ask in supervised mode; in unsupervised mode, record and defer the blocker rather
   than answering it or waiting for confirmation. While blocked, continue only
   independent authorized work. Do not let a successful wait hide a blocker.
@@ -88,8 +94,9 @@ busy agents to force receipt, or promote a read-only helper into a writer. Model
 settings and instructions are not OS isolation or hard spending guarantees.
 
 On a tool/transport/ownership failure, stop affected dispatch, preserve evidence
-and reconcile. Don't bypass permissions or switch routes. Continue only independent
-authorized work; if none can progress, hand off the blocker.
+and reconcile. Don't evade actual guard denials or required human authorization,
+expand task authority or switch routes. Native YOLO alone is not such a failure.
+Continue only independent authorized work; if none can progress, hand off the blocker.
 
 Before an authorized reset, retirement or ownership transfer, inspect unfinished
 work and service dependencies, preserve a concise handoff and verify quiescence.
