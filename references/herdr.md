@@ -68,17 +68,22 @@ and relevant CLI help when needed; don't invent commands or substitute another r
 - A native YOLO/bypass-mode indicator is not an approval blocker. For a real `blocked`
   state (or a native approval UI despite an `idle` lifecycle), inspect the actual
   prompt. Answer only with current or recorded standing owner approval.
-  The saved `startupPromptApprovals.piProjectTrust` policy covers exactly Pi's
-  **Trust (this session only)** choice for verified mission-owned worktrees in an
-  already approved mission. When enabled, do not ask again: reverify the live owned
-  Pi agent and that the prompt's canonical path equals its authorized worktree,
-  navigate using supported `herdr agent send-keys`, read back the selected option,
-  then confirm and verify startup. Record the path, choice and standing-consent
-  basis. This accepts the native prompt, including its stated project-resource
-  loading consequences; it does not disable a guard or change persistent trust.
-  Never choose permanent/parent-folder trust, edit trust configuration, cover an
-  unrelated/unverified path or another prompt, or reverse an explicit denial under
-  this policy. Pause if a project/mission guard conflicts or identity/choice is unclear.
+  The saved `startupPromptApprovals.projectTrust` policy covers native project/folder
+  trust for its listed harnesses in verified mission-owned workspaces of an already
+  approved mission. When enabled, do not ask again: reverify the live owned agent and
+  that the displayed canonical path equals its authorized workspace. Prefer a
+  session-only option; if unavailable, the policy permits exact-folder trust such as
+  AGY's **Yes, I trust this folder**, even when the harness remembers it persistently.
+  Stricter harness-specific policies take precedence: `piProjectTrust` continues to
+  allow only Pi's **Trust (this session only)** choice, never permanent Pi trust.
+  Navigate using supported `herdr agent send-keys`, read back the selected option,
+  then confirm and verify startup. If the prompt has already cleared, send no approval
+  keystroke; verify readiness instead. Record the path, choice and standing-consent
+  basis. This accepts the native prompt and its stated project-resource loading
+  consequences; it does not disable a guard or expand task authority.
+  Never choose parent-folder/global trust, manually edit native trust configuration,
+  cover an unrelated/unverified path or another prompt, or reverse an explicit denial.
+  Pause if a project/mission guard conflicts or identity/choice is unclear.
   Otherwise, if approval is missing, ask in supervised mode; in unsupervised mode,
   record and defer rather than answer or wait for confirmation. While blocked,
   continue only independent authorized work. A successful wait never hides a blocker.

@@ -7,6 +7,18 @@
   "autoLaunch": false,
   "nativeSubagents": false,
   "startupPromptApprovals": {
+    "projectTrust": {
+      "approved": true,
+      "approvedOn": "2026-09-14",
+      "harnesses": ["pi", "claude", "codex", "agy"],
+      "scope": "verified-mission-owned-workspaces",
+      "preferSessionOnly": true,
+      "persistentExactFolderTrustWhenSessionOnlyUnavailable": true,
+      "respectHarnessSpecificRestrictions": true,
+      "parentFolderTrust": false,
+      "globalTrust": false,
+      "otherPrompts": false
+    },
     "piProjectTrust": {
       "approved": true,
       "approvedOn": "2026-09-14",

@@ -59,7 +59,8 @@ Naming the coordinator does not authorize a mission or worker launch.
    requires them. Auto-approval grants no extra task authority and never permits bypassing
    an actual guard denial or required human authorization.
    Honor recorded owner consent for startup prompts under the Herdr reference:
-   covered session-only Pi project-trust prompts do not need repeated confirmation.
+   covered project/folder-trust prompts do not need repeated confirmation. Prefer
+   session-only trust and preserve any stricter harness-specific restrictions.
    Give each assignment a short ID, outcome, owned paths, required checks and an
    explicit completion-report expectation. Verify effective tools and settings.
    Parallelize independent work; keep one implementation writer per working directory
@@ -89,15 +90,21 @@ supplies initial mission approval or expands it. Only confirmation behavior chan
   confirmations. Record important decisions. Defer anything requiring new authority
   and continue other authorized work—never bypass a guard or permission prompt.
 
-The saved `startupPromptApprovals.piProjectTrust` policy is standing owner consent
-in **both modes**, not permission to disable trust checks. When enabled, automatically
-select **Trust (this session only)** for a verified, mission-owned worktree in an
-already authorized mission. Verify the live owned Pi agent, displayed canonical
-path and selected option; record the decision. Never extend this to permanent or
-parent-folder trust, unrelated/unverified paths, other approval prompts, or a
-previously denied action. Ambiguity or a conflicting project/mission guard still
-requires asking in supervised mode or deferring in unsupervised mode. Editing this
-policy does not start a mission, launch workers or extend authority/budgets.
+The saved `startupPromptApprovals.projectTrust` policy is standing owner consent
+in **both modes** for native project/folder-trust prompts in verified, mission-owned
+workspaces, using its listed harnesses in an already authorized mission. Automatically
+accept covered prompts after verifying the live owned agent, displayed canonical path
+and selected option. Prefer session-only trust. Where that is unavailable, exact-folder
+trust is permitted, including AGY's **Yes, I trust this folder**; the harness may retain
+that trust across sessions. Stricter harness-specific restrictions take precedence:
+Pi's `startupPromptApprovals.piProjectTrust` still permits only **Trust (this session
+only)**, not permanent trust. Record the path, choice and consent basis. This accepts
+the native prompt, including its stated project-resource loading consequences; it does
+not disable trust checks or expand the assignment. Never extend consent to parent-folder
+or global trust, unrelated/unverified paths, other approval prompts, or a previously
+denied action. Ambiguity or a conflicting project/mission guard still requires asking
+in supervised mode or deferring in unsupervised mode. Editing this policy does not
+start a mission, launch workers or extend authority/budgets.
 
 For **ongoing unsupervised work**, choose the next useful task from the agreed
 project/backlog by default. Respect priorities, non-goals and deferred scope; no
