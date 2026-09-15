@@ -1,13 +1,13 @@
-# Mission continuity
+# Goal continuity
 
 Continuity is a compact handoff, not a transcript or a second execution engine. The
-coordinator owns it for both direct and delegated missions. For a small direct task,
+coordinator owns it for both direct and delegated goals. For a small direct task,
 a short `state.md` is enough; create reports and runtime records only as needed.
 
 ## Storage
 
-Keep mission data separate from the installed skill and saved preferences. Default to
-`.agents/fsd/<mission-id>/` in a stable coordinator checkout, with a short unique ID:
+Keep goal data separate from the installed skill and saved preferences. Default to
+`.agents/fsd/<goal-id>/` in a stable coordinator checkout, with a short unique ID:
 
 - `state.md`: outcome, envelope, status, evidence references, and next action.
 - `reports/`: retained assignments, collected reports, and supporting checks/logs.
@@ -15,14 +15,14 @@ Keep mission data separate from the installed skill and saved preferences. Defau
 - `runtime/`: adapter-owned machine records, if supported by the installed adapter.
 
 If the checkout is disposable, use an approved persistent external directory, such as
-`~/.local/state/fsd/<project-id>/<mission-id>/`. Disclose the absolute mission path at
+`~/.local/state/fsd/<project-id>/<goal-id>/`. Disclose the absolute goal path at
 start and handoff. Include it in assignments; workers must not derive a different root
-from their own cwd/worktree. Keep an existing mission's recorded path unless deliberately
+from their own cwd/worktree. Keep an existing goal's recorded path unless deliberately
 relocated after reconciling ownership, in-flight work, and evidence links. Do not move
 an installed adapter's existing state merely to match the proposed directory layout.
 
 Before writing, use owner-private permissions (normally directories `0700`, files `0600`)
-and Git-ignore repository-local mission storage, normally `.agents/fsd/`, not all of
+and Git-ignore repository-local goal storage, normally `.agents/fsd/`, not all of
 `.agents/`. Git-ignore is not a privacy boundary. Retained state/reports are not temporary
 cleanup targets. Do not store credentials, secrets, or raw reasoning in continuity.
 
@@ -62,4 +62,4 @@ interrupt only owned operations through supported controls and verify their stat
 Preserve partial work; cancellation/interruption is not completion. Retire relevant
 observations and follow [Herdr cleanup](herdr.md#prune-finished-workers). Retain evidence
 and disclose any resources that could not safely be closed. The owner's Pi conversation
-remains available after the mission ends.
+remains available after the goal ends.

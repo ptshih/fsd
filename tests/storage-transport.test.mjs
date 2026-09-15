@@ -49,15 +49,15 @@ test('canonical scopes catch symlink aliases and parent/child overlap without st
   assert.equal(within(join(root, 'tree-other'), join(root, 'tree')), false);
 });
 test('repository-local storage requires ignore coverage and rejects already tracked private data', t => {
-  const root = temp(t); execFileSync('git', ['init', '--quiet', root]); const path = join(root, '.agents/fsd/mission');
+  const root = temp(t); execFileSync('git', ['init', '--quiet', root]); const path = join(root, '.agents/fsd/goal');
   assert.throws(() => ensureIgnored(path), /Git-ignore/);
   writeFileSync(join(root, '.git/info/exclude'), '/.agents/fsd/\n'); assert.doesNotThrow(() => ensureIgnored(path));
   mkdirSync(path, { recursive: true, mode: 0o700 }); writeFileSync(join(path, 'private.json'), '{}');
-  execFileSync('git', ['-C', root, 'add', '-f', '.agents/fsd/mission/private.json']);
+  execFileSync('git', ['-C', root, 'add', '-f', '.agents/fsd/goal/private.json']);
   assert.throws(() => ensureIgnored(path), /tracked files/);
 });
 test('external non-repository storage does not require Git configuration', t => {
-  const root = temp(t); assert.doesNotThrow(() => ensureIgnored(join(root, 'external-mission')));
+  const root = temp(t); assert.doesNotThrow(() => ensureIgnored(join(root, 'external-goal')));
 });
 test('transport uses PATH resolution and Herdr positional TARGET/TEXT before options', async t => {
   const calls = [], w = worker();

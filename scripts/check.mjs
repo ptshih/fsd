@@ -33,8 +33,9 @@ for (const file of files) {
   }
 }
 const prefs = JSON.parse(readFileSync(join(root, 'config/herdr-defaults.json'), 'utf8'));
+assert.equal(prefs.version, 2);
 assert.equal(prefs.autoLaunch, false); assert.equal(prefs.nativeSubagents, false);
-assert.equal(prefs.missionDefaults.mode, 'bounded-outcome');
+assert.equal(prefs.goalDefaults.mode, 'bounded-outcome');
 const { loadSkillsFromDir } = await import(pathToFileURL(join(locatePi(), 'dist/core/skills.js')).href);
 const loaded = loadSkillsFromDir({ dir: root, source: 'fsd-check' });
 assert.equal(loaded.skills.length, 1); assert.equal(loaded.skills[0].name, 'fsd'); assert.deepEqual(loaded.diagnostics, []);

@@ -108,7 +108,11 @@ export class RecordStore {
     return readdirSync(join(this.root, kind)).filter(n => /^[a-f0-9]{64}\.json$/.test(n))
       .map(n => readJson(join(this.root, kind, n)));
   }
-  manifest() { return optionalJson(join(this.root, 'mission.json')); }
-  saveManifest(value: unknown) { writeJson(join(this.root, 'mission.json'), value); }
+  isEmpty() {
+    return readdirSync(this.root).every(name => name === '.lease' ||
+      (['attempts', 'events', 'revisions', 'evidence'].includes(name) && readdirSync(join(this.root, name)).length === 0));
+  }
+  manifest() { return optionalJson(join(this.root, 'goal.json')); }
+  saveManifest(value: unknown) { writeJson(join(this.root, 'goal.json'), value); }
   close() { const release = this.release; this.release = undefined; release?.(); }
 }

@@ -4,7 +4,7 @@ import { canonical, digest, RecordStore, stableJson, within } from './storage.ts
 import { verifyWorker } from './transport.ts';
 import type { Binding, Worker } from './transport.ts';
 
-export const RUNTIME_VERSION = 3;
+export const RUNTIME_VERSION = 4;
 export const MESSAGE_TYPE = 'fsd-runtime';
 const text = (v: unknown, label: string, max = 2000): string => {
   if (typeof v !== 'string' || !v.trim() || v.length > max || v.includes('\0')) throw new Error(`Invalid ${label}`);
@@ -50,7 +50,7 @@ export class Runtime {
   now: () => number;
   clock: any;
   store: any;
-  mission: any;
+  goal: any;
   attempts = new Map<string, any>();
   handoffs = new Map<string, any>();
   observers = new Map<string, AbortController>();
@@ -73,15 +73,15 @@ export class Runtime {
     this.createStore = options.createStore ?? ((root: string) => new RecordStore(root));
   }
   iso() { return new Date(this.now()).toISOString(); }
-  effectiveDeadline(a: any) { return Math.min(Date.parse(a.deadline), Date.parse(this.mission.envelope.deadline)); }
+  effectiveDeadline(a: any) { return Math.min(Date.parse(a.deadline), Date.parse(this.goal.envelope.deadline)); }
   alive() { if (this.stopped) throw new Error('Coordinator runtime stopped'); }
-  afterIO(mission: any, signal?: AbortSignal) {
+  afterIO(goal: any, signal?: AbortSignal) {
     this.alive(); signal?.throwIfAborted();
-    if (this.mission !== mission) throw new Error('Mission changed during native inspection');
+    if (this.goal !== goal) throw new Error('Goal changed during native inspection');
   }
-  requireMission() { this.alive(); if (!this.mission || !this.store) throw new Error('Open an authorized mission first'); }
-  persistMission() {
-    try { this.store.saveManifest(this.mission); } catch (e) { this.fail(e); throw e; }
+  requireGoal() { this.alive(); if (!this.goal || !this.store) throw new Error('Open an authorized goal first'); }
+  persistGoal() {
+    try { this.store.saveManifest(this.goal); } catch (e) { this.fail(e); throw e; }
   }
   put(kind: string, key: string, value: any) {
     try { this.store.put(kind, key, value); } catch (e) { this.fail(e); throw e; }
@@ -97,7 +97,7 @@ export class Runtime {
   getAttempt(attemptId: string) {
     id(attemptId, 'attemptId');
     const a = this.attempts.get(attemptId) ?? this.store.get('attempts', attemptId);
-    if (!a || a.id !== attemptId || a.missionId !== this.mission.id) throw new Error('Unknown/mismatched attempt');
+    if (!a || a.id !== attemptId || a.goalId !== this.goal.id) throw new Error('Unknown/mismatched attempt');
     return a;
   }
   capabilities() {
@@ -106,49 +106,49 @@ export class Runtime {
       wakeupEvidence: { ...this.verified }, workerLaunch: false, workerInterruption: false, hardBudgetEnforcement: false };
   }
   summary() {
-    return { loaded: !!this.mission, capabilities: this.capabilities(), fault: this.fault,
-      ...(this.mission ? { missionId: this.mission.id, status: this.mission.status, revision: this.mission.revision,
-        deadline: this.mission.envelope.deadline, evidencePath: this.store.root,
+    return { loaded: !!this.goal, capabilities: this.capabilities(), fault: this.fault,
+      ...(this.goal ? { goalId: this.goal.id, status: this.goal.status, revision: this.goal.revision,
+        deadline: this.goal.envelope.deadline, evidencePath: this.store.root,
         attempts: [...this.attempts.values()].map(a => this.attemptSummary(a)),
         retainedHandoffs: [...this.handoffs.values()].map(a => this.attemptSummary(a)) } : {}) };
   }
   attemptSummary(a: any) {
     return { attemptId: a.id, assignment: a.assignment, phase: a.phase, intent: a.intent,
       worker: { pane: a.worker.pane, cwd: a.worker.cwd }, role: a.role, reason: a.reason, observationError: a.observationError,
-      observedStatus: a.observed?.status, revision: a.revision, currentRevision: this.mission.revision,
+      observedStatus: a.observed?.status, revision: a.revision, currentRevision: this.goal.revision,
       deadline: a.deadline, effectiveDeadline: new Date(this.effectiveDeadline(a)).toISOString(), evidencePath: this.store.path('attempts', a.id) };
   }
 
-  open(missionId: string, root: string, envelope: any) {
-    this.alive(); id(missionId, 'missionId');
-    if (this.mission) throw new Error('Close or hand off the current mission before opening another');
+  open(goalId: string, root: string, envelope: any) {
+    this.alive(); id(goalId, 'goalId');
+    if (this.goal) throw new Error('Close or hand off the current goal before opening another');
     const e = validateEnvelope(envelope);
-    if (Date.parse(e.deadline) <= this.now() || Date.parse(e.deadline) - this.now() > 24 * 3600_000) throw new Error('Mission needs a future deadline within 24 hours');
+    if (Date.parse(e.deadline) <= this.now() || Date.parse(e.deadline) - this.now() > 24 * 3600_000) throw new Error('Goal needs a future deadline within 24 hours');
     root = canonical(root);
     this.store = this.createStore(root);
     try {
-      if (this.store.manifest()) throw new Error('Mission already exists; resume explicitly instead of resetting its budget');
-      this.mission = { version: RUNTIME_VERSION, id: missionId, binding: clone(this.binding), startedAt: this.iso(),
+      if (!this.store.isEmpty()) throw new Error('Goal storage is not empty; restore an existing goal or use a fresh directory');
+      this.goal = { version: RUNTIME_VERSION, id: goalId, binding: clone(this.binding), startedAt: this.iso(),
         revision: 1, status: 'active', envelope: e, pausedAssignments: [], directCwds: [] };
       this.put('revisions', '1', { envelope: e, changedAt: this.iso(), basis: e.authorityBasis });
-      this.persistMission();
+      this.persistGoal();
       return this.summary();
-    } catch (e) { this.mission = undefined; this.store.close(); this.store = undefined; throw e; }
+    } catch (e) { this.goal = undefined; this.store.close(); this.store = undefined; throw e; }
   }
 
   async restore(root: string) {
-    this.alive(); if (this.mission) throw new Error('A mission is already loaded');
+    this.alive(); if (this.goal) throw new Error('A goal is already loaded');
     this.store = this.createStore(canonical(root));
     try {
       const m = this.store.manifest();
-      if (m?.version !== RUNTIME_VERSION || stableJson(m.binding) !== stableJson(this.binding)) throw new Error('Mission/session/Herdr binding mismatch; explicit handoff required');
-      if (!['active', 'paused', 'cancelled', 'closed'].includes(m.status) || !Number.isSafeInteger(m.revision) || m.revision < 1) throw new Error('Invalid mission record');
-      validateEnvelope(m.envelope); id(m.id, 'missionId');
-      if (!Number.isFinite(Date.parse(m.startedAt)) || !Array.isArray(m.pausedAssignments) || !Array.isArray(m.directCwds)) throw new Error('Invalid mission continuity');
-      this.mission = m;
-      if (m.status === 'closed') { this.store.close(); this.store = undefined; this.mission = undefined; return this.summary(); }
+      if (m?.version !== RUNTIME_VERSION || stableJson(m.binding) !== stableJson(this.binding)) throw new Error('Goal/session/Herdr binding mismatch; explicit handoff required');
+      if (!['active', 'paused', 'cancelled', 'closed'].includes(m.status) || !Number.isSafeInteger(m.revision) || m.revision < 1) throw new Error('Invalid goal record');
+      validateEnvelope(m.envelope); id(m.id, 'goalId');
+      if (!Number.isFinite(Date.parse(m.startedAt)) || !Array.isArray(m.pausedAssignments) || !Array.isArray(m.directCwds)) throw new Error('Invalid goal continuity');
+      this.goal = m;
+      if (m.status === 'closed') { this.store.close(); this.store = undefined; this.goal = undefined; return this.summary(); }
       for (const a of this.store.list('attempts')) {
-        if (a.missionId !== m.id || !['preparing', 'submitting', 'not-sent', 'uncertain', 'observing', 'retired'].includes(a.phase)) throw new Error('Invalid persisted attempt');
+        if (a.goalId !== m.id || !['preparing', 'submitting', 'not-sent', 'uncertain', 'observing', 'retired'].includes(a.phase)) throw new Error('Invalid persisted attempt');
         if (a.phase === 'retired' && a.retirement?.quiescentVerified !== false) continue;
         validateWorker(a.worker, this.binding); id(a.id, 'attemptId');
         const packet = this.validateSubmission(Object.fromEntries(['attemptId', 'assignment', 'revision', 'worker', 'role', 'writePaths',
@@ -182,7 +182,7 @@ export class Runtime {
     if (!p) throw new Error('Prepared submission required');
     id(p.attemptId, 'attemptId'); id(p.assignment, 'assignment');
     p.worker = validateWorker(p.worker, this.binding); p.prompt = text(p.prompt, 'assignment prompt', 48000);
-    if (!Number.isSafeInteger(p.revision) || p.revision < 1) throw new Error('Explicit mission revision required');
+    if (!Number.isSafeInteger(p.revision) || p.revision < 1) throw new Error('Explicit goal revision required');
     if (!['writer', 'read-only'].includes(p.role)) throw new Error('Explicit role required');
     if (!Number.isSafeInteger(p.readyRevision) || p.readyRevision < 0 || p.emptyPromptVerified !== true) throw new Error('Coordinator must inspect an empty worker prompt and supply its exact screen revision');
     p.readinessEvidence = text(p.readinessEvidence, 'readinessEvidence');
@@ -190,26 +190,26 @@ export class Runtime {
     p.writePaths = p.writePaths.map((path: string) => canonical(text(path, 'write path', 1024)));
     if (p.role === 'read-only' ? p.writePaths.length !== 0 : p.writePaths.length === 0) throw new Error('Write paths conflict with role');
     if (p.writePaths.some((path: string) => !within(path, p.worker.cwd) || within(path, this.store.root))) throw new Error('Write scope escapes worker cwd or includes reserved runtime state');
-    p.deadline = timestamp(p.deadline ?? priorDeadline ?? this.mission.envelope.deadline);
+    p.deadline = timestamp(p.deadline ?? priorDeadline ?? this.goal.envelope.deadline);
     return p;
   }
   canSubmit(p: any, exclude?: string) {
-    this.requireMission();
+    this.requireGoal();
     if (this.fault) throw new Error(`Runtime needs reconciliation: ${this.fault}`);
-    const e = this.mission.envelope;
-    if (this.mission.status !== 'active' || this.mission.pausedAssignments.includes(p.assignment)) throw new Error('Mission/assignment dispatch is paused or cancelled');
-    if (p.revision !== this.mission.revision) throw new Error('Superseded mission revision');
-    if (Date.parse(p.deadline) <= this.now() || Date.parse(p.deadline) > Date.parse(e.deadline)) throw new Error('Submission outside original/current mission deadline');
+    const e = this.goal.envelope;
+    if (this.goal.status !== 'active' || this.goal.pausedAssignments.includes(p.assignment)) throw new Error('Goal/assignment dispatch is paused or cancelled');
+    if (p.revision !== this.goal.revision) throw new Error('Superseded goal revision');
+    if (Date.parse(p.deadline) <= this.now() || Date.parse(p.deadline) > Date.parse(e.deadline)) throw new Error('Submission outside original/current goal deadline');
     if (!e.kinds.includes(p.worker.kind) || !e.workspaces.includes(p.worker.cwd)) throw new Error('Worker outside approved envelope');
     if (!this.verified.idle || !this.verified.busy) throw new Error('Automatic delivery unverified: acknowledge actual idle and busy probes before worker dispatch');
     const active = [...this.attempts.values(), ...this.handoffs.values()].filter(a => a.id !== exclude);
     if (active.length >= e.maxWorkers) throw new Error('Active worker limit reached');
     if (active.some(a => a.worker.pane === p.worker.pane || a.worker.terminal === p.worker.terminal || a.worker.nativeSession === p.worker.nativeSession)) throw new Error('Worker already has unresolved work');
-    if (p.role === 'writer' && (this.mission.directCwds.some((cwd: string) => within(cwd, p.worker.cwd) || within(p.worker.cwd, cwd)) || active.some(a => a.role === 'writer' &&
+    if (p.role === 'writer' && (this.goal.directCwds.some((cwd: string) => within(cwd, p.worker.cwd) || within(p.worker.cwd, cwd)) || active.some(a => a.role === 'writer' &&
       (within(a.worker.cwd, p.worker.cwd) || within(p.worker.cwd, a.worker.cwd) || a.writePaths.some((x: string) => p.writePaths.some((y: string) => within(x, y) || within(y, x))))))) throw new Error('Overlapping implementation writer ownership');
   }
   submit(input: any, signal?: AbortSignal): Promise<any> {
-    this.requireMission();
+    this.requireGoal();
     id(input?.attemptId, 'attemptId');
     const prior = this.store.get('attempts', input.attemptId);
     const p = this.validateSubmission(input, prior?.deadline);
@@ -219,7 +219,7 @@ export class Runtime {
       return Promise.resolve({ ...this.attemptSummary(prior), duplicate: true });
     }
     this.canSubmit(p);
-    const a: any = { ...p, id: p.attemptId, missionId: this.mission.id, packetHash, phase: 'preparing', intent: 'active', createdAt: this.iso() };
+    const a: any = { ...p, id: p.attemptId, goalId: this.goal.id, packetHash, phase: 'preparing', intent: 'active', createdAt: this.iso() };
     this.persist(a); this.attempts.set(a.id, a); this.dispatching.add(a.id);
     return this.track(this.dispatch(a, signal).finally(() => this.dispatching.delete(a.id)));
   }
@@ -320,7 +320,7 @@ export class Runtime {
   deadline(a: any) {
     this.stopObserver(a.id);
     if (this.stopped || a.phase === 'retired') return;
-    try { this.emit(a, 'deadline', 'Attempt/current mission deadline reached; no worker was stopped'); }
+    try { this.emit(a, 'deadline', 'Attempt/current goal deadline reached; no worker was stopped'); }
     catch (e) { this.fail(e); }
   }
   stopObserver(attemptId: string) {
@@ -330,10 +330,10 @@ export class Runtime {
 
   emit(a: any, kind: string, reason: string) {
     if (this.stopped) return;
-    const eventId = digest(`${this.mission.id}:${a.id}:${kind}:${kind === 'deadline' ? this.effectiveDeadline(a) : a.observed?.sequence ?? a.phase}`);
+    const eventId = digest(`${this.goal.id}:${a.id}:${kind}:${kind === 'deadline' ? this.effectiveDeadline(a) : a.observed?.sequence ?? a.phase}`);
     const old = this.store.get('events', eventId);
     if (old) return; // Stable transition identity: duplicates do not wake or accept twice.
-    const event = { id: eventId, kind, missionId: this.mission.id, revision: a.revision,
+    const event = { id: eventId, kind, goalId: this.goal.id, revision: a.revision,
       attemptId: a.id, assignment: a.assignment, worker: a.worker, at: this.iso(), reason: reason.slice(0, 700),
       status: 'pending', observedStatus: a.observed?.status, deadline: a.deadline,
       evidencePath: this.store.path('attempts', a.id) };
@@ -342,7 +342,7 @@ export class Runtime {
   deliver(event: any) {
     if (this.stopped || ['acknowledged', 'retired'].includes(event.status)) return;
     try {
-      const delivery = this.notify({ ...event, activation: this.activation, currentRevision: this.mission.revision });
+      const delivery = this.notify({ ...event, activation: this.activation, currentRevision: this.goal.revision });
       event.status = 'queued'; event.delivery = { ...delivery, activation: this.activation, at: this.iso() };
       delete event.deliveryError; this.put('events', event.id, event);
     } catch (e) {
@@ -353,7 +353,7 @@ export class Runtime {
   }
   replay() {
     for (const event of this.store.list('events')) {
-      if (event.missionId !== this.mission.id) throw new Error('Foreign notification in mission storage');
+      if (event.goalId !== this.goal.id) throw new Error('Foreign notification in goal storage');
       if (event.attemptId && this.getAttempt(event.attemptId).phase === 'retired') {
         if (event.status !== 'retired') { event.status = 'retired'; this.put('events', event.id, event); }
       } else if (event.kind === 'probe' && event.activation !== this.activation) {
@@ -362,10 +362,10 @@ export class Runtime {
     }
   }
   ack(eventId: string) {
-    this.requireMission();
+    this.requireGoal();
     if (!/^[a-f0-9]{64}$/.test(eventId)) throw new Error('Exact event ID required');
     const event = this.store.get('events', eventId);
-    if (!event || event.id !== eventId || event.missionId !== this.mission.id) throw new Error('Unknown event');
+    if (!event || event.id !== eventId || event.goalId !== this.goal.id) throw new Error('Unknown event');
     if (event.attemptId && this.getAttempt(event.attemptId).phase === 'retired') event.status = 'retired';
     if (event.status !== 'retired' && event.status !== 'acknowledged') {
       if (event.status !== 'queued') throw new Error('Event has not been queued');
@@ -378,12 +378,12 @@ export class Runtime {
     return { eventId, status: event.status, acceptance: false, capabilities: this.capabilities() };
   }
   probe(delayMs = 0, probeWhen = 'now') {
-    this.requireMission();
+    this.requireGoal();
     if (!Number.isInteger(delayMs) || delayMs < 0 || delayMs > 5000) throw new Error('Probe delay must be 0..5000ms');
     if (!['now', 'idle'].includes(probeWhen) || (probeWhen === 'idle' && delayMs !== 0)) throw new Error('Idle probes use the settled event, not a delay');
-    if (this.mission.status !== 'active' || Date.parse(this.mission.envelope.deadline) <= this.now()) throw new Error('Probe outside active mission');
+    if (this.goal.status !== 'active' || Date.parse(this.goal.envelope.deadline) <= this.now()) throw new Error('Probe outside active goal');
     if (probeWhen === 'idle' && this.pendingIdleProbe) return { eventId: this.pendingIdleProbe, status: 'scheduled', probeWhen, duplicate: true };
-    const event: any = { id: digest(randomUUID()), kind: 'probe', missionId: this.mission.id, revision: this.mission.revision,
+    const event: any = { id: digest(randomUUID()), kind: 'probe', goalId: this.goal.id, revision: this.goal.revision,
       activation: this.activation, probeWhen, status: 'scheduled', at: this.iso(), reason: 'Notification test only; not a new assignment', evidencePath: this.store.root };
     this.put('events', event.id, event);
     if (probeWhen === 'idle') {
@@ -402,12 +402,12 @@ export class Runtime {
 
   // Called only by the adapter at Pi's verified agent_settled boundary.
   deliverIdleProbe() {
-    if (this.stopped || !this.mission || !this.store || !this.pendingIdleProbe) return;
+    if (this.stopped || !this.goal || !this.store || !this.pendingIdleProbe) return;
     const eventId = this.pendingIdleProbe; this.pendingIdleProbe = undefined;
     try {
       const event = this.store.get('events', eventId);
-      if (!event || event.status !== 'scheduled' || event.activation !== this.activation || event.missionId !== this.mission.id) return;
-      if (this.mission.status !== 'active' || Date.parse(this.mission.envelope.deadline) <= this.now()) {
+      if (!event || event.status !== 'scheduled' || event.activation !== this.activation || event.goalId !== this.goal.id) return;
+      if (this.goal.status !== 'active' || Date.parse(this.goal.envelope.deadline) <= this.now()) {
         event.status = 'retired'; this.put('events', event.id, event); return;
       }
       event.status = 'pending'; this.put('events', event.id, event); this.deliver(event);
@@ -415,11 +415,11 @@ export class Runtime {
   }
 
   async inspect(attemptId?: string, reconcile = false, signal?: AbortSignal) {
-    this.requireMission(); const mission = this.mission;
+    this.requireGoal(); const goal = this.goal;
     if (!attemptId) return this.summary();
     const a = this.getAttempt(attemptId);
     if (reconcile && a.phase !== 'retired' && a.phase !== 'preparing' && a.phase !== 'submitting') {
-      const live = verifyWorker(a.worker, await this.transport.get(a.worker, signal)); this.afterIO(mission, signal);
+      const live = verifyWorker(a.worker, await this.transport.get(a.worker, signal)); this.afterIO(goal, signal);
       if (a.phase === 'retired') return this.attemptSummary(a);
       if (a.phase !== 'not-sent') { this.observe(a, live); this.arm(a); }
       return { ...this.attemptSummary(a), live: { status: live.agent_status, sequence: live.state_change_seq, revision: live.revision, ready: ready(live) } };
@@ -427,42 +427,42 @@ export class Runtime {
     return this.attemptSummary(a);
   }
   async control(input: any, signal?: AbortSignal) {
-    this.requireMission(); const mission = this.mission;
+    this.requireGoal(); const goal = this.goal;
     const op = input.operation;
     if (op === 'probe') return this.probe(input.delayMs, input.probeWhen);
     text(input.reason, 'control reason');
     this.put('revisions', `control-${randomUUID()}`, { kind: 'control-request', operation: op, at: this.iso(),
-      revision: this.mission.revision, attemptId: input.attemptId, reason: input.reason,
+      revision: this.goal.revision, attemptId: input.attemptId, reason: input.reason,
       evidence: input.evidence, handoff: input.handoff, disposition: input.disposition });
     if (op === 'revise') {
       const envelope = validateEnvelope(input.envelope);
       if (Date.parse(envelope.deadline) - this.now() > 24 * 3600_000) throw new Error('Revised deadline exceeds supported window');
-      if (this.mission.status === 'cancelled') throw new Error('Cancelled mission cannot be revived');
-      const revision = this.mission.revision + 1;
-      this.put('revisions', String(revision), { envelope, priorEnvelope: this.mission.envelope, basis: input.reason, at: this.iso() });
-      this.mission.envelope = envelope; this.mission.revision = revision; this.persistMission();
+      if (this.goal.status === 'cancelled') throw new Error('Cancelled goal cannot be revived');
+      const revision = this.goal.revision + 1;
+      this.put('revisions', String(revision), { envelope, priorEnvelope: this.goal.envelope, basis: input.reason, at: this.iso() });
+      this.goal.envelope = envelope; this.goal.revision = revision; this.persistGoal();
       for (const a of this.attempts.values()) if (['observing', 'uncertain'].includes(a.phase)) {
         this.clock.clear(this.timers.get(a.id)); this.timers.delete(a.id); this.arm(a, false);
       }
     } else if (op === 'reserve-direct') {
       if (!Array.isArray(input.directCwds)) throw new Error('directCwds required');
       const paths = input.directCwds.map(canonical);
-      if (paths.some((p: string) => !this.mission.envelope.workspaces.includes(p) || [...this.attempts.values(), ...this.handoffs.values()].some(a => a.role === 'writer' &&
+      if (paths.some((p: string) => !this.goal.envelope.workspaces.includes(p) || [...this.attempts.values(), ...this.handoffs.values()].some(a => a.role === 'writer' &&
         (within(p, a.worker.cwd) || within(a.worker.cwd, p))))) throw new Error('Direct writer scope is unauthorized or overlaps unresolved work');
-      this.mission.directCwds = paths; this.persistMission();
+      this.goal.directCwds = paths; this.persistGoal();
     } else if (['pause', 'resume', 'cancel', 'supersede'].includes(op)) {
-      if (this.mission.status === 'cancelled' && op === 'resume') throw new Error('Cancelled mission cannot be resumed');
+      if (this.goal.status === 'cancelled' && op === 'resume') throw new Error('Cancelled goal cannot be resumed');
       if (input.attemptId) {
         const a = this.getAttempt(input.attemptId);
         if (a.phase === 'retired') throw new Error('Attempt already retired');
-        if (op === 'resume') this.mission.pausedAssignments = this.mission.pausedAssignments.filter((x: string) => x !== a.assignment);
-        else this.mission.pausedAssignments = [...new Set([...this.mission.pausedAssignments, a.assignment])];
+        if (op === 'resume') this.goal.pausedAssignments = this.goal.pausedAssignments.filter((x: string) => x !== a.assignment);
+        else this.goal.pausedAssignments = [...new Set([...this.goal.pausedAssignments, a.assignment])];
         a.intent = op === 'resume' ? 'active' : op; this.persist(a);
       } else {
         if (op === 'supersede') throw new Error('Supersession requires an exact attempt');
-        this.mission.status = op === 'pause' ? 'paused' : op === 'cancel' ? 'cancelled' : 'active';
+        this.goal.status = op === 'pause' ? 'paused' : op === 'cancel' ? 'cancelled' : 'active';
       }
-      this.persistMission();
+      this.persistGoal();
       if (op === 'cancel' && !input.attemptId) {
         this.pendingIdleProbe = undefined;
         for (const [key, timer] of this.timers) if (key.startsWith('probe:')) { this.clock.clear(timer); this.timers.delete(key); }
@@ -475,7 +475,7 @@ export class Runtime {
       const a = this.getAttempt(input.attemptId);
       if (a.phase !== 'uncertain') throw new Error('Only uncertain attempts require adoption');
       text(input.evidence, 'ID-matched reconciliation evidence');
-      const live = verifyWorker(a.worker, await this.transport.get(a.worker, signal)); this.afterIO(mission, signal);
+      const live = verifyWorker(a.worker, await this.transport.get(a.worker, signal)); this.afterIO(goal, signal);
       if (a.phase !== 'uncertain') throw new Error('Attempt changed during reconciliation');
       if (live.state_change_seq <= a.baseline || live.agent_status === 'unknown') throw new Error('No post-submission activity to reconcile');
       a.confirmation = { sequence: live.state_change_seq, status: live.agent_status, source: 'coordinator-reconciliation', evidence: input.evidence, at: this.iso() };
@@ -485,16 +485,16 @@ export class Runtime {
       if (a.phase === 'retired') {
         if (a.retirement.quiescentVerified === false && !input.handoff) {
           text(input.evidence, 'handoff release evidence');
-          const revision = this.mission.revision;
-          const live = verifyWorker(a.worker, await this.transport.get(a.worker, signal)); this.afterIO(mission, signal);
-          if (revision !== this.mission.revision || !ready(live)) throw new Error('Handoff release requires current verified quiescence');
+          const revision = this.goal.revision;
+          const live = verifyWorker(a.worker, await this.transport.get(a.worker, signal)); this.afterIO(goal, signal);
+          if (revision !== this.goal.revision || !ready(live)) throw new Error('Handoff release requires current verified quiescence');
           a.retirement.quiescentVerified = true; a.retirement.releaseEvidence = input.evidence; a.retirement.reconciledAt = this.iso();
           this.persist(a); this.handoffs.delete(a.id);
         }
         return this.attemptSummary(a);
       }
       if (this.dispatching.has(a.id) || a.phase === 'preparing' || a.phase === 'submitting') throw new Error('Settle the bounded submission before retiring it');
-      const revision = this.mission.revision;
+      const revision = this.goal.revision;
       text(input.evidence, 'acceptance/partial-work evidence');
       if (!['accepted', 'incomplete', 'cancelled', 'superseded', 'not-sent'].includes(input.disposition)) throw new Error('Explicit disposition required');
       if (a.phase === 'not-sent' && input.disposition === 'accepted') throw new Error('Unsent work cannot be accepted');
@@ -503,8 +503,8 @@ export class Runtime {
         text(input.handoff, 'handoff owner and next action');
         if (input.disposition === 'accepted') throw new Error('Acceptance requires verified quiescence, not an unresolved handoff');
       } else if (!quiescent) {
-        const live = verifyWorker(a.worker, await this.transport.get(a.worker, signal)); this.afterIO(mission, signal);
-        if (a.phase === 'retired' || revision !== this.mission.revision) throw new Error('Attempt/mission changed during retirement; inspect again');
+        const live = verifyWorker(a.worker, await this.transport.get(a.worker, signal)); this.afterIO(goal, signal);
+        if (a.phase === 'retired' || revision !== this.goal.revision) throw new Error('Attempt/goal changed during retirement; inspect again');
         if (!ready(live)) throw new Error('Worker is not quiescent; interrupt/reconcile through supported controls or explicitly hand off');
         quiescent = true;
       }
@@ -519,17 +519,17 @@ export class Runtime {
     return { ...this.summary(), workerInterrupted: false };
   }
   close(outcome: string, evidence: string, cleanup: string) {
-    this.requireMission();
+    this.requireGoal();
     if (this.attempts.size || this.pending.size) throw new Error('Unresolved attempts/operations remain; reconcile or explicitly hand off first');
     if (!['delivered', 'blocked', 'limit-reached', 'cancelled'].includes(outcome)) throw new Error('Explicit terminal outcome required');
-    if (this.mission.status === 'cancelled' && outcome !== 'cancelled') throw new Error('A cancelled mission must remain cancelled');
+    if (this.goal.status === 'cancelled' && outcome !== 'cancelled') throw new Error('A cancelled goal must remain cancelled');
     text(evidence, 'final evidence'); text(cleanup, 'verified cleanup or retained-resource record');
-    this.mission.status = 'closed'; this.mission.finishedAt = this.iso(); this.mission.outcome = outcome;
-    this.mission.evidence = evidence; this.mission.cleanup = cleanup; this.persistMission();
+    this.goal.status = 'closed'; this.goal.finishedAt = this.iso(); this.goal.outcome = outcome;
+    this.goal.evidence = evidence; this.goal.cleanup = cleanup; this.persistGoal();
     for (const event of this.store.list('events')) { event.status = 'retired'; this.put('events', event.id, event); }
     for (const timer of this.timers.values()) this.clock.clear(timer); this.timers.clear();
-    const result = { missionId: this.mission.id, outcome, evidencePath: this.store.root, conversationClosed: false };
-    this.store.close(); this.store = undefined; this.mission = undefined; this.handoffs.clear(); this.pendingIdleProbe = undefined;
+    const result = { goalId: this.goal.id, outcome, evidencePath: this.store.root, conversationClosed: false };
+    this.store.close(); this.store = undefined; this.goal = undefined; this.handoffs.clear(); this.pendingIdleProbe = undefined;
     return result;
   }
   async shutdown() {

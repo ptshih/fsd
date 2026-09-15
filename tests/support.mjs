@@ -26,7 +26,7 @@ export class MemoryStore {
   data = new Map();
   closed = false;
   failWrite;
-  constructor(root = '/fsd-test/mission/runtime') { this.root = root; }
+  constructor(root = '/fsd-test/goal/runtime') { this.root = root; }
   path(kind, id) { return `${this.root}/${kind}/${digest(id)}.json`; }
   get(kind, id) { return structuredClone(this.data.get(`${kind}/${id}`)); }
   put(kind, id, value) {
@@ -34,8 +34,9 @@ export class MemoryStore {
     this.data.set(`${kind}/${id}`, structuredClone(value));
   }
   list(kind) { return [...this.data].filter(([k]) => k.startsWith(`${kind}/`)).map(([, v]) => structuredClone(v)); }
-  manifest() { return this.get('meta', 'mission'); }
-  saveManifest(value) { this.put('meta', 'mission', value); }
+  isEmpty() { return this.data.size === 0; }
+  manifest() { return this.get('meta', 'goal'); }
+  saveManifest(value) { this.put('meta', 'goal', value); }
   close() { this.closed = true; }
 }
 export class Transport {
@@ -84,8 +85,8 @@ export function fixture() {
   f.envelope = { goal: 'Deliver test outcome', doneCriteria: 'Verified tests', scope: 'Test worktrees', authorityBasis: 'Explicit test fixture',
     limits: 'Four workers; original deadline', usage: 'Known zero fixture usage', deadline: new Date(clock.time + 3600000).toISOString(),
     maxWorkers: 4, kinds: ['pi'], workspaces: [worker(2).cwd, worker(3).cwd, worker(4).cwd, worker(5).cwd] };
-  f.runtime.open('test-mission', store.root, f.envelope);
-  f.submission = (w = worker(2), attemptId = 'A1-1') => ({ attemptId, assignment: attemptId.split('-')[0], revision: f.runtime.mission.revision,
+  f.runtime.open('test-goal', store.root, f.envelope);
+  f.submission = (w = worker(2), attemptId = 'A1-1') => ({ attemptId, assignment: attemptId.split('-')[0], revision: f.runtime.goal.revision,
     worker: w, role: 'writer', writePaths: [w.cwd], prompt: 'Do the narrow test assignment.',
     readyRevision: transport.states.get(w.pane)?.revision ?? 10, emptyPromptVerified: true, readinessEvidence: 'Fixture inspects empty owned prompt' });
   f.events = kind => store.list('events').filter(e => !kind || e.kind === kind);

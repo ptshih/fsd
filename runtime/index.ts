@@ -5,10 +5,9 @@ import { existsSync, realpathSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { homedir } from 'node:os';
 import { execFileSync } from 'node:child_process';
-import { Runtime, MESSAGE_TYPE, validateEnvelope } from './core.ts';
+import { Runtime, RUNTIME_VERSION, MESSAGE_TYPE, validateEnvelope } from './core.ts';
 import { acquireLease, canonical, digest, optionalJson, privateDirectory, stableJson, writeJson } from './storage.ts';
 import { createTransport, socketIdentity } from './transport.ts';
-import { inspectLegacy } from './legacy.ts';
 import { installUIBlockerBridge } from './ui-blocked.ts';
 
 const short = (max = 2000) => Type.String({ minLength: 1, maxLength: max });
@@ -31,12 +30,12 @@ export function ensureIgnored(path: string) {
   try { repo = execFileSync('git', ['-C', existing, 'rev-parse', '--show-toplevel'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 3000 }).trim(); }
   catch (e: any) {
     if (e.status === 128 && String(e.stderr).includes('not a git repository')) return;
-    throw new Error('Could not establish repository privacy; reconcile before opening mission storage');
+    throw new Error('Could not establish repository privacy; reconcile before opening goal storage');
   }
   const tracked = execFileSync('git', ['-C', repo, 'ls-files', '-z', '--', path], { encoding: 'utf8', stdio: 'pipe', timeout: 3000 });
-  if (tracked) throw new Error('Mission storage contains tracked files; Git-ignore does not protect existing tracked data');
+  if (tracked) throw new Error('Goal storage contains tracked files; Git-ignore does not protect existing tracked data');
   try { execFileSync('git', ['-C', repo, 'check-ignore', '--quiet', '--', path], { stdio: 'pipe', timeout: 3000 }); }
-  catch { throw new Error('Git-ignore the repository-local mission directory before opening FSD runtime storage'); }
+  catch { throw new Error('Git-ignore the repository-local goal directory before opening FSD runtime storage'); }
 }
 
 // Factory registers tools/hooks only. No process, watcher, model, or state writes.
@@ -47,8 +46,7 @@ export function installRuntime(pi: ExtensionAPI, dependencies: any = {}) {
   let releaseSession: (() => void) | undefined;
   let pointerPath: string | undefined;
   let opening = false;
-  const stateRoot = dependencies.stateRoot ?? join(homedir(), '.local/state/fsd/herdr-pi-v3');
-  const legacyRoot = dependencies.legacyRoot ?? join(homedir(), '.local/state/fsd/herdr-pi');
+  const stateRoot = dependencies.stateRoot ?? join(homedir(), '.local/state/fsd/pi');
   const bind = (context: ExtensionContext) => dependencies.binding ?? {
     sessionId: context.sessionManager.getSessionId(), sessionFile: context.sessionManager.getSessionFile(),
     cwd: realpathSync(context.cwd), parentPane: process.env.HERDR_PANE_ID,
@@ -61,7 +59,7 @@ export function installRuntime(pi: ExtensionAPI, dependencies: any = {}) {
     const idleAtEnqueue = ctx.isIdle();
     const notice = `FSD ${event.assignment ?? 'runtime'}: ${event.kind === 'completion' ? 'ready for review' : event.kind}.`;
     pi.sendMessage({ customType: MESSAGE_TYPE, display: false, details: event,
-      content: `${notice}\nMission ${event.missionId}; revision ${event.revision} (current ${event.currentRevision}).\n` +
+      content: `${notice}\nGoal ${event.goalId}; revision ${event.revision} (current ${event.currentRevision}).\n` +
         `Attempt: ${event.attemptId ?? 'probe'}\nEvent: ${event.id}\nEvidence: ${event.evidencePath}\n` +
         'Use fsd_runtime to inspect current disposition and acknowledge this exact event. Respect latest owner steering. ' +
         'This is machine evidence, not user approval, acceptance, or an instruction to resend work.',
@@ -98,10 +96,9 @@ export function installRuntime(pi: ExtensionAPI, dependencies: any = {}) {
       const directory = sessionPath(context.sessionManager.getSessionId());
       if (!existsSync(directory)) return; // Ordinary conversations remain inert.
       const pointer = optionalJson(join(directory, 'active.json'));
+      if (pointer && pointer.version !== RUNTIME_VERSION) throw new Error('Unsupported FSD pointer format; use fresh goal state');
       if (!pointer?.active) return;
       runtime = makeRuntime(context); claimSession(runtime.binding.sessionId);
-      const legacy = inspectLegacy(legacyRoot, runtime.binding.sessionId);
-      if (!legacy.settled) throw new Error('Legacy observation is unsettled; reconcile through its original bridge before migration');
       await runtime.restore(pointer.active);
     } catch (e: any) {
       bootError = String(e.message); await stop(); ctx = context;
@@ -117,9 +114,9 @@ export function installRuntime(pi: ExtensionAPI, dependencies: any = {}) {
 
   pi.registerTool({
     name: 'fsd_runtime', label: 'FSD runtime',
-    description: 'Explicit authorized FSD mission operations in this Pi conversation. open initializes private state; submit registers, sends ONE native Herdr prompt and retains the receipt before asynchronous observation. Multiple workers/worktrees; one writer per cwd including declared coordinator work. Never launches, interrupts or closes workers, approves prompts, or accepts results automatically. Probe/ack actual idle and busy delivery before dispatch. inspect is bounded; no polling. control pauses/revises/adopts/retires records, not worker processes. Authority/evidence inputs are coordinator attestations, not guard overrides. Code v3 requires separate live qualification; no blanket reliability claim.',
+    description: 'Explicit authorized FSD goal operations in this Pi conversation. open initializes private state; submit registers, sends ONE native Herdr prompt and retains the receipt before asynchronous observation. Multiple workers/worktrees; one writer per cwd including declared coordinator work. Never launches, interrupts or closes workers, approves prompts, or accepts results automatically. Probe/ack actual idle and busy delivery before dispatch. inspect is bounded; no polling. control pauses/revises/adopts/retires records, not worker processes. Authority/evidence inputs are coordinator attestations, not guard overrides. Verify delivery on this host before dispatch; no blanket reliability claim.',
     parameters: Type.Object({ action: StringEnum(['open', 'submit', 'inspect', 'control', 'ack', 'close']),
-      missionId: Type.Optional(short(128)), missionPath: Type.Optional(short(1024)), envelope: Type.Optional(EnvelopeSchema),
+      goalId: Type.Optional(short(128)), goalPath: Type.Optional(short(1024)), envelope: Type.Optional(EnvelopeSchema),
       submission: Type.Optional(SubmissionSchema), attemptId: Type.Optional(short(128)), reconcile: Type.Optional(Type.Boolean()),
       eventId: Type.Optional(short(128)), operation: Type.Optional(StringEnum(['probe', 'pause', 'resume', 'cancel', 'supersede', 'revise', 'reserve-direct', 'adopt', 'retire'])),
       reason: Type.Optional(short()), delayMs: Type.Optional(Type.Integer({ minimum: 0, maximum: 5000 })),
@@ -129,45 +126,42 @@ export function installRuntime(pi: ExtensionAPI, dependencies: any = {}) {
       handoff: Type.Optional(short()), outcome: Type.Optional(StringEnum(['delivered', 'blocked', 'limit-reached', 'cancelled'])),
       cleanup: Type.Optional(short()) }, { additionalProperties: false }),
     async execute(_id, args, signal, _update, context) {
-      if (args.action === 'inspect' && !runtime?.mission) return { content: [{ type: 'text', text: bootError ?? 'No active FSD runtime mission. Reading status does not open one.' }], details: { loaded: false } };
+      if (args.action === 'inspect' && !runtime?.goal) return { content: [{ type: 'text', text: bootError ?? 'No active FSD runtime goal. Reading status does not open one.' }], details: { loaded: false } };
       if (bootError) throw new Error(bootError);
       if (!ctx || ctx.mode !== 'tui' || ctx.sessionManager.getSessionId() !== context.sessionManager.getSessionId()) throw new Error('FSD requires this active interactive Herdr/Pi session');
       let result: any;
       if (args.action === 'open') {
-        if (opening) throw new Error('Mission open already in progress');
-        if (!args.missionId || !args.missionPath || !args.envelope) throw new Error('missionId, absolute missionPath, and approved envelope are required');
+        if (opening) throw new Error('Goal open already in progress');
+        if (!args.goalId || !args.goalPath || !args.envelope) throw new Error('goalId, absolute goalPath, and approved envelope are required');
         opening = true;
         try {
           runtime ??= makeRuntime(ctx);
-          const legacy = inspectLegacy(legacyRoot, runtime.binding.sessionId);
-          if (!legacy.settled) throw new Error('Legacy observation/probe unsettled; no v3 dispatch or migration permitted');
-          const missionPath = canonical(args.missionPath);
-          (dependencies.ensureIgnored ?? ensureIgnored)(missionPath);
-          privateDirectory(missionPath); claimSession(runtime.binding.sessionId);
+          const goalPath = canonical(args.goalPath);
+          (dependencies.ensureIgnored ?? ensureIgnored)(goalPath);
+          privateDirectory(goalPath); claimSession(runtime.binding.sessionId);
           const pointer = optionalJson(pointerPath!);
-          const root = join(missionPath, 'runtime');
-          if (pointer?.active && pointer.active !== root) throw new Error('An existing mission must be resumed/reconciled, not replaced');
-          const existing = existsSync(root) ? optionalJson(join(root, 'mission.json')) : undefined;
+          if (pointer && pointer.version !== RUNTIME_VERSION) throw new Error('Unsupported FSD pointer format; use fresh goal state');
+          const root = join(goalPath, 'runtime');
+          if (pointer?.active && pointer.active !== root) throw new Error('An existing goal must be resumed/reconciled, not replaced');
+          const existing = existsSync(root) ? optionalJson(join(root, 'goal.json')) : undefined;
           if (existing) {
-            if (runtime.mission || existing.id !== args.missionId || stableJson(existing.envelope) !== stableJson(validateEnvelope(args.envelope))) throw new Error('Existing mission differs; inspect or explicitly revise instead of resetting it');
+            if (runtime.goal || existing.id !== args.goalId || stableJson(existing.envelope) !== stableJson(validateEnvelope(args.envelope))) throw new Error('Existing goal differs; inspect or explicitly revise instead of resetting it');
             const current = runtime;
             result = await current.restore(root);
-            if (runtime !== current || !ctx) throw new Error('Session changed during mission restore');
-            if (!runtime.mission) throw new Error('Closed missions cannot be reopened; use a new mission ID/directory');
-          } else result = runtime.open(args.missionId, root, args.envelope);
-          runtime.put('evidence', 'legacy-inventory', legacy);
-          writeJson(pointerPath!, { version: 3, active: runtime.store.root });
+            if (runtime !== current || !ctx) throw new Error('Session changed during goal restore');
+            if (!runtime.goal) throw new Error('Closed goals cannot be reopened; use a new goal ID/directory');
+          } else result = runtime.open(args.goalId, root, args.envelope);
+          writeJson(pointerPath!, { version: RUNTIME_VERSION, active: runtime.store.root });
         } catch (e) {
-          if (runtime?.mission) runtime.fail(e);
+          if (runtime?.goal) runtime.fail(e);
           throw e;
         } finally { opening = false; }
       } else {
-        if (!runtime) throw new Error('Open an authorized FSD mission first');
+        if (!runtime) throw new Error('Open an authorized FSD goal first');
         const binding = bind(context);
         if (stableJson(binding) !== stableJson(runtime.binding)) throw new Error('Coordinator/Herdr binding changed; reconcile before operations');
         if (args.action === 'submit') {
-          if (optionalJson(pointerPath!)?.active !== runtime.store?.root) throw new Error('Mission pointer was not durably established; reconcile before dispatch');
-          if (!inspectLegacy(legacyRoot, runtime.binding.sessionId).settled) throw new Error('Legacy bridge acquired unsettled work; reconcile before dispatch');
+          if (optionalJson(pointerPath!)?.active !== runtime.store?.root) throw new Error('Goal pointer was not durably established; reconcile before dispatch');
           result = await runtime.submit(args.submission, signal);
         }
         if (args.action === 'inspect') result = await runtime.inspect(args.attemptId, args.reconcile, signal);
@@ -175,11 +169,11 @@ export function installRuntime(pi: ExtensionAPI, dependencies: any = {}) {
         if (args.action === 'ack') result = runtime.ack(args.eventId!);
         if (args.action === 'close') {
           result = runtime.close(args.outcome!, args.evidence!, args.cleanup!);
-          writeJson(pointerPath!, { version: 3, active: null, last: result.evidencePath });
+          writeJson(pointerPath!, { version: RUNTIME_VERSION, active: null, last: result.evidencePath });
         }
       }
       const phase = result.phase ?? result.status ?? result.outcome ?? 'updated';
-      return { content: [{ type: 'text', text: `FSD ${result.assignment ?? result.missionId ?? 'runtime'}: ${phase}.` +
+      return { content: [{ type: 'text', text: `FSD ${result.assignment ?? result.goalId ?? 'runtime'}: ${phase}.` +
         `${result.fault ? ` Needs reconciliation: ${result.fault}` : ''}` +
         `${result.capabilities && !result.capabilities.automaticDeliveryVerified ? '\nAutomatic delivery unverified for this activation; use explicit idle/busy probes before dispatch.' : ''}` +
         `\n${JSON.stringify(result)}` }], details: result };

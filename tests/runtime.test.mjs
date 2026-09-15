@@ -74,7 +74,7 @@ for (const [name, patch] of [
 test('read-only scopes cannot be upgraded to writers; state directory remains excluded', async t => {
   const f = setup(t); await qualify(f); const w = f.transport.add(worker());
   assert.throws(() => f.runtime.submit({ ...f.submission(w), role: 'read-only' }), /role/);
-  assert.throws(() => f.runtime.submit({ ...f.submission(w), writePaths: ['/fsd-test/mission/runtime'] }), /scope/);
+  assert.throws(() => f.runtime.submit({ ...f.submission(w), writePaths: ['/fsd-test/goal/runtime'] }), /scope/);
   const r = await f.runtime.submit({ ...f.submission(w), role: 'read-only', writePaths: [] });
   assert.equal(r.phase, 'observing'); assert.match(f.transport.prompts[0].text, /Role: read-only/);
 });
@@ -119,9 +119,9 @@ test('worker identity reuse, out-of-order sequence, and unchanged waits fail wit
 });
 test('owner revision gates stale submissions without resetting start or extending existing attempt deadlines', async t => {
   const f = setup(t); await qualify(f); const w = f.transport.add(worker());
-  await f.runtime.submit(f.submission(w)); const started = f.runtime.mission.startedAt, deadline = f.runtime.getAttempt('A1-1').deadline;
+  await f.runtime.submit(f.submission(w)); const started = f.runtime.goal.startedAt, deadline = f.runtime.getAttempt('A1-1').deadline;
   await f.runtime.control({ operation: 'revise', reason: 'Owner explicitly expanded the time allowance', envelope: { ...f.envelope, deadline: new Date(f.clock.time + 7200000).toISOString() } });
-  assert.equal(f.runtime.mission.startedAt, started); assert.equal(f.runtime.getAttempt('A1-1').deadline, deadline);
+  assert.equal(f.runtime.goal.startedAt, started); assert.equal(f.runtime.getAttempt('A1-1').deadline, deadline);
   const b = f.transport.add(worker(3)); assert.throws(() => f.runtime.submit({ ...f.submission(b, 'A2-1'), revision: 1 }), /Superseded/);
   assert.equal(f.store.get('revisions', '2').priorEnvelope.deadline, f.envelope.deadline);
 });
@@ -135,7 +135,7 @@ test('pause/cancel during preflight prevents input; cancellation after input pre
   await f.runtime.control({ operation: 'resume', reason: 'Owner resumes original work' });
   f.transport.promptHook = async () => { await f.runtime.control({ operation: 'cancel', reason: 'Owner cancels after submission' }); throw new Error('receipt lost'); };
   const result = await f.runtime.submit(f.submission(w, 'A2-1'));
-  assert.equal(result.phase, 'uncertain'); assert.equal(f.runtime.mission.status, 'cancelled'); assert.equal(f.transport.prompts.length, 1);
+  assert.equal(result.phase, 'uncertain'); assert.equal(f.runtime.goal.status, 'cancelled'); assert.equal(f.transport.prompts.length, 1);
 });
 test('cannot retire busy work, reuse an occupied worker, or silently turn cancellation into acceptance', async t => {
   const f = setup(t); await qualify(f); const w = f.transport.add(worker()); await f.runtime.submit(f.submission(w));
@@ -196,7 +196,7 @@ test('restart replays queued completion with stable identity but never replays a
   f.runtime = new Runtime(f.options); await f.runtime.restore(f.store.root); await flush();
   assert.equal(f.sent.filter(x => x.id === e.id).length, 2); assert.equal(f.transport.prompts.length, 1);
 });
-test('another coordinator session cannot adopt the mission', async t => {
+test('another coordinator session cannot adopt the goal', async t => {
   const f = setup(t); await f.runtime.shutdown();
   f.runtime = new Runtime({ ...f.options, binding: { ...f.options.binding, sessionId: 'another-session' } });
   await assert.rejects(f.runtime.restore(f.store.root), /binding mismatch/);
@@ -221,14 +221,14 @@ test('idempotent submit ignores JSON object key order and retains the original d
   const reordered = Object.fromEntries(Object.entries(p).reverse());
   assert.equal((await f.runtime.submit(reordered)).duplicate, true); assert.equal(f.transport.prompts.length, 1);
 });
-test('mission cancellation retires scheduled probes and cannot later be labeled delivered', async t => {
+test('goal cancellation retires scheduled probes and cannot later be labeled delivered', async t => {
   const f = setup(t); const p = f.runtime.probe(50);
-  await f.runtime.control({ operation: 'cancel', reason: 'Owner cancels mission' }); f.clock.tick(100);
+  await f.runtime.control({ operation: 'cancel', reason: 'Owner cancels goal' }); f.clock.tick(100);
   assert.equal(f.sent.length, 0); assert.equal(f.runtime.ack(p.eventId).status, 'retired');
   assert.throws(() => f.runtime.close('delivered', 'nothing', 'no workers'), /remain cancelled/);
   f.runtime.close('cancelled', 'Nothing dispatched', 'No resources created');
 });
-test('mission revision during retirement forces fresh inspection instead of accepting against old direction', async t => {
+test('goal revision during retirement forces fresh inspection instead of accepting against old direction', async t => {
   const f = setup(t); await qualify(f); const w = f.transport.add(worker()); await f.runtime.submit(f.submission(w));
   // Stop only the fixture observer so the pending get is specifically the retirement call.
   f.runtime.stopObserver('A1-1'); await flush(); f.transport.move(w, 'done'); let resolve;
@@ -248,7 +248,7 @@ test('shutdown during native submission retains uncertainty before releasing sta
   const before = f.sent.length; await f.runtime.shutdown(); await p;
   assert.equal(f.store.get('attempts', 'A1-1').phase, 'uncertain'); assert.equal(f.sent.length, before); assert.equal(f.store.closed, true);
 });
-test('a shortened mission deadline applies now without overwriting original attempt allowance', async t => {
+test('a shortened goal deadline applies now without overwriting original attempt allowance', async t => {
   const f = setup(t); await qualify(f); const w = f.transport.add(worker()); await f.runtime.submit(f.submission(w));
   const original = f.runtime.getAttempt('A1-1').deadline;
   await f.runtime.control({ operation: 'revise', reason: 'Owner shortens remaining time', envelope: { ...f.envelope, deadline: new Date(f.clock.time + 1000).toISOString() } });

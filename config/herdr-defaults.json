@@ -1,12 +1,12 @@
 {
-  "version": 1,
+  "version": 2,
   "kind": "fsd-owner-preferences",
   "confirmedOn": "2026-09-15",
   "coordinationRoute": "herdr-only",
   "workerHarnesses": ["pi", "claude", "codex", "agy"],
   "autoLaunch": false,
   "nativeSubagents": false,
-  "missionDefaults": {
+  "goalDefaults": {
     "mode": "bounded-outcome",
     "execution": "adaptive-direct-or-delegated",
     "routineStaffingAndRecovery": "within-approved-envelope",
@@ -25,7 +25,7 @@
       "approved": true,
       "approvedOn": "2026-09-14",
       "harnesses": ["pi", "claude", "codex", "agy"],
-      "scope": "verified-mission-owned-workspaces",
+      "scope": "verified-goal-owned-workspaces",
       "preferSessionOnly": true,
       "persistentExactFolderTrustWhenSessionOnlyUnavailable": true,
       "respectHarnessSpecificRestrictions": true,
@@ -37,7 +37,7 @@
       "approved": true,
       "approvedOn": "2026-09-14",
       "choice": "Trust (this session only)",
-      "scope": "verified-mission-owned-worktrees",
+      "scope": "verified-goal-owned-worktrees",
       "persistentTrust": false,
       "parentFolderTrust": false,
       "otherPrompts": false
@@ -47,8 +47,8 @@
     "approvalMode": "yolo",
     "tools": "harness-defaults"
   },
-  "missionConfirmationRequired": true,
-  "missionConfirmationStyle": "outcome-and-envelope",
+  "goalConfirmationRequired": true,
+  "goalConfirmationStyle": "outcome-and-envelope",
   "coordinator": {
     "effort": "xhigh",
     "required": true

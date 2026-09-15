@@ -7,14 +7,14 @@ invent commands or substitute another delegation route.
 
 ## Coordinator identity
 
-When first using Herdr for an approved FSD mission—not merely reading/editing the
+When first using Herdr for an approved FSD goal—not merely reading/editing the
 skill—discover the caller with `herdr pane current --current`, its tab ID, and existing
 agent names. Never infer ownership from UI focus. Name only your own tab and agent with
 supported `herdr tab rename` and `herdr agent rename`, then verify the resulting names.
 Use owner-specified names or readable defaults such as `FSD <project> Coordinator` and
 a unique CLI-valid `fsd-<project>-coordinator`. Preserve focus. Reuse appropriate names
-on resume rather than renaming repeatedly; record them in mission continuity. Naming
-is not mission approval. A direct-only task need not perform worker setup or relabel
+on resume rather than renaming repeatedly; record them in goal continuity. Naming
+is not goal approval. A direct-only task need not perform worker setup or relabel
 the ordinary conversation.
 
 ## Assign and collect
@@ -23,7 +23,7 @@ the ordinary conversation.
   when needed. Old IDs/labels are not proof of ownership or settings. Rediscover after
   reconnect, restart, or occupant change and reconcile with continuity before dispatch.
 - Reuse suitable available agents, or launch for approved assignments. Routine additions
-  and replacements are covered by the mission's operating envelope unless it says
+  and replacements are covered by the goal's operating envelope unless it says
   otherwise; model/role defaults alone are not a budget or permission to exceed it.
   Use separate visible **tabs**, preserve coordinator focus, and keep native workers
   individually accessible. Use supported `herdr agent start` and verified native flags.
@@ -31,9 +31,9 @@ the ordinary conversation.
   using native session/settings evidence at setup and after relevant changes. Herdr's
   recognized kind, launch request, or lifecycle hook does not prove all those settings.
   Record verified settings and unknowns; pause affected dispatch for an unverifiable
-  required setting. Preserve mission choices and only use approved, disclosed fallbacks.
+  required setting. Preserve goal choices and only use approved, disclosed fallbacks.
   Follow [native approvals and trust](#native-approvals-and-trust).
-- Give assignments short mission-local IDs (`A1`, `A2`, …), an outcome, owned
+- Give assignments short goal-local IDs (`A1`, `A2`, …), an outcome, owned
   cwd/worktree/paths, writer/read-only role, checks, and report expectation. Keep the ID
   on follow-ups; link replacement assignments to their predecessors. Every actual
   submission has a distinct attempt identity. Reconcile uncertain delivery and partial
@@ -67,29 +67,18 @@ result and evidence are integrated or an explicit disposition authorizes removal
 
 ## Dispatch, yield, inspect
 
-Follow the [async operating policy](async-coordination.md). Automatic observation must
-be established before submission. Use an installed, verified combined dispatch operation
-if available; the [v3 runtime source](../runtime/README.md) must first be explicitly
-installed and live-qualified. With an observation-only adapter, follow its actual
-registration/receipt protocol and the native dispatch procedure below. Source files
-or the [design contract](runtime-contract.md) do not make a tool available.
+Follow the [async operating policy](async-coordination.md). Use the installed
+[`fsd_runtime`](../runtime/README.md) combined submission operation so observation is
+registered before native input. Verify the actually loaded tool and delivery on this
+host; source files alone do not provide a working adapter.
 
 - Prompt only a verified owned agent ready for input with no human draft. Resolve prior
   work first. Repairs/report requests may retain the assignment ID but require a new
   submission attempt; old reports/events cannot satisfy a newer dispatch.
-- Use a short foreground startup acknowledgment, capped by remaining mission time.
-  The inspected CLI supports:
-
-  ```sh
-  herdr agent prompt <target> "<assignment>" \
-    --wait --until working --until done --until idle --until blocked \
-    --timeout 10000
-  ```
-
-  Verify installed semantics. Herdr's post-submission activity check must establish
-  that this submission started; old idle state or a successful input write is not
-  proof. Settled states account for fast completion and blockers. Retain native
-  receipts as required by the installed adapter, without reconstructing evidence.
+- The runtime retains a native startup acknowledgment, capped at ten seconds or the
+  remaining goal time. It must establish post-submission activity; old idle state or
+  successful input alone is not proof. Keep the actual receipt, not reconstructed
+  evidence. Do not bypass a failed combined submission with a manual prompt.
 - After acknowledgment, do independent authorized work or yield. Do not chain completion
   waits, sleep loops, or status polling in the model. Foreground completion waiting is
   an explicit owner-requested exception, never a fallback for missing delivery.
@@ -118,10 +107,10 @@ an actual guard denial, release limit, or required human authorization.
 
 For a real blocked state or native approval UI, inspect the actual prompt. The saved
 `startupPromptApprovals.projectTrust` is standing owner consent in both supervision
-modes for listed harnesses in verified mission-owned workspaces of an authorized mission:
+modes for listed harnesses in verified goal-owned workspaces of an authorized goal:
 
 1. Verify the live owned agent and that the displayed canonical path equals its
-   authorized workspace. A conflicting project/mission guard takes precedence.
+   authorized workspace. A conflicting project/goal guard takes precedence.
 2. Prefer session-only trust. Where unavailable, the policy permits persistent
    exact-folder trust, including AGY's **Yes, I trust this folder**. The stricter
    `piProjectTrust` policy permits only **Trust (this session only)** for Pi, never
@@ -147,7 +136,7 @@ each before requesting the next. Bound recovery by remaining limits and mark unr
 evidence incomplete.
 
 Read-only workers return text and never write report files. The coordinator may retain
-it in the recorded mission `reports/`. A temporary-report-file fallback is allowed only
+it in the recorded goal `reports/`. A temporary-report-file fallback is allowed only
 for an already write-authorized worker with an explicitly assigned private report path,
 Git-ignored inside a repository and distinct from coordinator-owned files. Do not broaden
 a read-only role for this fallback or keep the only needed evidence in `scratch/`.
@@ -170,19 +159,19 @@ or retire the coordinator, unrelated agents, or shared services.
 Cleanup is part of delivery, cancellation, and wind-down. Prune once accepted work and
 necessary follow-ups finish; idle/done alone is not permission. Retain workers only for
 explicitly planned reuse or an owner-directed handoff, not hypothetical future usefulness.
-Routine cleanup of disposable mission-owned workers needs no separate confirmation.
+Routine cleanup of disposable goal-owned workers needs no separate confirmation.
 
 1. Retain reports, acceptance/check evidence, and partial-work handoffs in the recorded
-   mission directory. Preserve code, worktrees, and continuity; pruning does not authorize
+   goal directory. Preserve code, worktrees, and continuity; pruning does not authorize
    their deletion. Cancellation remains interrupted, not completed.
 2. Rediscover the caller with `herdr pane current --current` and reconcile live targets
-   against mission ownership. Inspect output and `herdr pane process-info --pane <pane_id>`
+   against goal ownership. Inspect output and `herdr pane process-info --pane <pane_id>`
    for unfinished operations or services. Settle work first; interrupt only owned work
    through supported controls and verify it stopped. Uncertain identity, human drafts,
    or shared dependencies block that target's cleanup.
 3. Close disposable panes with `herdr pane close <pane_id>`. Use `herdr tab close <tab_id>`
    only if every pane in that tab is verified disposable. Targets must be created for
-   the mission or explicitly authorized for closure; reusing an existing agent does not
+   the goal or explicitly authorized for closure; reusing an existing agent does not
    grant pane/tab ownership. Preserve focus and the coordinator conversation. Do not
    close unrelated/shared resources, entire workspaces/sessions, or the Herdr server.
 4. Re-list agents/panes/tabs to verify removal. Record removed IDs, retained resources
