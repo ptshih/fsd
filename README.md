@@ -4,17 +4,17 @@
 conversations: work directly or coordinate visible Herdr workers, verify the result,
 and finish deliberately.
 
-FSD 1.0.0 is instructions, references and record templates. It ships no executable,
-extension hooks, server, scheduler or extra coordinating model. Normal harness tools,
-Herdr, Git and private files do the work. Automatic wakeups depend on verified native
-facilities; a file appearing on disk does not itself resume an agent.
+FSD 1.0.0 is instructions, references and record templates. **Herdr is the only runtime
+dependency** beyond your coding harness and its ordinary tools. Assume Herdr's harness
+integrations are installed. FSD adds no executable, extension, package dependency,
+server, scheduler or helper model. Use Git where the project requires it.
 
-The default deployment is **Pi coordinating inside Herdr**. The
-[preferred automatic method](references/pi-herdr.md) uses the separately approved
-`pi-interactive-shell` host extension to run a bounded Herdr controller command in
-headless dispatch mode. It is not bundled or auto-installed by FSD. Pi core alone has
-no background bash, and `pi-subagents` is not this method's transport. Direct work
-needs neither extension nor a worker-completion wakeup.
+There is one workflow: **Herdr tabs → filesystem reports → existing native wakeup →
+coordinator verification**. Small work stays direct. For unattended delegation, FSD
+uses only a wakeup facility already exposed by Herdr or the active harness. Files
+preserve state but cannot wake an idle agent by themselves. If the host lacks a usable
+facility, FSD reports that gap before dispatch—not an installation task, a custom
+bridge, or an undisclosed manual fallback. See [native wakeup](references/delivery.md).
 
 ## Use
 
@@ -65,8 +65,8 @@ plugins, or load `SKILL.md` through your harness's normal skill discovery.
 
 Place this directory in the harness's documented skill location, or use its supported
 skill-package installer. Resolve reference/template links relative to `SKILL.md`.
-Direct work needs ordinary file/shell tools; delegated work also needs a live Herdr
-session. Do not assume another harness's notification or effort settings carry over.
+Use the current harness inside Herdr with its installed integration. Do not assume
+another harness's wakeup or effort settings carry over, and do not add dependencies.
 
 ### Keep updates separate from your work
 
@@ -86,8 +86,7 @@ to rewrite goal evidence or import another user's preferences.
 - [Worker guide](references/worker.md): focused execution and reporting without coordinator setup.
 - [Filesystem protocol](references/filesystem.md): ownership, messages, evidence and recovery.
 - [Filesystem examples](references/recipes.md): tested one-shot commands using normal tools.
-- [Preferred Pi/Herdr method](references/pi-herdr.md): concrete transport, discovery and dispatch.
-- [Native delivery](references/delivery.md): qualification, alternatives and bounded heartbeats.
+- [Native wakeup](references/delivery.md): use existing host facilities; no custom machinery.
 - [Herdr operations](references/herdr.md): dispatch, integration and cleanup.
 
 ## Development checks

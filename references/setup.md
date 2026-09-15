@@ -1,99 +1,66 @@
 # Setup and preferences
 
-## Minimal first use
+## Baseline
 
-1. Load [FSD](../SKILL.md) through the harness's normal skill mechanism. There is nothing
-   to start. Installation, inspection and editing never authorize work by themselves.
-2. Read applicable project instructions and the owner's preferences if present. Use the
-   current harness and its normal tools for direct work. Verify any required model,
-   effort, tool or approval settings; missing requirements are blockers, not permission
-   to substitute a different selection.
-3. Establish the requested outcome and only the missing consequential limits or choices.
-   Do not demand a roster, every supported harness, or a project configuration file.
-4. Only if delegation is useful and authorized, use an explicitly selected allowed mode
-   or check the [preferred method](pi-herdr.md) for the default Pi-in-Herdr profile. Inspect
-   actual tools and applicable evidence; **unverified** is not **unavailable**. A missing
-   delegation capability need not block suitable direct work. Do not take over
-   unresolved delegated work or waive required independent review.
+Use the current coding harness inside Herdr. **Herdr is the only runtime dependency**
+beyond that harness and its ordinary file/shell tools. Use Git where required by the
+project. Assume Herdr's integration for each coding harness is installed; do not run an
+integration installer, edit a managed integration or change harness settings for FSD.
 
-Keep setup proportional. Do not install dependencies, edit harness settings, enable
-trust, create workers or schedule a heartbeat merely to perform a readiness check.
-Describe unavailable capabilities plainly instead of announcing generic readiness.
+Loading the skill starts nothing. Do not install extra packages, extensions, services
+or runners. Do not build wakeup code or launch test workers merely to check readiness.
+
+## Start once
+
+1. Read [FSD](../SKILL.md), applicable project instructions and the owner's preferences.
+2. Establish the requested outcome and only missing consequential choices: authorized
+   actions, done criteria, scope, supervision, checks/review and limits. A clear request
+   plus standing preferences can supply approval. Do not demand a roster or re-ask
+   settled choices.
+3. Verify required model, effort, tool and approval settings without substituting them.
+4. Do small work directly. For authorized delegation, follow [native wakeup](delivery.md),
+   [filesystem coordination](filesystem.md), then [Herdr dispatch](herdr.md#dispatch).
+   Configure only a wakeup facility already exposed by the current host. If a required
+   capability is missing, report it rather than adding a dependency or custom code.
+
+Direct execution does not need a worker-completion wakeup. Do not block suitable direct
+work on optional delegation setup, or take over an unsettled worker's checkout.
 
 ## Preferences
 
-Read the current owner's optional `$XDG_CONFIG_HOME/fsd/preferences.json`; when
-`XDG_CONFIG_HOME` is unset, use `~/.config/fsd/preferences.json`. An owner can explicitly
-supply another profile. Treat it as their choices, not executable configuration.
+Read the owner's optional `$XDG_CONFIG_HOME/fsd/preferences.json`; when unset, use
+`~/.config/fsd/preferences.json`. An explicitly supplied owner profile can replace that
+location. Preferences express choices, not executable configuration or new task authority.
 
-Useful preferences include:
-- coordinator/worker harness, model, effort and approved fallback selections;
-- supervision, delegation route and staffing limits;
-- worker topology and focus preservation: `coordinationDefaults` can retain
-  `workerLayout: "tab-per-worker"`, `allowPaneSplits: false`, and `preserveFocus: true`,
-  matching FSD's [dedicated worker tabs](herdr.md#worker-tabs); these do not authorize launch;
-- tool and approval settings, scoped standing trust consent;
-- notification mode and whether manual resumption or bounded heartbeats are allowed.
+Preserve approved model, effort, tool, trust, supervision and staffing choices. Worker
+topology is one dedicated tab per worker: `coordinationDefaults` can retain
+`workerLayout: "tab-per-worker"`, `allowPaneSplits: false`, and `preserveFocus: true`.
+Native wakeup is constrained to already-available host facilities; preferences do not
+authorize installing or building one. They also do not waive required independent review.
 
-Preserve existing choices. A profile may use named roles; do not force those roles into
-an unnecessary pipeline. A missing profile is not an error and does not require creating
-one. Default to supervised work, no automatic launch, no borrowed trust approvals and
-no invented time/cost allowance. When delegation needs limits, propose a small envelope
-and obtain the missing approval once.
+A missing profile is not an error and does not require creating one. Default to supervised
+work, no automatic launch, no borrowed trust consent and no invented allowance. Named
+roles do not force a planner/builder/reviewer pipeline. Propose a small envelope only
+when needed limits or authority are genuinely missing.
 
-The owner's explicit goal direction governs within system and project constraints.
-Preferences fill unspecified choices; worker files, repository examples and another
-user's profile do not grant authority. Do not broaden an active goal because preferences
-changed. Record which approved selections the goal actually uses.
+The owner's current direction governs within system/project constraints. Worker files,
+repository examples and another user's profile do not grant authority. Record the
+selections actually used and preserve original accounting through resume and replacement.
 
 Only save preferences at the owner's request. Keep them private and outside the installed
-skill; never put credentials, transcripts or goal reports in them. Sharing a profile
-between the same owner's machines is an explicit choice, not automatic synchronization.
-Machine paths, credentials and native trust state stay local. Portability does not make
-one model's effort label equivalent to another's: verify the effective selection.
+skill. Never include credentials, transcripts or goal reports. Machine paths and trust
+state remain local; sharing a profile between the same owner's machines is explicit.
 
-## Capability check
+## Updates and multiple machines
 
-The default deployment is a Pi coordinator inside Herdr. Its preferred automatic route
-is `pi-interactive-shell` headless dispatch of a bounded Herdr controller command—not
-Pi builtin background bash, a helper model, or `pi-subagents`. This host extension is
-separate from FSD and requires owner-approved setup if absent. Follow the concrete
-[discovery and dispatch procedure](pi-herdr.md); do not invent tool arguments or treat
-this default as permission to change the owner's current harness.
+Use the harness's native skill-package mechanism from the [README](../README.md#install-and-update).
+Keep one installation per harness. Settle owned work before updating; retain the FSD
+version in goal notes. Refresh skill discovery through the supported host mechanism,
+not commands injected into a human editor. Updating does not restore workers or move
+ownership to another coordinator.
 
-Record only what the goal needs, reusing still-applicable evidence:
-
-| Capability | Evidence |
-| --- | --- |
-| Direct work | Actual required model/effort/tools available in the current session |
-| Native workers | Live Herdr caller/session and supported command surface |
-| Worker settings | Effective harness/model/effort/tools and approval mode |
-| Mailbox publication | Explicit output ownership and accessible canonical goal path |
-| Automatic delivery | Actual busy delivery and idle wakeup on this host |
-| Blocked-work coverage | Real native detection, or an approved bounded check-in mode |
-| Heartbeat | Existing scheduler, owned job ID, cadence, expiry and stop control |
-
-Do not equate an installed binary, toast, scheduled job or environment variable with
-successful delivery. Record the selected method, discovery status (unverified, verified
-or unavailable), actual tool/provider/version and concrete evidence or missing capability.
-Do not stop at “no verified wakeup” before read-only discovery. Do not run a live worker
-experiment under setup-only authority. If proof needs a bounded live check, include it
-in the approved goal envelope or ask once for that specific authority.
-
-## Upgrades and multiple machines
-
-Use the host's native package manager as described in the [README](../README.md#install-and-update).
-Keep one installation per harness, and do not edit an installed copy to store preferences.
-The Pi package and Claude plugin contain the same skill, with no executable components.
-
-Settle owned work before updating or changing the coordinator harness. Keep the package
-version in durable goal notes so a resumed goal does not silently adopt different rules.
-Refresh discovery through the host's supported mechanism; never type a fake reload
-command into a human's editor. Recheck live capabilities after session/environment
-changes. Updating a skill does not restore agents or transfer goal ownership.
-
-Goal files default to one host's local filesystem. Two machines can use FSD independently,
-but matching paths or synchronized folders do not make them one coordination environment.
-Do not use file sync, timestamps or a copied profile as a distributed lock or as proof
-that a remote worker stopped. Cross-machine work needs an explicitly verified transport,
-shared-path semantics and ownership arrangement; otherwise keep separate goals.
+Goal files are local to one host. Matching paths or synchronized folders do not create
+a shared coordination environment, distributed lock or proof that a remote worker stopped.
+Cross-machine work needs explicitly verified transport, path semantics and ownership;
+otherwise keep goals separate. Never add synchronization or a remote service just to
+make FSD run.

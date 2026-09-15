@@ -78,7 +78,7 @@ test('worker entry point is explicit, short and separate from coordinator setup'
   const skill = readFileSync(join(root, 'SKILL.md'), 'utf8');
   const guide = readFileSync(join(root, 'references/worker.md'), 'utf8');
   const worker = skill.indexOf('(references/worker.md)');
-  const coordinator = skill.indexOf('## Start with the outcome');
+  const coordinator = skill.indexOf('## One usage path');
   assert(worker >= 0 && coordinator > worker, 'Route assigned workers before coordinator setup');
   assert(guide.trim().split(/\s+/).length <= 500, 'Keep the worker guide under 500 words');
 });
@@ -103,7 +103,7 @@ test('unlisted root configuration cannot silently add host behavior', t => {
 });
 
 test('published documents do not include an owner profile or machine paths', () => {
-  for (const name of ['SKILL.md', 'README.md', 'references/setup.md', 'references/filesystem.md', 'references/herdr.md', 'references/delivery.md', 'references/worker.md', 'references/recipes.md', 'references/pi-herdr.md']) {
+  for (const name of ['SKILL.md', 'README.md', 'references/setup.md', 'references/filesystem.md', 'references/herdr.md', 'references/delivery.md', 'references/worker.md', 'references/recipes.md']) {
     const text = readFileSync(join(root, name), 'utf8');
     assert.doesNotMatch(text, /\/Users\/|approvedOn|confirmedOn|gpt-\d|startupPromptApprovals/);
   }

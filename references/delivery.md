@@ -1,129 +1,93 @@
-# Native delivery and bounded heartbeats
+# Native wakeup for filesystem handoffs
 
-A durable inbox is useful even when notifications are duplicated or missed. It cannot
-wake a model by itself. FSD does not install hooks, write watchers, create schedulers,
-run a service or add a monitoring model. Use existing native facilities only.
+FSD uses **Herdr tabs → filesystem reports → existing native wakeup → coordinator
+verification**. Herdr is the only runtime dependency beyond the current coding harness
+and its ordinary tools. Assume Herdr's harness integrations are installed. Do not add
+packages, extensions, services, helper models or custom watcher/controller code.
 
-## Preferred method first
+Files are the source of truth. A native notification is a hint to inspect them, not
+acceptance or authority. A file appearing, a desktop toast, and an installed integration
+are not proof that an idle coordinator will resume.
 
-The default environment is **Pi orchestrating inside Herdr**. Start with the concrete
-[preferred Pi/Herdr method](pi-herdr.md): `pi-interactive-shell` headless dispatch runs a
-bounded Herdr prompt-and-wait command, and its native completion notification resumes
-Pi. Herdr still owns the worker. Disable quiet auto-close; do not spawn an agent through
-the shell extension. Pi core alone does not supply this background-command facility.
+## Establish the existing facility
 
-Inspect that provider's actual availability and applicable proof before reporting a
-blocker. **Unverified** means discovery/qualification remains; **unavailable** requires a
-specific missing tool/contract or failed check. Reuse valid proof instead of repeating
-a campaign for every assignment. Read-only discovery is not permission to install,
-launch workers or run a live probe. Loading FSD or doing direct work needs no wakeup.
+Before unattended worker dispatch:
 
-The modes below describe alternatives only when selected and authorized; they are not
-an instruction to search indefinitely or invent a bridge when the preferred method is
-missing. Continue suitable direct/independent work; pause only work that really requires
-the missing delegation capability.
+1. Identify the current coordinator's actual harness/session and live Herdr caller.
+   Read the available tools' actual contracts; do not infer availability from a package
+   name, environment variable or another session's transcript.
+2. Use an already-exposed native filesystem-watch facility for the assigned inboxes.
+   If the host exposes native worker-lifecycle events instead, use those to trigger
+   the same inbox inspection. This is capability discovery, not permission to install
+   a provider or implement a receiver. Do not prescribe a particular extension package.
+3. Require delivery to this coordinator while busy and after it becomes genuinely idle,
+   without typing into or changing the human editor. Require a retained native handle,
+   bounded expiry, failure/timeout notification, and specific-handle stop controls.
+   A timeout that silently stops observation is not a deadline notification.
+4. Reuse applicable proof for this facility, activation and coordinator session. If proof
+   is missing, qualify only the missing behavior with harmless identified events under
+   the approved goal envelope. Record actual receipts, not a guessed acknowledgment.
+   A timer expiring before the model yields does not establish idle wakeup. Missing probe
+   authority requires one specific request, not a new setup campaign or automatic launch.
+5. Record the native tool/facility, binding, proof and handle in goal state. Arm observation
+   before the final inbox scan and before dispatch, so an early worker report cannot
+   fall between a scan and subscription. Watch only worker inboxes, not coordinator
+   acknowledgments or state. Ignore temporary files and coalesce hints where supported.
 
-## Choose a real mode
+Use the facility through its documented native interface with bounded configuration
+(paths, events, deadline and session). Do not write a script, start an unobserved process,
+attach a separate controller later, or use a shell completion wait as a replacement.
 
-| Mode | Requirement |
-| --- | --- |
-| Event-driven (preferred) | The verified background-command method above, or an explicitly selected equivalent |
-| Event-driven with recovery heartbeat | Event delivery plus an existing, approved bounded scheduler |
-| Heartbeat-driven | Explicitly approved periodic resumption, bounded cadence/count/deadline, and known detection latency |
-| Manual | Explicit owner agreement to resume/inspect; no unattended claim |
+## Handle a missing capability
 
-Direct work without background workers needs none of these. Unsupervised delegated
-work requires a verified automatic mode. Do not silently select manual mode, poll in a
-model turn, or move to a different delegation route when delivery fails. Continue only
-independent authorized work or explain the missing capability.
+Distinguish **unverified** (proof missing) from **unavailable** (a concrete missing
+interface or failed check). Complete read-only discovery before reporting a gap.
+An installed Herdr integration supplies only the behavior it actually exposes; it does
+not create a missing coordinator wakeup API.
 
-Native facilities differ by harness and version. Inspect installed help/tool contracts;
-a similarly named feature on another host proves nothing. An OS toast, terminal output,
-a saved file, or a successful scheduler registration is not a model wakeup. Ordinary
-shell backgrounding does not guarantee host notification or ownership after restart.
-Never send keystrokes into the coordinator's editor to simulate a user message.
+If no usable native facility exists, stop affected unattended delegation before launching
+workers. State the exact missing capability. Continue independent direct work when the
+outcome and required review permit it. Do not silently switch to manual resumption,
+create machinery, install a dependency, or resurrect an older transport. A change to the
+requested outcome or operating envelope belongs to the owner.
 
-## Verify before affected dispatch
+## Multiple workers
 
-Under the goal's authority, use harmless uniquely identified test events to establish:
+Give each worker attempt its own inbox and unique report identity. Prefer one native
+recursive watch over the goal's `inbox/` when the facility supports it; otherwise arm
+native watches for each assigned inbox before dispatch. Keep every handle bound to this
+goal and coordinator. No custom multiplexer or extra coordinating agent is needed.
 
-- **Busy delivery:** the actual coordinator receives the event at a supported safe
-  boundary while doing other bounded work.
-- **Idle wakeup:** yield the model turn; receipt must occur after the host really becomes
-  idle. Elapsed time or a timer created during the same turn is not proof.
-- **Editor safety:** no human draft or prompt input was modified.
-- **Session binding:** the event reached the intended current coordinator, not another
-  pane/session, and the receiver can identify its source.
+One wakeup may represent several workers, and several wakeups may refer to one report.
+Scan all pending inboxes on every wakeup, not just the path in the notification. Match
+each report to its worker and attempt, then reconcile its acknowledgment and acceptance
+records before acting. Unique immutable reports preserve concurrent results even when
+hints coalesce. Never equate event count with completed-worker count. One coordinator
+still owns integration and the destination checkout.
 
-Record actual receipt and the facility/host/version/session, not an invented acknowledgment.
-Reuse proof while those bindings and capabilities remain valid. Repeat only relevant
-proof when activation, session, host or delivery facility changes. Missing evidence is
-not evidence of failure: inspect first and identify the specific check needed. A setup-only
-request does not authorize workers or a live qualification campaign.
+## Receive and reconcile
 
-Wakeup and worker-state detection are separate. A file-only channel cannot report a
-worker stuck at a permission prompt before it can write a message. Before unattended
-work, establish native blocked/failure detection or an approved bounded check-in that
-inspects actual owned worker state/screens. Metadata can miss an interactive prompt;
-never treat `working` as proof no question is waiting.
+On each wakeup, inspect the retained native receipt and scan all final inbox files and
+unresolved attempts. Match the goal, revision, attempt, worker identity and native handle.
+Duplicate or missed hints must not cause duplicate dispatch or acceptance. Reports remain
+available until inspected; acknowledgment, verification and acceptance are separate.
 
-## Connect the inbox
+Completion wakeup and blocked-worker detection are different capabilities. A worker
+stuck at a permission prompt may not be able to write a report. Require actual native
+blocked/failure detection or an owner-approved bounded inspection check-in using an
+already-available host facility. Inspect the real UI; `working` metadata is not proof
+that no prompt is waiting. If required coverage is absent, report it before unattended
+work. Do not build a bridge to repair the harness integration.
 
-With the preferred method, one verified host-owned background operation covers the
-Herdr command and its completion delivery, including commands that finish before the
-coordinator yields. Do not start an unobserved command first and attach later. Completion
-is the hint to scan the inbox; no separate filesystem watcher is required. Job acceptance
-is not worker-startup proof, and notifications may abbreviate output: retain and inspect
-the full native receipt.
-
-For an explicitly selected file/message mode, use an existing host-managed monitor or
-genuine native cross-agent messages pointing to final inbox files. Keep notifications
-small: goal, attempt, event ID and report location. The coordinator reads and verifies
-the authoritative records through normal tools.
-
-Watch only worker inboxes, not goal/state/acknowledgment files: coordinator writes must
-not create wakeup loops. Ignore temporary files, coalesce hints where supported, and
-scan for all pending records on every wakeup. Notification loss or duplication must not
-lead to re-dispatch or acceptance without inspection.
-
-For a separate monitor, arm observation before the final inbox scan and before dispatch
-so there is no scan-then-subscribe gap. On rearming after a one-shot notification, arm
-first and rescan. Record the watch's native ID, owner, observed paths, expiry and stop control.
-Do not generate a long-running shell/JavaScript loop to manufacture missing support.
-A static command passed to an existing generic monitor is configuration, not permission
-to add an FSD-specific background program.
-
-## Heartbeat contract
-
-Use a heartbeat only when the owner/envelope permits it and an existing scheduler can
-resume this actual conversation. Register one owned job per goal, with:
-
-- native job ID and target session;
-- approved cadence and maximum wakeups or equivalent bounded schedule;
-- an absolute expiry no later than the goal's approved deadline;
-- next expected check-in and remaining allowance;
-- a supported stop operation and cleanup owner.
-
-At each check-in, first read the goal's current status, revision and remaining limits.
-Stop scheduling for closed/cancelled work. Inspect pending inbox entries, unresolved
-attempts, actual worker state and evidence of progress. If nothing needs action, record
-only a useful change and yield. Do not create another heartbeat or restart allowances.
-Do not run concurrent coordinator turns or displace queued owner steering.
-
-A stale worker timestamp or long thought/tool call is a reason to inspect, not to kill,
-reassign or resend. Repeated identical failed attempts can justify stopping within the
-agreed attempt policy; absence of file writes alone cannot establish failure.
-
-Heartbeats trade detection latency and model usage for recovery. They do not enforce
-hard time/dollar limits, interrupt workers, or guarantee activity after the host exits.
-Before unattended dispatch, establish a native deadline notification or an approved
-check-in due by the deadline. An expiry that only stops watching does not wake the
-coordinator; silence is not success. If the facility cannot honor these bounds, do not
-claim a bounded automatic mode.
+If observation ends while work remains, reconcile the worker and retained files first.
+Renew only native observation within the original deadline and allowance; never resend
+the assignment to re-establish a watch. Keep the coordinator's process/session in place.
+Do not claim continuation across a stopped host or a replaced session.
 
 ## Wind down
 
-Cancel only goal-owned watches and scheduled jobs, verify their disposition, and preserve
-IDs/receipts in goal state. Writing `closed` is not cancellation of a native job. If a
-job cannot be stopped, record its actual expiry, owner and next action as a cleanup
-blocker. Late events never authorize a new goal or revive superseded work.
+Cancel only goal-owned native watches/check-ins, verify their disposition, and retain
+handles and receipts in goal state. Cancelling a watch does not stop a Herdr worker;
+follow [Herdr cleanup](herdr.md#cleanup) separately. If cancellation fails, retain the
+actual expiry and next owner/action as a cleanup blocker. Late events cannot revive a
+closed goal or superseded authority.

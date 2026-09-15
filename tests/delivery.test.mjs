@@ -1,106 +1,99 @@
-// Development-only documentation contracts. Tool calls are captured, never executed.
+// Development-only documentation contracts. No host tools, agents or watches are run.
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { test } from 'node:test';
-import { runInNewContext } from 'node:vm';
 
 const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
-const method = read('references/pi-herdr.md');
-const example = method.match(/<!-- fsd-example: pi-herdr-dispatch -->\n```js\n([\s\S]*?)\n```/)?.[1];
+const text = path => read(path).replace(/\s+/g, ' ');
 
-function capture(observerTimeoutMs) {
-  assert(example, 'Preferred method must include its concrete agent-side tool call');
-  const calls = [];
-  const values = {
-    herdrPromptCommand: "herdr agent prompt 'fixture-worker' 'approved fixture task' --wait --timeout 1000",
-    coordinatorCwd: '/private/fixture',
-    observerTimeoutMs,
-  };
-  runInNewContext(example, {
-    ...values,
-    interactive_shell: args => calls.push(JSON.parse(JSON.stringify(args))),
-  }, { timeout: 1000 });
-  assert.equal(calls.length, 1, 'Exactly one background controller submission');
-  return { args: calls[0], values };
-}
-
-test('Pi-in-Herdr default directs discovery to a concrete preferred method', () => {
-  const skill = read('SKILL.md');
-  assert.match(skill, /default environment is \*\*Pi as coordinator inside Herdr\*\*/);
-  for (const path of ['SKILL.md', 'README.md', 'references/setup.md', 'references/delivery.md', 'references/herdr.md']) {
-    assert.match(read(path), /\]\((?:references\/)?pi-herdr\.md\)/, `${path} must link the preferred method`);
+test('one Herdr/filesystem/native-wakeup path has no prescribed extension dependency', () => {
+  const skill = text('SKILL.md');
+  assert.match(skill, /Herdr is the only runtime dependency/);
+  assert.match(skill, /## One usage path/);
+  assert.match(skill, /already-available native host facility/);
+  assert.match(text('README.md'), /Herdr tabs → filesystem reports → existing native wakeup → coordinator verification/);
+  assert(!existsSync(new URL('../references/pi-herdr.md', import.meta.url)), 'Remove the superseded transport guide');
+  const docs = ['SKILL.md', 'README.md'];
+  for (const dir of ['references', 'templates']) {
+    for (const name of readdirSync(new URL(`../${dir}/`, import.meta.url))) {
+      if (name.endsWith('.md')) docs.push(`${dir}/${name}`);
+    }
   }
-  assert.match(method, /separately installed and approved host\nextension/);
-  assert.match(method, /No `pi-subagents` tool/);
+  for (const path of docs)
+    assert.doesNotMatch(read(path), /pi-interactive-shell|interactive_shell|pi-inbox|pi-herdr\.md|fsd_runtime|provider job ID|observerTimeoutMs/, path);
+});
+
+test('Herdr harness integrations are an installed baseline, not a setup project', () => {
+  assert.match(text('SKILL.md'), /Assume Herdr's integration for each coding harness is installed/);
+  assert.match(text('references/setup.md'), /do not run an integration installer/);
+  assert.match(text('references/herdr.md'), /Assume Herdr's integration for each coding harness is installed/);
 });
 
 test('workers get dedicated Herdr tabs with no split-pane fallback', () => {
-  const skill = read('SKILL.md');
-  const herdr = read('references/herdr.md');
-  assert.match(skill, /each new worker in its own Herdr tab, never a split pane/);
+  const herdr = text('references/herdr.md');
+  assert.match(text('SKILL.md'), /each new worker in its own Herdr tab, never a split pane/);
   assert.match(herdr, /one new, goal-owned Herdr tab per worker/);
   assert.match(herdr, /Do not use `herdr pane split`/);
   assert.match(herdr, /Do not fall back to split panes/);
   assert.match(herdr, /generic sibling-pane default/);
   assert.match(herdr, /\.result\.root_pane\.pane_id/);
   assert.match(herdr, /`agent start --pane` targets that tab's root pane; it does not create a split/);
-  assert.match(method, /in its own dedicated tab, not a split pane/);
-  assert.doesNotMatch(herdr, /preferably separate tabs/);
+  const command = read('references/herdr.md').match(/<!-- fsd-example: herdr-worker-tab -->\n```sh\n([\s\S]*?)\n```/)?.[1];
+  assert.equal(command, 'herdr tab create --workspace WORKSPACE_ID --cwd WORKER_CWD --label WORKER_LABEL --no-focus');
+  for (const choice of ['workerLayout: "tab-per-worker"', 'allowPaneSplits: false', 'preserveFocus: true'])
+    assert(text('references/setup.md').includes(choice));
 });
 
-test('worker-tab example specifies workspace, cwd, label and focus preservation', () => {
-  const herdr = read('references/herdr.md');
-  const command = herdr.match(/<!-- fsd-example: herdr-worker-tab -->\n```sh\n([\s\S]*?)\n```/)?.[1];
-  assert.equal(command,
-    'herdr tab create --workspace WORKSPACE_ID --cwd WORKER_CWD --label WORKER_LABEL --no-focus');
-  const setup = read('references/setup.md');
-  assert.match(setup, /workerLayout: "tab-per-worker"/);
-  assert.match(setup, /allowPaneSplits: false/);
-  assert.match(setup, /preserveFocus: true/);
+test('direct Herdr submission uses a bounded startup receipt, never a controller completion wait', () => {
+  const herdr = text('references/herdr.md');
+  assert.match(herdr, /submit through native `agent prompt` exactly once/);
+  assert.match(herdr, /herdr agent prompt TARGET TEXT --wait --until working --until idle --until done --until blocked --timeout 10000/);
+  assert.match(herdr, /Use the shorter remaining goal\/attempt allowance/);
+  assert.match(herdr, /Do not run default `agent prompt --wait` or `agent wait` as a task-completion wait/);
+  assert.match(herdr, /already-armed native wakeup facility/);
 });
 
-test('preferred command uses headless dispatch with quiet auto-close disabled, not an agent spawn', () => {
-  const { args, values } = capture(5000);
-  assert.deepEqual(args, {
-    command: values.herdrPromptCommand,
-    cwd: values.coordinatorCwd,
-    mode: 'dispatch',
-    background: true,
-    handsFree: { autoExitOnQuiet: false },
-    timeout: 5000,
-  });
-  assert.equal(args.spawn, undefined);
-  assert.equal(args.monitor, undefined);
+test('unattended wakeup is required but missing capabilities cannot authorize new machinery', () => {
+  const delivery = text('references/delivery.md');
+  assert.match(text('SKILL.md'), /Automatic wakeup is required for unattended delegation/);
+  assert.match(delivery, /already-exposed native filesystem-watch facility/);
+  assert.match(delivery, /native worker-lifecycle events/);
+  assert.match(delivery, /Do not add packages, extensions, services, helper models or custom watcher\/controller code/);
+  assert.match(delivery, /stop affected unattended delegation before launching workers/);
+  assert.match(delivery, /Do not silently switch to manual resumption/);
+  assert.match(delivery, /Continue independent direct work/);
+  assert.match(delivery, /unverified/);
+  assert.match(delivery, /unavailable/);
 });
 
-test('dispatch example preserves the validated caller timeout rather than inventing a new allowance', () => {
-  for (const remaining of [1500, 5000, 9000]) {
-    const { args } = capture(remaining);
-    assert.equal(args.timeout, remaining);
-  }
-  assert.match(method, /Neither timeout\nmay extend the goal deadline/);
+test('native observation requires actual busy/idle, session, deadline and cleanup evidence', () => {
+  const delivery = text('references/delivery.md');
+  assert.match(delivery, /after it becomes genuinely idle/);
+  assert.match(delivery, /without typing into or changing the human editor/);
+  assert.match(delivery, /specific-handle stop controls/);
+  assert.match(delivery, /silently stops observation is not a deadline notification/);
+  assert.match(delivery, /Reuse applicable proof/);
+  assert.match(delivery, /Arm observation before the final inbox scan and before dispatch/);
+  assert.match(delivery, /blocked-worker detection are different capabilities/);
+  assert.match(delivery, /already-available host facility/);
+  assert.match(delivery, /Cancelling a watch does not stop a Herdr worker/);
 });
 
-test('discovery distinguishes unverified from verified and unavailable without waiving authority', () => {
-  for (const status of ['unverified', 'verified', 'unavailable'])
-    assert(method.includes(`**${status}:**`));
-  assert.match(method, /Live qualification needs the goal's approval/);
-  assert.match(method, /Reuse still-applicable proof/);
-  assert.match(method, /Do not silently install a package, change preferences, create a bridge/);
-  assert.match(read('SKILL.md'), /Direct work requires no worker-completion wakeup/);
+test('multiple workers share wakeups but retain distinct inboxes and report identities', () => {
+  const delivery = text('references/delivery.md');
+  assert.match(delivery, /each worker attempt its own inbox and unique report identity/);
+  assert.match(delivery, /one native recursive watch/);
+  assert.match(delivery, /native watches for each assigned inbox before dispatch/);
+  assert.match(delivery, /Scan all pending inboxes on every wakeup/);
+  assert.match(delivery, /Never equate event count with completed-worker count/);
 });
 
-test('attempt records distinguish the background job receipt from native worker evidence', () => {
-  const attempt = read('templates/attempt.md');
-  assert.match(attempt, /provider job ID and owning coordinator session/);
-  assert.match(attempt, /Provider job receipt versus actual worker startup\/completion receipt/);
-  assert.match(method, /job-start receipt proves neither worker startup nor/);
-  assert.match(method, /new\n  approved observer uses `herdr agent wait`, \*\*not another prompt\*\*/);
-  assert.match(method, /Stopping\/dismissing the controller job does not prove the Herdr worker stopped/);
-});
-
-test('method documentation does not convert source review or local checks into live qualification', () => {
-  assert.match(method, /\*\*not a live Pi\/Herdr pass\*\*/);
-  assert.match(method, /Do not claim recovery across reload, session switch or host exit/);
-  assert.match(method, /Do not claim coverage of every Pi\npermission\/question UI without proof/);
+test('records distinguish native watch registration, startup, reports and acceptance', () => {
+  const attempt = text('templates/attempt.md');
+  assert.match(attempt, /Armed native watch handle/);
+  assert.match(attempt, /distinct from the startup receipt and watch registration/);
+  assert.match(text('templates/goal.md'), /Missing capabilities that block unattended dispatch/);
+  assert.match(text('templates/state.md'), /Already-available native wakeup facility/);
+  assert.match(text('references/filesystem.md'), /Neither sent bytes nor an armed watch prove worker startup or completion/);
+  assert.match(text('README.md'), /not agent compliance or end-to-end delivery/);
 });

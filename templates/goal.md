@@ -30,10 +30,10 @@ max_attempts: REPLACE_WITH_APPROVED_DISPATCH_LIMIT
 
 ## Delivery and resources
 
-- Preferred method, actual provider and discovery status/reason:
-- Native facility, applicable busy/idle receipt evidence and blocked-work coverage:
-- Approved manual mode or bounded heartbeat, if applicable:
-- Owned watches/jobs, expiry, stop controls and cleanup owner:
+- Already-available native wakeup facility, coordinator binding and discovery evidence:
+- Actual busy/idle receipts, blocked-work coverage and deadline notification:
+- Owned native watch/check-in handles, expiry, stop controls and cleanup owner:
+- Missing capabilities that block unattended dispatch (no installation or custom bridge):
 - Authorized workspaces, paths and integration owner:
 
 ## Revisions

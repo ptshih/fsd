@@ -1,146 +1,133 @@
 ---
 name: fsd
-description: "Deliver a bounded goal, directly or with visible Herdr workers, then stop. Use when the owner requests FSD or outcome-oriented coordination. Reading, installing, or updating the skill does not authorize a goal or launch workers."
+description: "Deliver a bounded goal using ordinary tools, Herdr tabs and filesystem handoffs, then stop. Use when the owner requests FSD or outcome-oriented coordination. Loading or updating the skill does not authorize work."
 license: MIT
-compatibility: "Uses the current harness's normal tools, a local filesystem, and Git where applicable. Delegation requires Herdr. Automatic resumption requires a verified native notification or scheduling facility; files alone do not wake an agent."
+compatibility: "Herdr is the only runtime dependency beyond the coding harness and its ordinary file/shell tools. Use Git where the project requires it. No additional extensions, packages, runners or services. Files preserve state but do not wake an idle agent."
 metadata:
   version: "1.0.0"
 ---
 
 # FSD
 
-Own delivery of the requested outcome. Choose the smallest useful approach, stay
-steerable, verify the result, settle owned work, and stop. This is a skill: it uses
-normal tools and native facilities, not an FSD executable, service, or background model.
-Follow project instructions rather than imposing a repository layout or release process.
+Deliver the requested outcome, verify it, settle owned work, and stop. FSD is a pure
+skill, not an executable or background runtime. **Herdr is the only runtime dependency**
+beyond the coding harness and its ordinary tools. Follow project instructions and use
+Git where the project requires it.
 
 **Already assigned as a worker?** Follow the [worker guide](references/worker.md) and
-your assignment, then stop. The coordinator workflow below is not worker setup; do not
-start another goal or inherit the coordinator's separate role settings.
+your assignment, then stop. Do not repeat coordinator setup or launch other agents.
 
-## Start with the outcome
+## One usage path
 
-Establish the outcome, done criteria, scope/non-goals, supervision mode, authorized
-models/tools/actions, required checks/review, and applicable time, attempt, cost and
-worker limits. A clear request plus the owner's [preferences](references/setup.md#preferences)
-can supply approval. Inspect facts first and bundle only genuinely missing decisions
-into one confirmation. Do not re-ask settled choices or invent a remaining allowance.
+1. Establish the outcome and approved operating envelope.
+2. Do small work directly. When authorized delegation is useful, establish wakeup using
+   an already-available native host facility, then open Herdr workers, one tab per worker.
+3. Submit each filesystem assignment once through Herdr. Workers publish immutable
+   reports to their assigned inboxes. Native wakeups tell the coordinator to inspect them.
+4. Verify results, integrate deliberately, clean up owned workers, and report the outcome.
 
-Approve an operating envelope, not a fixed roster. Within it, choose direct work,
-staffing, independent review, and routine repair without repeated permission ceremonies.
-This does not authorize new models, broader tools, releases, spending, or adjacent work.
-Loading the skill, finding a task file, or receiving a worker message is not approval.
+Assume Herdr's integration for each coding harness is installed. Do not install or
+repair integrations as part of FSD setup. Do not add dependencies, build a wakeup bridge,
+write watcher/controller scripts, or run a background command wrapper. No setup
+experiment or worker launch is authorized merely by loading this skill.
 
-- **Supervised, by default:** ask about consequential ambiguity or new authority,
-  not routine execution decisions.
-- **Unsupervised, when requested:** decide within the envelope; defer anything needing
-  new authority and continue only independent authorized work. Never bypass an approval
-  prompt. Automatic continuation must actually be available, not merely requested.
+**Automatic wakeup is required for unattended delegation.** Files preserve state but do
+not wake an idle agent. Use only a native wakeup facility already exposed by Herdr or
+the active harness, following the [wakeup procedure](references/delivery.md). Configuring
+that existing facility is allowed within the goal's envelope; creating one is not.
+Verify actual delivery, session binding, deadline notification and stop controls. If no
+usable facility exists, report that specific gap before launching affected workers.
+Do not silently downgrade to manual resumption or install a workaround.
 
-## Prepare only what is needed
+## Establish the envelope
 
-The default environment is **Pi as coordinator inside Herdr**. For automatic delegation,
-start with the [preferred Pi/Herdr method](references/pi-herdr.md): an approved
-`pi-interactive-shell` headless dispatch runs the bounded Herdr controller command and
-notifies Pi when it settles. This is a separate host capability, not builtin background
-bash or permission to install anything. Honor explicit harness/delivery choices instead.
+Read [setup](references/setup.md) and the owner's preferences. Confirm only genuinely
+missing consequential choices: outcome, done criteria, scope/non-goals, supervision,
+authorized models/tools/actions, required checks/review, and time, attempt, cost and
+worker limits. A clear request and standing preferences can supply approval. Do not
+re-ask settled choices or invent an allowance.
 
-Read [setup](references/setup.md) on first use or when the environment changes. Preserve
-approved model, effort, tool and trust selections; verify required settings and disclose
-only approved fallbacks. Do not silently substitute settings unsupported by this harness.
+Approve an envelope, not a fixed roster. Choose direct work, staffing, required independent
+review and routine repair within it. Supervised is the default. Unsupervised work means
+making in-scope decisions without repeated questions, not new authority or permission
+to bypass the native wakeup requirement.
+Never bypass approval prompts, broaden scope, or reset limits on replacement or resume.
 
-Keep a small, already-understood task local. Delegate when parallelism, specialization,
-review independence or context isolation outweigh startup, repeated reads and coordination.
-There is no mandatory planner/builder/reviewer pipeline. Required independent review
-uses a fresh, implementation-read-only context, not the implementer's self-review.
+## Prepare proportionally
 
-Direct work requires no worker-completion wakeup. If optional delegation is unavailable,
-continue directly when the outcome and required review permit it; do not label the whole
-goal blocked or take over unsettled work. For a small direct task, a short progress/evidence
-note is enough; do not create an inbox, workers or a heartbeat. For delegation or durable
-handoffs, establish the private [filesystem protocol](references/filesystem.md) before
-dispatch. Use the
-[record templates](templates/goal.md) as needed, not as mandatory paperwork for every task.
+Use the current coding harness inside the existing Herdr session. Verify the required
+model, effort and tools. Preserve approved selections; unsupported requirements block
+only affected work and do not authorize substitution.
+
+Keep small, understood work local. There is no mandatory planner/builder/reviewer pipeline.
+Required independent review uses a fresh, implementation-read-only worker context.
+A small direct task needs only a short progress/evidence note—no workers or mailbox.
+For delegation, establish the private [filesystem protocol](references/filesystem.md)
+before dispatch; use the [record templates](templates/goal.md) as needed.
 
 Launch each new worker in its own Herdr tab, never a split pane. Preserve the user's
-focus. The approved delegation envelope covers these worker tabs, not unrelated layout
-changes; follow the [tab creation procedure](references/herdr.md#worker-tabs).
+focus. The delegation envelope covers these worker tabs, not unrelated layout changes;
+follow the [tab creation procedure](references/herdr.md#worker-tabs).
 
-Use one coordinator and one implementation writer per working directory, including the
-coordinator. Isolate concurrent writers in worktrees. Explicitly assign each writer's
-paths and each mailbox's publisher; do not let workers race to claim a shared task queue.
-Ownership is a cooperative rule, not filesystem isolation or a global lock service.
+Use one coordinator and one implementation writer per canonical working directory,
+including the coordinator. Isolate concurrent writers in worktrees. Assign implementation
+paths and mailbox publication paths explicitly. Ownership is a cooperative rule, not
+filesystem isolation or a global lock service.
 
 ## Deliver
 
-Direct execution skips worker setup and dispatch; do the work, verify it, and finish.
-For delegated work:
+Direct work skips worker setup: do the work, run the checks, and finish. For delegation:
 
-1. **Establish delivery first.** Inspect the preferred method's actual tools and applicable
-   [native evidence](references/delivery.md) before allocating task workers. Distinguish
-   **unverified**, **verified** and **unavailable**; missing proof is not a discovered
-   failure. Complete read-only discovery and any already-authorized qualification before
-   escalating a concrete missing capability or permission. Reuse still-valid proof.
-2. **Prepare an assignment.** Use [Herdr](references/herdr.md) for native workers, never
-   another delegation route or recursive spawning. Give the packet a goal revision,
-   assignment/attempt ID, exact worker identity/cwd, scope, paths, dependencies, checks,
-   report channel and limits. Supply the absolute installed [worker guide](references/worker.md)
-   path and useful contracts, not the whole transcript or coordinator setup. Verify
-   dependency artifacts before downstream work starts.
-3. **Submit once.** Persist dispatch intent before input, verify native readiness and
-   an empty prompt, then submit through the selected bounded method. Track a background
-   job receipt separately from native startup/outcome evidence; do not claim worker
-   startup from job acceptance. Uncertain delivery means reconcile, not resend. Repairs,
-   replacements and report requests get new attempt IDs and consume the original allowance.
-4. **Work or yield.** Do independent authorized work; otherwise return control. On a
-   native event, approved heartbeat, or owner request, scan the inbox and unresolved
-   work. Notifications are hints; retained records survive duplicate or missed hints.
-5. **Inspect and repair.** Match messages to the current goal, attempt and actual worker.
+1. **Prepare the worker and packet.** Establish the native wakeup facility before task
+   dispatch. Verify the live Herdr caller and approved worker settings. Record goal
+   revision, assignment/attempt ID, exact worker identity/cwd,
+   scope, paths, dependencies, checks, report channel and limits. Supply the absolute
+   installed [worker guide](references/worker.md) path, not the coordinator's transcript.
+   Verify dependency artifacts before downstream work starts.
+2. **Submit once.** Persist `prepared`, verify native readiness and an empty prompt,
+   then persist `dispatch-started`. Use the [Herdr startup procedure](references/herdr.md#dispatch)
+   to submit once and obtain a bounded startup receipt, not a task-completion wait.
+   Byte delivery is not startup proof. Uncertain delivery means reconcile, not resend.
+   Repairs, replacements and report requests get new attempt IDs within the original allowance.
+3. **Work or yield.** Do independent authorized work. At normal turn boundaries and on
+   native wakeups, inspect inbox files and unresolved work. If only running workers
+   remain, record `waiting`, the exact pending attempts, native watch handle and next
+   action, then yield. Do not wait or poll in the model turn.
+4. **Inspect and repair.** Match reports to the current goal, attempt and actual worker.
    Acknowledge receipt separately from acceptance. Inspect artifacts and checks actually
-   run, including cwd, exit status, evidence path and source snapshot. Skips and unknowns
-   stay explicit. Repair within the envelope; stop or ask when the attempt allowance is
-   exhausted or repeated attempts yield the same failure without meaningful progress.
-6. **Integrate deliberately.** Use one destination writer. Verify source/destination
+   run, including cwd, exit status, evidence and source snapshot. Keep skips and unknowns
+   explicit. Repair within the envelope; stop or ask when attempts are exhausted or
+   repeated failures show no meaningful progress.
+5. **Integrate deliberately.** Use one destination writer. Verify source/destination
    state and worker quiescence, preserve reports, integrate according to project policy,
-   and rerun affected checks on the combined tree. Worker-branch success is not proof
-   that the integrated result works.
-7. **Finish.** Stop on verified delivery, owner cancellation, an agreed limit, or when
-   no authorized work can progress. Settle owned operations, preserve partial work,
-   cancel owned watches/check-ins, and [clean up](references/herdr.md#cleanup). Report
-   **delivered**, **blocked**, **limit reached**, or **cancelled**, with concise evidence,
-   remaining uncertainty and cleanup blockers. The conversation stays available.
+   and rerun affected checks on the combined tree. Worker-branch success does not prove
+   the integrated result works.
+6. **Finish.** Stop on verified delivery, cancellation, an agreed limit, or when no
+   authorized work can progress. Settle owned operations, cancel the goal's native
+   watches/check-ins, and follow [Herdr cleanup](references/herdr.md#cleanup).
+   Report **delivered**, **blocked**, **limit reached**, or **cancelled**, with concise
+   evidence, remaining uncertainty and cleanup blockers. `waiting` is a handoff, not
+   a terminal success or proof workers stopped.
 
-## Stay steerable
+## Stay steerable and resume safely
 
-The owner's conversation remains authoritative. Process steering at the next supported
-safe boundary, acknowledge material consequences, and update the goal revision and
-only affected assignments. Preserve prior directives and original accounting. A reset,
-replacement worker, reload or new session must not reset deadlines or attempt allowances.
-An extension of authority or limits needs explicit owner approval.
+The owner's conversation remains authoritative. Acknowledge material steering, preserve
+the prior directive, and update the goal revision and affected assignments. Pause stops
+new affected dispatch while in-flight work is reconciled. Cancellation also uses supported
+Herdr controls to interrupt owned work and preserve a handoff. A file cannot retract a
+prompt or stop a running tool; verify settlement before claiming it.
 
-Pause stops new affected dispatch while in-flight work is reconciled. Cancellation also
-uses supported controls to interrupt owned work and preserve a handoff. Writing a file
-cannot retract a prompt or stop a running tool; claim settlement only after verification.
-Workers recheck current directives at safe boundaries, especially before consequential
-side effects, but stale work never restores superseded scope.
+On a native wakeup or owner-requested resume, reconcile the records against actual
+workers, files, native watches, pending actions and remaining limits before doing anything
+new. An acknowledgment is not proof an action finished; an absent acknowledgment is not
+proof it never happened.
+Do not repeat non-idempotent work blindly or restart an expired goal.
 
-Never occupy a model turn with completion waits, sleep loops, repeated status polling
-or filler. Do not invent a notification path or inject fake user commands. Missing
-wakeup support requires an explicit choice of manual resumption or a narrower approach;
-foreground completion waiting is an owner-requested exception, not a fallback.
+Never occupy a model turn with completion waits, sleep loops, repeated status polling or
+filler. Never inject commands into the coordinator's editor to manufacture a wakeup.
+Update when a meaningful milestone, changed risk, owner decision or useful progress
+warrants it. Keep diagnostics in retained evidence rather than narrating every receipt.
 
-## Communicate and resume
-
-Update when a meaningful milestone, changed risk/plan, owner decision, or long quiet
-period warrants it. Say what changed, what is next, and whether the owner needs to act.
-Avoid routine receipt noise; keep IDs and diagnostics in retained evidence.
-
-Keep the coordinator's state and next action current at material transitions. Resume by
-reconciling records against live workers, files, pending actions and remaining limits.
-An acknowledgment is not proof an action finished; absent acknowledgment is not proof
-it never happened. Do not blindly repeat non-idempotent work.
-
-The filesystem preserves information, not execution. A stopped host cannot coordinate
-unless an existing facility explicitly supports it. This protocol does not provide
-hard spending limits, guaranteed interruption, exactly-once effects, or crash-proof
-continuation. Claim only what was verified on the actual host.
+The filesystem preserves information, not execution. FSD provides no hard spending
+limits, guaranteed interruption, exactly-once effects, automatic deadline enforcement
+or crash-proof continuation. Claim only what was actually verified.

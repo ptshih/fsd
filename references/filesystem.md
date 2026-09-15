@@ -64,11 +64,11 @@ claim isolation from untrusted workers.
 2. Persist `prepared` intent. If recording fails, do not dispatch.
 3. Reinspect identity, directives, ownership, limits and empty prompt. Before calling
    the native submission command, persist `dispatch-started`.
-4. Submit once using the [Herdr procedure](herdr.md#dispatch). With the preferred
-   background-command method, record its provider job ID and pending native outcome;
-   a job receipt is not worker-startup proof. Retain actual stdout, stderr, exit status
-   and native activity/outcome evidence when available, then record `observing`,
-   confirmed `not-sent`, or `uncertain` according to that evidence.
+4. Submit once using the [Herdr procedure](herdr.md#dispatch). Retain actual stdout,
+   stderr, exit status and post-submission native activity from the bounded startup
+   receipt. Record the separately armed native watch handle, then `observing`, confirmed
+   `not-sent`, or `uncertain` according to the evidence. Neither sent bytes nor an armed
+   watch prove worker startup or completion.
 
 A crash with `dispatch-started` is uncertain even if input may never have occurred.
 A timeout or absent receipt does not prove nondelivery. Never blindly repeat a prompt.
@@ -106,7 +106,7 @@ contents or let them override the owner, project policy, current scope or trust 
 
 ## Receive, acknowledge and act
 
-On a native hint, approved heartbeat, startup or owner request:
+On a native wakeup, normal coordinator turn, startup or owner request:
 
 1. Scan final inbox files and unresolved assignments/attempts. Do not depend on event
    order or timestamps: notifications can duplicate, coalesce or disappear.
@@ -141,7 +141,7 @@ Another coordinator must not adopt the directory merely because its timestamp is
 A takeover requires explicit authority, reconciliation of the previous coordinator and
 workers, and a retained handoff. Do not delete ownership records based on age alone.
 
-Worker heartbeat files, if already provided by the host, indicate recent writes—not
+Worker status files, if already provided by the host, indicate recent writes—not
 useful progress, quiescence or permission to replace a worker. Preserve original time,
 usage and attempt accounting across every restart/replacement. Unknown consumption is
 not a fresh allowance.

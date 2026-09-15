@@ -15,7 +15,7 @@ deadline: REPLACE
 
 - Assignment packet and exact native identity/cwd:
 - Prompt or private immutable prompt reference:
-- Selected delivery method, provider job ID and owning coordinator session:
+- Armed native watch handle, assigned inbox paths and owning coordinator session:
 - Verified ownership, effective settings and empty prompt evidence:
 - Dispatch allowance consumed/remaining, including prior attempts:
 - Prepared intent retained; `dispatch-started` retained immediately before native input:
@@ -23,8 +23,8 @@ deadline: REPLACE
 ## Native result
 
 - Actual command stdout/stderr/exit and private receipt location:
-- Post-submission activity evidence; pending native outcome is not startup proof:
-- Provider job receipt versus actual worker startup/completion receipt:
+- Post-submission native activity from the bounded startup acknowledgment:
+- Worker completion/report evidence, distinct from the startup receipt and watch registration:
 - Observing, confirmed not-sent, or uncertain; basis:
 - Original accounting, reconciliation and next action:
 
