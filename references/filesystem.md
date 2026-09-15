@@ -81,7 +81,11 @@ reset it. These records guide recovery but do not enforce idempotency automatica
 A message identifies `event_id`, `goal_id`, `revision`, `assignment_id`, `attempt_id`,
 `worker_session`, `kind` and `created_at`, with a concise summary, evidence references,
 checks and remaining work. Kinds are `progress`, `question`, `blocked` or `result-ready`.
-Keep control instructions and authority changes out of worker messages.
+Keep control instructions and authority changes out of worker messages. Follow the
+[message template](../templates/message.md): quote string scalars, keep the session
+ID/path separate from descriptive binding details, and use observed UTC or `"unknown"`
+for `created_at`. Do not fabricate values to make a report appear complete. Templates
+are a reporting convention, not a runtime parser or automatic validation service.
 
 Use a globally unique event ID and publish one complete file per event. Do not append
 to a shared log or overwrite a previously published message:

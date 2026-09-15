@@ -26,7 +26,9 @@ mode authorizes ongoing backlog work. Steer, pause or cancel through the convers
 
 Small direct tasks need no worker setup. Delegated goals use one coordinator, isolated
 implementation worktrees, immutable inbox messages and separate acknowledgment and
-acceptance. The [skill](SKILL.md) gives the workflow.
+acceptance. Prepare once, reuse still-applicable evidence, and recheck live identity/UI
+before input. Workers receive a focused read list and resolved report contract, not a
+coordination research task. The [skill](SKILL.md) gives the workflow.
 
 ## Install and update
 
@@ -78,7 +80,9 @@ No personal models, credentials or trust approvals are shipped with FSD. See
 Update between goals, with owned work settled. For a long goal, retain its FSD version
 and do not mix instructions from different releases. Pin a release through the host's
 package manager when reproducibility matters. Skill versions do not confer permission
-to rewrite goal evidence or import another user's preferences.
+to rewrite goal evidence or import another user's preferences. When using FSD to improve
+itself, [pin the runbook](references/setup.md#improving-fsd-itself) and review changes in
+a separate checkout; proposed instructions cannot change the running goal's authority.
 
 ## References
 

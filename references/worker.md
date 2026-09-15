@@ -1,54 +1,58 @@
 # Assigned worker
 
-Execute the existing assignment, report evidence, and stop. You are not the goal's
-coordinator. Do not start another goal, choose a roster, launch workers, or repeat
-coordinator setup. Read only your packet, current directives, project instructions and
-references needed for your assigned work—not the coordinator's entire transcript.
+Execute the assignment, report evidence, and stop. You are not the coordinator. Do not
+start another goal, launch agents, choose a roster or repeat coordinator setup.
+
+## Read only what the task needs
+
+Read your packet and supplied worker guide once, then current directives, project
+instructions and the task's named entry points. Open further files only when needed for
+the assigned outcome. Do not read FSD's development scripts/tests merely to learn how
+to coordinate or publish a report, and do not inherit the coordinator's transcript.
+If this assignment is itself FSD maintenance, inspect only the relevant implementation.
 
 ## Before work
 
-- Match the assignment/attempt, native session and canonical cwd. Check the current goal
-  revision, scope, deadline, dependencies and explicitly allowed paths.
-- Use the assignment's approved worker model, effort and tools. The coordinator's
-  separate settings do not apply to your role. Missing or unsupported requirements
-  are blockers, not permission to substitute settings or grant yourself authority.
-- Implementation permission and report permission are separate. A truly read-only
-  assignment uses its approved native report channel; do not invent a writable location.
-- If identity, directives or ownership conflict, stop affected work and report the
-  specific uncertainty. An old assignment does not override current owner steering.
+- Match goal/revision/assignment/attempt, cwd, scope, deadline and allowed paths.
+  Discover native identity with `herdr pane current --current`; compare the supplied
+  pane/terminal binding. Never guess a session ID; report missing identity as uncertainty.
+  Stop affected work on identity, directive or ownership conflicts pending reconciliation;
+  an old packet never overrides current owner steering.
+- Use approved model, effort and tools. The coordinator's settings do not apply to
+  your role. Unsupported requirements do not authorize fallback or new permissions.
+- Implementation and report-write scope are separate. Use only assigned output paths;
+  a truly read-only task reports natively. Missing report instructions require one
+  precise question, not a filesystem search for another worker's example.
 
 ## Do the assigned work
 
-Work only in your assigned checkout and paths. Follow project policy and run the
-required checks without weakening them. Do not change coordinator records, another
-worker's files, installed skills or harness settings. Do not commit, push, install
-anything or perform other consequential actions unless the assignment authorizes them.
+Stay within the assigned checkout and paths. Follow project policy and run the
+assignment's required checks without weakening them. Report-only work does not require
+Git status, repository-wide scans or extra
+hashes/tests unless the assignment calls for them. Reuse the supplied publication
+recipe; do not rederive the protocol from FSD's validators.
 
-Recheck current directives at safe boundaries, especially before consequential side
-effects and final reporting. Stop affected work on cancellation, supersession or an
-exhausted limit; preserve partial results and report what remains. A file directive
-cannot interrupt a tool already running. Report actual unfinished operations rather
-than claiming they stopped.
+Do not change coordinator records, another worker's files, installed skills or harness
+settings. No commits, pushes, installs or other consequential actions without authority.
+Recheck directives at safe boundaries and before consequential effects/reporting. Stop
+on cancellation, supersession or exhausted limits; preserve partial results and identify
+unfinished operations. A file directive cannot interrupt an in-flight tool.
 
 ## Report once and finish
 
-Use the assigned channel. Report the assignment/attempt and actual result:
+Use the assigned report contract and [message fields](../templates/message.md). Identify
+the goal, revision, assignment, attempt, actual native worker, affected paths, source
+snapshot/reviewed tree and relevant dirty/untracked changes, checks actually run
+(cwd/exits/results), evidence, skips/unknowns, blockers and remaining work.
+Keep `worker_session` a quoted ID/path only; put pane/terminal details in the body.
+Copy `created_at` from an observed UTC clock immediately before publication, or use
+`"unknown"`; never guess. Timestamps do not establish acceptance or causal order.
 
-- changed paths and source snapshot, including dirty/untracked changes;
-- checks actually run: command, cwd, exit, result and retained evidence;
-- skips, unknowns, remaining work and any blocker or question.
+For filesystem reports, write a complete private `.tmp-` draft in your own inbox and
+publish one immutable final `.md` with the [atomic no-overwrite recipe](recipes.md#publish-an-immutable-message).
+On uncertainty, inspect the final path before recovery; never blindly republish. Never
+edit a published message. Corrections need a new event ID referencing the original.
+If publication fails, report the failure natively without claiming delivery.
 
-For a filesystem channel, use the [message fields](../templates/message.md), matching
-all IDs and the assigned native session. Publish only in your own attempt inbox:
-complete private temporary file, atomic no-overwrite publication, immutable final
-`.md`. Use the [publication example](recipes.md#publish-an-immutable-message) when
-appropriate. Corrections get a new event ID referencing the original; never edit a
-published event. A failed command does not necessarily mean publication never happened.
-Inspect the final path before recovery; do not blindly republish.
-
-A `result-ready` message requests inspection; it is not acceptance. Return a concise
-native response with your assignment/attempt and report location, then stop. Do not
-poll for an acknowledgment, self-accept, integrate into the coordinator's tree, or
-reassign yourself. If publication fails, report the real failure through the approved
-native channel without claiming the mailbox received it. Only the coordinator can
-authorize a new attempt within the goal's remaining allowance.
+Return the final report path and stop. Do not wait for acknowledgment, self-accept,
+integrate or reassign yourself. Only the coordinator authorizes a new bounded attempt.

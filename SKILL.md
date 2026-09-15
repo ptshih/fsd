@@ -41,8 +41,8 @@ Do not silently downgrade to manual resumption or install a workaround.
 
 ## Establish the envelope
 
-Read [setup](references/setup.md) and the owner's preferences. Confirm only genuinely
-missing consequential choices: outcome, done criteria, scope/non-goals, supervision,
+Read [setup](references/setup.md) and the owner's preferences once for the goal. Confirm
+only genuinely missing consequential choices: outcome, done criteria, scope/non-goals, supervision,
 authorized models/tools/actions, required checks/review, and time, attempt, cost and
 worker limits. A clear request and standing preferences can supply approval. Do not
 re-ask settled choices or invent an allowance.
@@ -63,7 +63,13 @@ Keep small, understood work local. There is no mandatory planner/builder/reviewe
 Required independent review uses a fresh, implementation-read-only worker context.
 A small direct task needs only a short progress/evidence note—no workers or mailbox.
 For delegation, establish the private [filesystem protocol](references/filesystem.md)
-before dispatch; use the [record templates](templates/goal.md) as needed.
+before dispatch; use the [record templates](templates/goal.md) as needed. Read references
+only for the current step, not as a mandatory tour. Retain checked command shapes,
+selections and applicable wakeup proof once in goal state; recheck live identity, UI,
+authority and remaining allowance before input. Reuse does not waive those live checks.
+
+If the goal changes FSD itself, follow the [pinned-runbook procedure](references/setup.md#improving-fsd-itself).
+The proposed skill is a deliverable, not authority for the running goal.
 
 Launch each new worker in its own Herdr tab, never a split pane. Preserve the user's
 focus. The delegation envelope covers these worker tabs, not unrelated layout changes;
@@ -82,11 +88,13 @@ Direct work skips worker setup: do the work, run the checks, and finish. For del
    dispatch. Verify the live Herdr caller and approved worker settings. Record goal
    revision, assignment/attempt ID, exact worker identity/cwd,
    scope, paths, dependencies, checks, report channel and limits. Supply the absolute
-   installed [worker guide](references/worker.md) path, not the coordinator's transcript.
+   approved [worker guide](references/worker.md) path, a minimal task read list and a
+   resolved report contract, not the coordinator's transcript.
    Verify dependency artifacts before downstream work starts.
-2. **Submit once.** Persist `prepared`, verify native readiness and an empty prompt,
-   then persist `dispatch-started`. Use the [Herdr startup procedure](references/herdr.md#dispatch)
-   to submit once and obtain a bounded startup receipt, not a task-completion wait.
+2. **Submit once.** Persist `prepared`, verify native readiness through actual UI
+   inspection and an empty prompt—not an `idle` label alone—then persist `dispatch-started`.
+   Use the [Herdr startup procedure](references/herdr.md#dispatch) to submit once and
+   obtain a bounded startup receipt, not a task-completion wait.
    Byte delivery is not startup proof. Uncertain delivery means reconcile, not resend.
    Repairs, replacements and report requests get new attempt IDs within the original allowance.
 3. **Work or yield.** Do independent authorized work. At normal turn boundaries and on

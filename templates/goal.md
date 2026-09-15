@@ -30,6 +30,8 @@ max_attempts: REPLACE_WITH_APPROVED_DISPATCH_LIMIT
 
 ## Delivery and resources
 
+- Readiness record: checked contracts/selections and reusable evidence references:
+- Pinned runbook revision/path when this goal changes FSD itself:
 - Already-available native wakeup facility, coordinator binding and discovery evidence:
 - Actual busy/idle receipts, blocked-work coverage and deadline notification:
 - Owned native watch/check-in handles, expiry, stop controls and cleanup owner:

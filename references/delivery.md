@@ -27,12 +27,17 @@ Before unattended worker dispatch:
 4. Reuse applicable proof for this facility, activation and coordinator session. If proof
    is missing, qualify only the missing behavior with harmless identified events under
    the approved goal envelope. Record actual receipts, not a guessed acknowledgment.
-   A timer expiring before the model yields does not establish idle wakeup. Missing probe
-   authority requires one specific request, not a new setup campaign or automatic launch.
+   A timer expiring before the model yields does not establish idle wakeup. A new goal
+   or worker is not a reason to repeat valid same-session qualification. Recheck only
+   evidence invalidated by changed bindings, activation, capability or an observed failure.
+   Missing probe authority requires one specific request, not a setup campaign or launch.
 5. Record the native tool/facility, binding, proof and handle in goal state. Arm observation
    before the final inbox scan and before dispatch, so an early worker report cannot
    fall between a scan and subscription. Watch only worker inboxes, not coordinator
    acknowledgments or state. Ignore temporary files and coalesce hints where supported.
+   Reusing facility proof does not reuse an expired watch: register a current goal-owned
+   handle and choose an inspection interval that leaves time for work and cleanup within
+   the original deadline.
 
 Use the facility through its documented native interface with bounded configuration
 (paths, events, deadline and session). Do not write a script, start an unobserved process,
@@ -75,9 +80,11 @@ available until inspected; acknowledgment, verification and acceptance are separ
 Completion wakeup and blocked-worker detection are different capabilities. A worker
 stuck at a permission prompt may not be able to write a report. Require actual native
 blocked/failure detection or an owner-approved bounded inspection check-in using an
-already-available host facility. Inspect the real UI; `working` metadata is not proof
-that no prompt is waiting. If required coverage is absent, report it before unattended
-work. Do not build a bridge to repair the harness integration.
+already-available host facility. Inspect the real UI; neither `working` nor `idle`
+metadata proves readiness. An `idle` label can accompany a trust dialog or an active
+tool. Follow [UI/status conflict handling](herdr.md#inspect-results-and-prompts); do not
+infer settlement from the label or a report file. If required coverage is absent,
+report it before unattended work. Do not build a bridge to repair the harness integration.
 
 If observation ends while work remains, reconcile the worker and retained files first.
 Renew only native observation within the original deadline and allowance; never resend

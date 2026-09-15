@@ -34,8 +34,9 @@ After establishing [native wakeup](delivery.md) and within the approved delegati
 workers into the coordinator's or an unrelated existing tab. This FSD topology takes
 precedence over Herdr's generic sibling-pane default. Keep the user's focus unchanged.
 
-Inspect installed `herdr tab create --help`. Replace all placeholders below with the
-verified workspace ID, approved canonical worker cwd and a useful worker label, quoting
+Use the already-checked installed `herdr tab create --help` contract; rediscover it only
+when version/behavior changes or evidence is missing. Replace placeholders below with
+the verified workspace ID, approved canonical worker cwd and a useful worker label, quoting
 each replacement as one shell argument. Use the coordinator's workspace unless the
 owner selected another; do not create a workspace merely to launch a worker.
 
@@ -92,6 +93,20 @@ On a notification, check native identity/state and ID-matched output. `agent get
 `agent read` are inspection, not acceptance. Use `recent-unwrapped` for retained text
 when available and `visible` for an interactive screen; alternate-screen output may not
 be recoverable merely by increasing the read window.
+
+Treat status as a hint, not an input/cleanup gate by itself:
+
+| Observation | Required action |
+| --- | --- |
+| `idle`/`done` with a trust, question or permission dialog | Do not submit work; handle only the exact prompt covered by owner consent. |
+| `idle`/`done` with a spinner or active tool | Work is not settled; do not resend, integrate or close it as completed. |
+| `working` with a visible trust, question or permission dialog | Treat as blocked, not progressing; resolve only within owner consent, never just wait it out. |
+| Final report or response but conflicting native state/UI | Inspect actual output and owned processes; retain uncertainty until settlement is verified. |
+
+Inspect at startup, immediately before input, on wakeups/bounded check-ins, and before
+cleanup—not in a polling loop. If the UI is unavailable or ambiguous, preserve that
+uncertainty instead of inferring readiness. Retain concise observable UI facts, selected
+choices and receipts, not worker deliberation text or full transcripts.
 
 Require reports to identify assignment/attempt, affected paths, actual checks/results,
 skips/unknowns and remaining work. Preserve them in authorized evidence paths. A truly
