@@ -1,67 +1,90 @@
 # FSD
 
-A skill for **deliver this goal, then stop**, inside an ordinary conversation.
-Work directly when that is more efficient, or coordinate visible native Herdr workers.
-Verify results, stay steerable, preserve evidence, clean up, and stop.
+**Deliver this goal, then stop.** A pure Agent Skill for ordinary coding-agent
+conversations: work directly or coordinate visible Herdr workers, verify the result,
+and finish deliberately.
+
+FSD 1.0.0 is instructions, references and record templates. It ships no executable,
+extension hooks, server, scheduler or extra coordinating model. Normal harness tools,
+Herdr, Git and private files do the work. Automatic wakeups depend on verified native
+facilities; a file appearing on disk does not itself resume an agent.
 
 ## Use
 
-Give FSD a goal, scope, and limits:
+> Use FSD: fix the parser regression, run the tests, and stop. No public API changes.
 
-> Run FSD: fix the parser regression, run the tests, and stop. No public API changes.
+Supervised is the default. Request unsupervised work explicitly; that changes how
+in-scope decisions are handled, not permissions or available host capabilities. Neither
+mode authorizes ongoing backlog work. Steer, pause or cancel through the conversation.
 
-Supervised is the default. Request **unsupervised** to let the coordinator make decisions
-within the approved scope without routine check-ins. New authority is never implied:
-defer actions that need it, continue only independent allowed work, and report blockers.
-Neither mode is ongoing backlog management or a guarantee of crash-proof operation.
+Small direct tasks need no worker setup. Delegated goals use one coordinator, isolated
+implementation worktrees, immutable inbox messages and separate acknowledgment and
+acceptance. The [skill](SKILL.md) gives the workflow.
 
-The [saved preferences](config/herdr-defaults.json) supply model/effort/tool choices and
-covered startup trust consent. A clear request can approve a goal; reading or installing
-the skill does not. Routine staffing and recovery stay within the approved limits.
-Steer through the same conversation: change direction, request status, pause, or cancel.
+## Install and update
 
-## Install
+Choose one installation per harness. Installing or updating grants no goal authority
+and launches nothing. Review the skill before use.
 
-Clone into a directory that does not already exist:
-
-```sh
-git clone https://github.com/ptshih/fsd.git ~/.agents/skills/fsd
-```
-
-Load `SKILL.md` through your agent's skill loader. For Pi, install the local package:
+### Pi
 
 ```sh
-pi install ~/.agents/skills/fsd
+pi install git:github.com/ptshih/fsd
+pi update git:github.com/ptshih/fsd
 ```
 
-Install/authenticate Herdr and the selected worker harnesses separately. Delegation
-runs inside a live Herdr session and uses the [runtime](runtime/README.md); direct work
-does not require an observer. The coordinator's required effort is `xhigh`.
+The package declares only the skill. It does not register tools or hooks. Start a new
+session or use Pi's supported reload to refresh discovery after an update.
 
-Use only one runtime entrypoint. An existing source-linked Pi entrypoint already loads
-this checkout; do not register it again as a package. Deliberately reload Pi after code
-changes, with owned work settled first. The current API/state format is goal-based and
-uses fresh goal directories, without alternate schemas or import/conversion tooling.
-
-## Operating references
-
-- [Skill](SKILL.md): goal lifecycle, authority, execution and stopping rules.
-- [Herdr](references/herdr.md): native workers, trust, worktrees and cleanup.
-- [Async coordination](references/async-coordination.md): dispatch, yield and inspect.
-- [Continuity](references/continuity.md): private goal state and handoffs.
-- [Runtime](runtime/README.md): current API, checks and limitations.
-
-## Develop and sync
+### Claude Code
 
 ```sh
-npm test
-npm run check
-npm run test:herdr-wire
+claude plugin marketplace add ptshih/fsd
+claude plugin install fsd@fsd
 ```
 
-Review the intended diff before committing/pushing. On other devices use
-`git pull --ff-only`; preserve and reconcile local changes rather than resetting them.
-Credentials, goal state, worker reports and private evidence stay outside this repository.
-Git-ignore repository-local `.agents/fsd/` state; ignore rules are not a privacy boundary.
+To update the catalog and installed skill:
+
+```sh
+claude plugin marketplace update fsd
+claude plugin update fsd@fsd
+```
+
+The plugin contains the same root `SKILL.md`, not a separate implementation. Restart
+Claude Code when its updater requires it. Use a version supporting root-level single-skill
+plugins, or load `SKILL.md` through your harness's normal skill discovery.
+
+### Other skill-capable harnesses
+
+Place this directory in the harness's documented skill location, or use its supported
+skill-package installer. Resolve reference/template links relative to `SKILL.md`.
+Direct work needs ordinary file/shell tools; delegated work also needs a live Herdr
+session. Do not assume another harness's notification or effort settings carry over.
+
+### Keep updates separate from your work
+
+Owner preferences live at `$XDG_CONFIG_HOME/fsd/preferences.json`, defaulting to
+`~/.config/fsd/preferences.json`. Goal records live outside the installed skill.
+No personal models, credentials or trust approvals are shipped with FSD. See
+[setup and preferences](references/setup.md).
+
+Update between goals, with owned work settled. For a long goal, retain its FSD version
+and do not mix instructions from different releases. Pin a release through the host's
+package manager when reproducibility matters. Skill versions do not confer permission
+to rewrite goal evidence or import another user's preferences.
+
+## References
+
+- [Setup and preferences](references/setup.md): minimal first use, local choices, upgrades.
+- [Filesystem protocol](references/filesystem.md): ownership, messages, evidence and recovery.
+- [Native delivery](references/delivery.md): wakeups, heartbeats and unsupported modes.
+- [Herdr operations](references/herdr.md): dispatch, integration and cleanup.
+
+## Development checks
+
+From a source checkout with Node 22 or later, run `npm test` and `npm run check`. No
+dependency installation is needed. These validate packaging, documentation and templates, not agent compliance or
+end-to-end delivery. Install/update behavior and autonomous coordination must be checked
+on each supported host profile; cross-harness live qualification is not claimed.
 
 [MIT](LICENSE) © 2026 ptshih.

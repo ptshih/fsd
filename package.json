@@ -1,21 +1,16 @@
 {
   "name": "@ptshih/fsd",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "private": true,
-  "description": "Bounded FSD skill and Herdr-to-Pi coordination adapter",
+  "description": "A pure skill for bounded, filesystem-coordinated delivery with native Herdr workers",
   "type": "module",
   "license": "MIT",
-  "engines": { "node": ">=22.19.0" },
-  "keywords": ["pi-package"],
-  "pi": { "extensions": ["runtime/index.ts"], "skills": ["SKILL.md"] },
-  "peerDependencies": {
-    "@earendil-works/pi-coding-agent": "*",
-    "@earendil-works/pi-ai": "*",
-    "typebox": "*"
-  },
+  "repository": { "type": "git", "url": "https://github.com/ptshih/fsd.git" },
+  "keywords": ["pi-package", "agent-skill"],
+  "pi": { "skills": ["SKILL.md"] },
+  "files": ["SKILL.md", "README.md", "LICENSE", "references/", "templates/", ".claude-plugin/"],
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "test:herdr-wire": "node tests/herdr-wire.mjs",
     "check": "node scripts/check.mjs"
   }
 }

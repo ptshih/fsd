@@ -1,0 +1,8 @@
+{
+  "name": "fsd",
+  "version": "1.0.0",
+  "description": "Deliver a bounded goal through normal tools, native Herdr workers and private filesystem coordination",
+  "author": { "name": "ptshih" },
+  "repository": "https://github.com/ptshih/fsd",
+  "license": "MIT"
+}

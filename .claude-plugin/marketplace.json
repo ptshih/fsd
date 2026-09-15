@@ -1,0 +1,12 @@
+{
+  "name": "fsd",
+  "description": "FSD: a pure skill for bounded, filesystem-coordinated delivery",
+  "owner": { "name": "ptshih" },
+  "plugins": [
+    {
+      "name": "fsd",
+      "source": "./",
+      "description": "Pure-skill bounded delivery with filesystem coordination"
+    }
+  ]
+}

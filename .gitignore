@@ -2,10 +2,12 @@
 .DS_Store
 Thumbs.db
 
-# Local secrets (never commit credentials)
+# Private local data
 .env
 .env.*
 !.env.example
-
-# Mission data belongs outside this skill repository
 /.agents/fsd/
+
+# Development artifacts
+node_modules/
+*.tgz
