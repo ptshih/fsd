@@ -6,6 +6,7 @@ revision: REPLACE
 assignment_id: REPLACE
 attempt_id: REPLACE
 goal_path: REPLACE
+worker_guide: REPLACE_WITH_ABSOLUTE_INSTALLED_WORKER_GUIDE_PATH
 worker_host: REPLACE
 worker_pane: REPLACE
 worker_tab: REPLACE
@@ -20,6 +21,10 @@ output_write_paths: []
 report_channel: REPLACE
 deadline: REPLACE
 ```
+
+Read the supplied `worker_guide` and this packet first. You are executing an existing
+assignment, not starting a new goal; do not repeat coordinator setup. The guide path
+must be absolute because this packet lives outside the installed skill.
 
 ## Outcome
 

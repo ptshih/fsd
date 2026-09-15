@@ -14,6 +14,10 @@ steerable, verify the result, settle owned work, and stop. This is a skill: it u
 normal tools and native facilities, not an FSD executable, service, or background model.
 Follow project instructions rather than imposing a repository layout or release process.
 
+**Already assigned as a worker?** Follow the [worker guide](references/worker.md) and
+your assignment, then stop. The coordinator workflow below is not worker setup; do not
+start another goal or inherit the coordinator's separate role settings.
+
 ## Start with the outcome
 
 Establish the outcome, done criteria, scope/non-goals, supervision mode, authorized
@@ -58,7 +62,8 @@ Ownership is a cooperative rule, not filesystem isolation or a global lock servi
 
 1. **Prepare an assignment.** Give it a goal revision, assignment/attempt ID, focused
    outcome, exact worker identity and cwd, owned paths, dependencies, checks, report
-   channel and limits. Pass useful entry points and contracts, not the whole transcript.
+   channel and limits. Supply the absolute installed [worker guide](references/worker.md)
+   path and useful entry points/contracts, not the whole transcript or coordinator setup.
    Verify a dependency's actual artifact before downstream work starts.
 2. **Establish delivery.** Before affected delegation, verify the chosen
    [native wakeup mode](references/delivery.md), including blocked-work coverage. Use

@@ -74,6 +74,22 @@ test('message identity fields cannot disappear from the template', t => {
   assert(templateFields.message.includes('worker_session'));
 });
 
+test('worker entry point is explicit, short and separate from coordinator setup', () => {
+  const skill = readFileSync(join(root, 'SKILL.md'), 'utf8');
+  const guide = readFileSync(join(root, 'references/worker.md'), 'utf8');
+  const worker = skill.indexOf('(references/worker.md)');
+  const coordinator = skill.indexOf('## Start with the outcome');
+  assert(worker >= 0 && coordinator > worker, 'Route assigned workers before coordinator setup');
+  assert(guide.trim().split(/\s+/).length <= 500, 'Keep the worker guide under 500 words');
+});
+
+test('assignments retain the installed worker-guide path field', t => {
+  const dir = fixture(t);
+  const path = join(dir, 'templates/assignment.md');
+  writeFileSync(path, readFileSync(path, 'utf8').replace(/^worker_guide: .*\n/m, ''));
+  assert.throws(() => validate(dir), /Missing assignment.worker_guide/);
+});
+
 test('pure distribution rejects executable assets', t => {
   const dir = fixture(t);
   writeFileSync(join(dir, 'templates/helper.mjs'), 'export const helper = true;');
@@ -87,7 +103,7 @@ test('unlisted root configuration cannot silently add host behavior', t => {
 });
 
 test('published documents do not include an owner profile or machine paths', () => {
-  for (const name of ['SKILL.md', 'README.md', 'references/setup.md', 'references/filesystem.md', 'references/herdr.md', 'references/delivery.md']) {
+  for (const name of ['SKILL.md', 'README.md', 'references/setup.md', 'references/filesystem.md', 'references/herdr.md', 'references/delivery.md', 'references/worker.md', 'references/recipes.md']) {
     const text = readFileSync(join(root, name), 'utf8');
     assert.doesNotMatch(text, /\/Users\/|approvedOn|confirmedOn|gpt-\d|startupPromptApprovals/);
   }

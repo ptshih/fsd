@@ -2,7 +2,9 @@
 
 Files are the durable task board and mailbox. Native notifications are hints to inspect
 it. These are instructions followed by the coordinator and workers, not automatic
-validation, a security boundary or a transaction engine.
+validation, a security boundary or a transaction engine. The [filesystem examples](recipes.md)
+provide tested one-shot commands for private setup, publication and state replacement;
+use them only within already authorized scope.
 
 ## Establish one private goal directory
 

@@ -8,7 +8,7 @@ import { execFileSync } from 'node:child_process';
 export const templateFields = {
   goal: ['goal_id', 'revision', 'fsd_version', 'status', 'started_at', 'deadline', 'goal_path',
     'coordinator_host', 'coordinator_session', 'supervision', 'max_workers', 'max_attempts'],
-  assignment: ['goal_id', 'revision', 'assignment_id', 'attempt_id', 'goal_path', 'worker_host',
+  assignment: ['goal_id', 'revision', 'assignment_id', 'attempt_id', 'goal_path', 'worker_guide', 'worker_host',
     'worker_pane', 'worker_tab', 'worker_terminal', 'worker_session', 'worker_kind', 'cwd',
     'branch_and_base', 'role', 'implementation_write_paths', 'output_write_paths', 'report_channel', 'deadline'],
   attempt: ['goal_id', 'revision', 'assignment_id', 'attempt_id', 'worker_session', 'status', 'created_at', 'deadline'],

@@ -76,15 +76,18 @@ to rewrite goal evidence or import another user's preferences.
 ## References
 
 - [Setup and preferences](references/setup.md): minimal first use, local choices, upgrades.
+- [Worker guide](references/worker.md): focused execution and reporting without coordinator setup.
 - [Filesystem protocol](references/filesystem.md): ownership, messages, evidence and recovery.
+- [Filesystem examples](references/recipes.md): tested one-shot commands using normal tools.
 - [Native delivery](references/delivery.md): wakeups, heartbeats and unsupported modes.
 - [Herdr operations](references/herdr.md): dispatch, integration and cleanup.
 
 ## Development checks
 
 From a source checkout with Node 22 or later, run `npm test` and `npm run check`. No
-dependency installation is needed. These validate packaging, documentation and templates, not agent compliance or
-end-to-end delivery. Install/update behavior and autonomous coordination must be checked
+dependency installation is needed. These validate packaging, documentation, templates and
+exact filesystem examples in disposable local fixtures—not agent compliance or end-to-end
+delivery. Install/update behavior and autonomous coordination must be checked
 on each supported host profile; cross-harness live qualification is not claimed.
 
 [MIT](LICENSE) © 2026 ptshih.
