@@ -62,6 +62,10 @@ handoffs, establish the private [filesystem protocol](references/filesystem.md) 
 dispatch. Use the
 [record templates](templates/goal.md) as needed, not as mandatory paperwork for every task.
 
+Launch each new worker in its own Herdr tab, never a split pane. Preserve the user's
+focus. The approved delegation envelope covers these worker tabs, not unrelated layout
+changes; follow the [tab creation procedure](references/herdr.md#worker-tabs).
+
 Use one coordinator and one implementation writer per working directory, including the
 coordinator. Isolate concurrent writers in worktrees. Explicitly assign each writer's
 paths and each mailbox's publisher; do not let workers race to claim a shared task queue.

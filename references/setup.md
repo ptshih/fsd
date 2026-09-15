@@ -29,6 +29,9 @@ supply another profile. Treat it as their choices, not executable configuration.
 Useful preferences include:
 - coordinator/worker harness, model, effort and approved fallback selections;
 - supervision, delegation route and staffing limits;
+- worker topology and focus preservation: `coordinationDefaults` can retain
+  `workerLayout: "tab-per-worker"`, `allowPaneSplits: false`, and `preserveFocus: true`,
+  matching FSD's [dedicated worker tabs](herdr.md#worker-tabs); these do not authorize launch;
 - tool and approval settings, scoped standing trust consent;
 - notification mode and whether manual resumption or bounded heartbeats are allowed.
 

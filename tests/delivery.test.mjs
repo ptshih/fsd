@@ -34,6 +34,31 @@ test('Pi-in-Herdr default directs discovery to a concrete preferred method', () 
   assert.match(method, /No `pi-subagents` tool/);
 });
 
+test('workers get dedicated Herdr tabs with no split-pane fallback', () => {
+  const skill = read('SKILL.md');
+  const herdr = read('references/herdr.md');
+  assert.match(skill, /each new worker in its own Herdr tab, never a split pane/);
+  assert.match(herdr, /one new, goal-owned Herdr tab per worker/);
+  assert.match(herdr, /Do not use `herdr pane split`/);
+  assert.match(herdr, /Do not fall back to split panes/);
+  assert.match(herdr, /generic sibling-pane default/);
+  assert.match(herdr, /\.result\.root_pane\.pane_id/);
+  assert.match(herdr, /`agent start --pane` targets that tab's root pane; it does not create a split/);
+  assert.match(method, /in its own dedicated tab, not a split pane/);
+  assert.doesNotMatch(herdr, /preferably separate tabs/);
+});
+
+test('worker-tab example specifies workspace, cwd, label and focus preservation', () => {
+  const herdr = read('references/herdr.md');
+  const command = herdr.match(/<!-- fsd-example: herdr-worker-tab -->\n```sh\n([\s\S]*?)\n```/)?.[1];
+  assert.equal(command,
+    'herdr tab create --workspace WORKSPACE_ID --cwd WORKER_CWD --label WORKER_LABEL --no-focus');
+  const setup = read('references/setup.md');
+  assert.match(setup, /workerLayout: "tab-per-worker"/);
+  assert.match(setup, /allowPaneSplits: false/);
+  assert.match(setup, /preserveFocus: true/);
+});
+
 test('preferred command uses headless dispatch with quiet auto-close disabled, not an agent spawn', () => {
   const { args, values } = capture(5000);
   assert.deepEqual(args, {

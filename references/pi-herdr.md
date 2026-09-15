@@ -64,7 +64,8 @@ Do not waive independent review or take over an unsettled worker's checkout.
 ## Dispatch one controller command
 
 After applicable qualification (including any explicitly authorized probes), create/start
-the **task worker through Herdr**, with the approved identity, cwd, model and
+the **task worker through Herdr** in its own dedicated tab, not a split pane, following
+[worker tab creation](herdr.md#worker-tabs) with the approved identity, cwd, model and
 scope. `interactive_shell` runs only the Herdr controller command: do not use its
 `spawn` facility, agent CLI commands, worktree creation, or another model as the worker
 route. FSD remains Herdr-only for delegation.

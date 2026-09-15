@@ -13,10 +13,9 @@ label or an old transcript. Record server/socket context, pane, tab, terminal, n
 agent session, kind and canonical cwd. Reconcile after any occupant/session change.
 
 Keep the coordinator in the ordinary conversation. Name only owned resources as useful,
-and preserve focus. Use visible native workers, preferably separate tabs for delegated
-work when covered by the envelope. Creating a worker does not authorize unrelated layout
-changes or closure of reused resources. Native subagents and recursive spawning are not
-the FSD delegation route.
+and preserve focus. Use visible native workers in dedicated tabs as described below.
+Creating a worker does not authorize unrelated layout changes or closure of reused
+resources. Native subagents and recursive spawning are not the FSD delegation route.
 
 Verify effective executable/arguments, harness/model/effort, tools and approval mode.
 Preserve the owner's selections. Recognized agent kind and launch flags alone do not
@@ -26,6 +25,31 @@ only approved fallbacks after reconciling unfinished work.
 Use one implementation writer per canonical cwd. Concurrent writers get separate Git
 worktrees, with recorded branch/base, paths, dependencies and integration owner. Never
 edit another worker's checkout or silently take over its partial work.
+
+## Worker tabs
+
+After delivery qualification and within the approved delegation envelope, create
+**one new, goal-owned Herdr tab per worker**. Do not use `herdr pane split` or put new
+workers into the coordinator's or an unrelated existing tab. This FSD topology takes
+precedence over Herdr's generic sibling-pane default. Keep the user's focus unchanged.
+
+Inspect installed `herdr tab create --help`. Replace all placeholders below with the
+verified workspace ID, approved canonical worker cwd and a useful worker label, quoting
+each replacement as one shell argument. Use the coordinator's workspace unless the
+owner selected another; do not create a workspace merely to launch a worker.
+
+<!-- fsd-example: herdr-worker-tab -->
+```sh
+herdr tab create --workspace WORKSPACE_ID --cwd WORKER_CWD --label WORKER_LABEL --no-focus
+```
+
+Retain the returned `.result.tab.tab_id` and `.result.root_pane.pane_id`; verify the new
+tab has only its root pane and the intended cwd. Start the approved agent in that root
+pane after verifying its empty shell prompt. Herdr's pane ID is still the native target:
+`agent start --pane` targets that tab's root pane; it does not create a split.
+Record both IDs in the assignment. If tab creation fails or is unavailable, reconcile
+any created resources and pause only affected delegation. Do not fall back to split panes.
+Follow [cleanup](#cleanup) for these owned tabs; preserve unrelated resources and drafts.
 
 ## Dispatch
 
