@@ -1,59 +1,84 @@
 # Herdr
 
-Require `HERDR_ENV=1` before inspection/control. Use the installed `herdr --skill`
-and relevant CLI help when needed; don't invent commands or substitute another route.
+This is the worker-operation reference, not a requirement to delegate every task.
+Require `HERDR_ENV=1` before inspection/control; the variable alone does not prove a
+live session. Use installed `herdr --skill` and relevant CLI help when needed. Do not
+invent commands or substitute another delegation route.
+
+## Coordinator identity
+
+When first using Herdr for an approved FSD mission—not merely reading/editing the
+skill—discover the caller with `herdr pane current --current`, its tab ID, and existing
+agent names. Never infer ownership from UI focus. Name only your own tab and agent with
+supported `herdr tab rename` and `herdr agent rename`, then verify the resulting names.
+Use owner-specified names or readable defaults such as `FSD <project> Coordinator` and
+a unique CLI-valid `fsd-<project>-coordinator`. Preserve focus. Reuse appropriate names
+on resume rather than renaming repeatedly; record them in mission continuity. Naming
+is not mission approval. A direct-only task need not perform worker setup or relabel
+the ordinary conversation.
 
 ## Assign and collect
 
-- Discover actual IDs with `herdr agent list` and `herdr pane current --current`.
-  Check `herdr status` for compatibility when needed. Old IDs or labels aren't proof
-  of current ownership, model, effort or tools. Rediscover after reconnect, restart
-  or occupant change; reconcile with the continuity record before dispatch.
-- Reuse suitable available agents; launch only when an approved assignment and
-  mission worker authority cover it. Saved `autoLaunch: false` prevents automatic
-  launches from skill activation, not launches explicitly authorized by the mission.
-  Replacement/additional workers need authority within that envelope, not just an
-  available role default. This owner prefers separate **tabs** and preserved
-  coordinator focus. Use supported `herdr agent start` with verified native flags
-  and inspect the effective executable/arguments, not just the requested launch.
-- For execution agents, use the saved YOLO/auto-approval preference and normal
-  harness tools; do not invent a restrictive profile just to launch a worker.
-  Native YOLO/bypass-permissions is expected for any role, including Reviewer/Judge.
-  A wrapper or alias that merely selects that native mode, or a mismatch with a
-  requested approval-mode flag, is not by itself a blocker or reason to relaunch.
-  Record the effective mode; no additional owner confirmation is needed solely for it.
-  Verify the role's required tools and guards, then continue. Read-only roles remain
-  read-only; native auto-approval does not expand tool/task authority, spending or
-  release limits. If a mode actually disables a required guard or violates a role
-  constraint, report that specific conflict. Never use it to evade an actual denial.
-- Verify effective harness/model/effort, approval mode and tool availability using
-  native session/settings evidence before assigning work. Herdr's recognized kind,
-  requested launch flags and lifecycle hooks do not establish all those settings.
-  Record what was verified and any unknowns; pause affected dispatch if a required
-  setting cannot be verified. Native bypass mode alone is not such a failure.
-  Keep mission selections and approved fallback rules.
-- Use short mission-local assignment IDs (`A1`, `A2`, …). Include the ID, outcome,
-  owned cwd/worktree/paths, read-only or writer role, required checks and report
-  expectation in each assignment. Retain the ID on status/report follow-ups;
-  give replacement work a new ID linked to the superseded assignment. Do not
-  replace in-flight work until its delivery, ownership and side effects are reconciled.
-- Require a concise text report: assignment ID; `complete`, `incomplete` or `blocked`;
-  work done and affected paths (or review findings); checks actually run and their
-  exits/results; skips/unknowns; remaining work/blockers. A worker's `complete` report
-  requests coordinator acceptance; it is not acceptance by itself.
+- Discover actual IDs with `herdr agent list`; check `herdr status` for compatibility
+  when needed. Old IDs/labels are not proof of ownership or settings. Rediscover after
+  reconnect, restart, or occupant change and reconcile with continuity before dispatch.
+- Reuse suitable available agents, or launch for approved assignments. Routine additions
+  and replacements are covered by the mission's operating envelope unless it says
+  otherwise; model/role defaults alone are not a budget or permission to exceed it.
+  Use separate visible **tabs**, preserve coordinator focus, and keep native workers
+  individually accessible. Use supported `herdr agent start` and verified native flags.
+- Verify effective executable/arguments, harness/model/effort, tools, and approval mode
+  using native session/settings evidence at setup and after relevant changes. Herdr's
+  recognized kind, launch request, or lifecycle hook does not prove all those settings.
+  Record verified settings and unknowns; pause affected dispatch for an unverifiable
+  required setting. Preserve mission choices and only use approved, disclosed fallbacks.
+  Follow [native approvals and trust](#native-approvals-and-trust).
+- Give assignments short mission-local IDs (`A1`, `A2`, …), an outcome, owned
+  cwd/worktree/paths, writer/read-only role, checks, and report expectation. Keep the ID
+  on follow-ups; link replacement assignments to their predecessors. Every actual
+  submission has a distinct attempt identity. Reconcile uncertain delivery and partial
+  effects before replacing work or transferring its implementation to the coordinator.
+- Require a concise text report: assignment ID; `complete`, `incomplete`, or `blocked`;
+  work/affected paths or review findings; checks actually run and exits/results;
+  skips/unknowns; and remaining work/blockers. A `complete` report requests acceptance,
+  not automatic acceptance. Keep one implementation writer per cwd, including the
+  coordinator; use separate worktrees for concurrent writers and verify dependencies.
+
+## Worktrees and integration
+
+Use a separate worktree for each concurrent implementation writer. Record its canonical
+path, branch/base revision, owned paths, dependencies, and who will integrate the result.
+Workers edit only their assigned tree—not the coordinator's checkout or another worker's
+branch—and return affected paths, commits or patches, and checks. Narrow handoffs include
+only the needed goal, constraints, entry points, dependency contracts, and evidence paths;
+let workers gather task-specific context rather than copying the full coordinator history.
+
+Designate one integration writer for the destination checkout, normally the coordinator.
+Before integration, verify the worker is quiescent, preserve its report and partial work,
+and inspect both source and destination for unexpected changes. Follow project instructions
+for merge/cherry-pick/patch application; no destructive reset, force push, or silently
+clobbered local edits. Resolve conflicts deliberately, then re-run affected checks on the
+integrated tree: passing worker-branch tests does not prove that the combined result works.
+
+Avoid parallel tasks with overlapping files or unstable shared interfaces when conflict
+and rework would outweigh the benefit. Hand off a verified dependency before building on
+it. Do not delete worktrees/branches as part of Herdr pane cleanup; retain them until the
+result and evidence are integrated or an explicit disposition authorizes removal.
 
 ## Dispatch, yield, inspect
 
-Use the [nonblocking coordination contract](async-coordination.md). Register the
-assignment/attempt watcher before submitting work when automatic delivery is used.
-A background non-model watcher may use Herdr events or bounded `agent wait` calls;
-the coordinator must not occupy its model turn doing those completion waits.
+Follow the [async operating policy](async-coordination.md). Automatic observation must
+be established before submission. Use an installed, verified combined dispatch operation
+if available; the [v3 runtime source](../runtime/README.md) must first be explicitly
+installed and live-qualified. With an observation-only adapter, follow its actual
+registration/receipt protocol and the native dispatch procedure below. Source files
+or the [design contract](runtime-contract.md) do not make a tool available.
 
-- Send prompts only to a verified owned agent ready for input with no human draft.
-  Resolve or explicitly supersede prior work first; same-assignment follow-ups may
-  request a missing report or repairs. Give each actual submission a distinct attempt
-  identity so an old report/event cannot satisfy a newer dispatch.
-- Use only a short startup acknowledgment in the foreground. The current CLI supports:
+- Prompt only a verified owned agent ready for input with no human draft. Resolve prior
+  work first. Repairs/report requests may retain the assignment ID but require a new
+  submission attempt; old reports/events cannot satisfy a newer dispatch.
+- Use a short foreground startup acknowledgment, capped by remaining mission time.
+  The inspected CLI supports:
 
   ```sh
   herdr agent prompt <target> "<assignment>" \
@@ -61,112 +86,109 @@ the coordinator must not occupy its model turn doing those completion waits.
     --timeout 10000
   ```
 
-  The settled states handle fast completion or a prompt; Herdr's post-submission
-  activity check must still establish that this submission started. A previous idle
-  state or a successful input write alone is not proof. Use the configured acknowledgment
-  limit, capped by remaining mission time, and verify installed CLI semantics.
-- After acknowledgment, do independent authorized work or yield. Do not chain long
-  `agent wait` calls, sleep loops or repeated status reads in the coordinator. A foreground
-  completion wait is an explicit owner-requested exception, not an automatic fallback.
-- On a completion/blocker/failure/deadline event or explicit manual resumption, inspect
-  `herdr agent get <target>` and the ID-matched output. Use `recent-unwrapped` when idle;
-  use `visible` for a working agent whose alternate-screen history cannot be scrolled.
-  Inspect artifacts/checks before accepting. If still working, update continuity and
-  yield rather than re-enter a wait loop. A lifecycle completion is not assignment completion.
-- A startup timeout, `agent_prompt_stalled`, transport error or `unknown` state proves
-  neither completion nor nondelivery. Record uncertainty and make a bounded identity/
-  output inspection. Confirmed activity means keep observing the existing attempt, not
-  resend it. If ready but receipt remains unclear, ask a short ID-specific status question.
-  Resubmit only after establishing nondelivery or reconciling partial work into an
-  authorized replacement. Persistent uncertainty blocks affected dispatch; do not switch
-  routes, force receipt, or reset limits.
-- A native YOLO/bypass-mode indicator is not an approval blocker. For a real `blocked`
-  state (or a native approval UI despite an `idle` lifecycle), inspect the actual
-  prompt. Answer only with current or recorded standing owner approval.
-  The saved `startupPromptApprovals.projectTrust` policy covers native project/folder
-  trust for its listed harnesses in verified mission-owned workspaces of an already
-  approved mission. When enabled, do not ask again: reverify the live owned agent and
-  that the displayed canonical path equals its authorized workspace. Prefer a
-  session-only option; if unavailable, the policy permits exact-folder trust such as
-  AGY's **Yes, I trust this folder**, even when the harness remembers it persistently.
-  Stricter harness-specific policies take precedence: `piProjectTrust` continues to
-  allow only Pi's **Trust (this session only)** choice, never permanent Pi trust.
-  Navigate using supported `herdr agent send-keys`, read back the selected option,
-  then confirm and verify startup. If the prompt has already cleared, send no approval
-  keystroke; verify readiness instead. Record the path, choice and standing-consent
-  basis. This accepts the native prompt and its stated project-resource loading
-  consequences; it does not disable a guard or expand task authority.
-  Never choose parent-folder/global trust, manually edit native trust configuration,
-  cover an unrelated/unverified path or another prompt, or reverse an explicit denial.
-  Pause if a project/mission guard conflicts or identity/choice is unclear.
-  Otherwise, if approval is missing, ask in supervised mode; in unsupervised mode,
-  record and defer rather than answer or wait for confirmation. While blocked,
-  continue only independent authorized work. A successful wait never hides a blocker.
+  Verify installed semantics. Herdr's post-submission activity check must establish
+  that this submission started; old idle state or a successful input write is not
+  proof. Settled states account for fast completion and blockers. Retain native
+  receipts as required by the installed adapter, without reconstructing evidence.
+- After acknowledgment, do independent authorized work or yield. Do not chain completion
+  waits, sleep loops, or status polling in the model. Foreground completion waiting is
+  an explicit owner-requested exception, never a fallback for missing delivery.
+- On an event or approved manual resumption, inspect `herdr agent get <target>` and
+  ID-matched output. Use `recent-unwrapped` when idle; use `visible` for working agents
+  whose alternate-screen history cannot be scrolled. Inspect artifacts/checks before
+  acceptance. If still working, retain/reconcile observation and yield.
+- Startup timeout, `agent_prompt_stalled`, transport error, or `unknown` proves neither
+  completion nor nondelivery. Record uncertainty and make a bounded identity/output
+  inspection. Confirmed activity means observe the existing attempt, not resend it.
+  If ready but delivery is unclear, an ID-specific status question must itself follow
+  the dispatch protocol and must not request another implementation pass. Resubmit
+  only after proving nondelivery or reconciling partial work into an authorized
+  replacement. Persistent uncertainty blocks affected dispatch; do not force receipt,
+  switch routes, or reset limits.
+
+## Native approvals and trust
+
+Use the saved native YOLO/auto-approval preference and normal harness tools for execution
+agents, including Reviewer/Judge. Do not invent restrictive allowlists, shell bans, or
+permission checkpoints absent project/owner requirements. A wrapper selecting YOLO over
+a requested approval-mode flag is not by itself a blocker or reason to relaunch or ask
+again. Record the effective mode and verify required tools/guards. Read-only roles stay
+read-only. Native auto-approval grants no extra task authority and never permits evading
+an actual guard denial, release limit, or required human authorization.
+
+For a real blocked state or native approval UI, inspect the actual prompt. The saved
+`startupPromptApprovals.projectTrust` is standing owner consent in both supervision
+modes for listed harnesses in verified mission-owned workspaces of an authorized mission:
+
+1. Verify the live owned agent and that the displayed canonical path equals its
+   authorized workspace. A conflicting project/mission guard takes precedence.
+2. Prefer session-only trust. Where unavailable, the policy permits persistent
+   exact-folder trust, including AGY's **Yes, I trust this folder**. The stricter
+   `piProjectTrust` policy permits only **Trust (this session only)** for Pi, never
+   permanent Pi trust.
+3. Use supported `herdr agent send-keys` navigation, read back the selected option,
+   then confirm and verify readiness. If the prompt already cleared, send no approval
+   keystroke. Record path, choice, and consent basis; no repeated owner confirmation
+   is needed for covered prompts.
+
+This accepts the native prompt and its stated project-resource loading consequences,
+not a disabled trust check or expanded assignment. Never extend consent to parent/global
+trust, unrelated/unverified paths, another approval prompt, manually edited trust
+configuration, or a previously denied action. If identity/choice/authority is unclear,
+ask in supervised mode or defer in unsupervised mode. Continue only independent
+allowed work while blocked; a successful wait must not hide a real approval prompt.
 
 ## Recover incomplete reports
 
-If a report is missing or truncated, increase the read window/use supported available
-history first. If that cannot recover it, request only the missing ID-matched report
-once the owned agent is verified ready, not another implementation pass. If it is still
-working, yield until a readiness event or approved manual resumption; do not block on
-completion. Ask for concise text or short numbered chunks, reading each before requesting
-the next. Bound recovery by remaining mission limits; mark unrecovered evidence incomplete.
+Increase the read window/use supported history first. If needed, request only the
+missing ID-matched report once the worker is verified ready, not another implementation
+pass. While it is working, yield. Ask for concise text or short numbered chunks, reading
+each before requesting the next. Bound recovery by remaining limits and mark unrecovered
+evidence incomplete.
 
-Read-only workers return text and never write report files. The coordinator may save
-collected text under `reports/` in the recorded absolute mission directory. Herdr's
-generic temporary-report-file fallback is allowed only for an already write-authorized
-worker with an explicitly assigned private report path under that directory's `reports/`,
-Git-ignored when inside a repository and distinct from coordinator-owned files. Never
-broaden a read-only role to use that fallback or leave the only needed report in `scratch/`.
+Read-only workers return text and never write report files. The coordinator may retain
+it in the recorded mission `reports/`. A temporary-report-file fallback is allowed only
+for an already write-authorized worker with an explicitly assigned private report path,
+Git-ignored inside a repository and distinct from coordinator-owned files. Do not broaden
+a read-only role for this fallback or keep the only needed evidence in `scratch/`.
 
 ## Preserve ownership
 
-Never overwrite human drafts, send reports into human-used input fields, interrupt
-busy agents to force receipt, or promote a read-only helper into a writer. Model/tool
-settings and instructions are not OS isolation or hard spending guarantees.
+Never overwrite human drafts, send reports into human-used inputs, interrupt busy
+agents to force receipt, or promote a read-only helper into a writer. Explicitly
+requested pause/cancel/steering uses supported owned controls and verified handoffs,
+not forced input. Model/tool settings are not OS isolation or hard spending guarantees.
 
-On a tool/transport/ownership failure, stop affected dispatch, preserve evidence
-and reconcile. Don't evade actual guard denials or required human authorization,
-expand task authority or switch routes. Native YOLO alone is not such a failure.
-Continue only independent authorized work; if none can progress, hand off the blocker.
-
-Before an authorized reset, retirement or ownership transfer, inspect unfinished
-work and service dependencies, preserve a concise handoff and verify quiescence.
-Use supported controls and rediscover the resulting identity. Never reset or retire
-the human coordinator, unrelated agents or shared services. Reconcile in-flight work
-before an approved model fallback; record and disclose the switch without duplicates.
+On a tool/transport/ownership failure, stop affected dispatch, preserve evidence, and
+reconcile. Continue independent authorized work only. Before reset, retirement, ownership
+transfer, or an approved model fallback, reconcile unfinished work and service dependencies,
+preserve a handoff, verify quiescence, and rediscover the resulting identity. Never reset
+or retire the coordinator, unrelated agents, or shared services.
 
 ## Prune finished workers
 
-Cleanup is part of coordinator completion, not an optional housekeeping task. Prune
-workers once accepted work and necessary follow-ups are finished; also reconcile and
-clean up on cancellation or wind-down. A lifecycle `idle`/`done` state alone is not
-permission to prune. Do not keep unused workers around just because they might be
-useful later; retain only explicitly planned reuse or an owner-directed handoff.
+Cleanup is part of delivery, cancellation, and wind-down. Prune once accepted work and
+necessary follow-ups finish; idle/done alone is not permission. Retain workers only for
+explicitly planned reuse or an owner-directed handoff, not hypothetical future usefulness.
+Routine cleanup of disposable mission-owned workers needs no separate confirmation.
 
-1. Save the ID-matched report, acceptance/check outcomes and any partial-work handoff
-   under the recorded mission directory before closing anything. Preserve code,
-   worktrees, reports and continuity files; pruning Herdr agents does not authorize
-   deleting them. Cancellation must remain recorded as interrupted, not completed.
-2. Rediscover the caller with `herdr pane current --current`, and inspect live agents,
-   panes and tabs against recorded mission ownership. Inspect each target's output
-   and `herdr pane process-info --pane <pane_id>` for unfinished work or service
-   dependencies. Settle bounded operations first; on cancellation use supported
-   interruption controls only on owned operations and verify they have stopped.
-   Uncertain identity, human drafts or shared dependencies block that target's cleanup.
-3. Close disposable worker panes with `herdr pane close <pane_id>`. Use
-   `herdr tab close <tab_id>` only when the entire tab is disposable and every pane
-   in it has been verified safe to close. Targets must have been created for this
-   mission or explicitly authorized for closure; reusing an existing worker does not
-   grant ownership of its pane/tab. Never target the calling coordinator pane/tab,
-   unrelated agents, shared services or resources retained for reuse/handoff. Preserve
-   user focus; do not close whole workspaces/sessions or stop the Herdr server.
-4. Re-list agents, panes and tabs to verify the targets are gone. Record removed IDs,
-   retained workers and their reason/owner/next action, and any cleanup failures in
-   `state.md`. Report unresolved cleanup in the final handoff rather than claiming it
-   succeeded. On failure, preserve evidence and reconcile through supported controls;
-   do not force-kill processes or broaden closure scope to make the list look clean.
+1. Retain reports, acceptance/check evidence, and partial-work handoffs in the recorded
+   mission directory. Preserve code, worktrees, and continuity; pruning does not authorize
+   their deletion. Cancellation remains interrupted, not completed.
+2. Rediscover the caller with `herdr pane current --current` and reconcile live targets
+   against mission ownership. Inspect output and `herdr pane process-info --pane <pane_id>`
+   for unfinished operations or services. Settle work first; interrupt only owned work
+   through supported controls and verify it stopped. Uncertain identity, human drafts,
+   or shared dependencies block that target's cleanup.
+3. Close disposable panes with `herdr pane close <pane_id>`. Use `herdr tab close <tab_id>`
+   only if every pane in that tab is verified disposable. Targets must be created for
+   the mission or explicitly authorized for closure; reusing an existing agent does not
+   grant pane/tab ownership. Preserve focus and the coordinator conversation. Do not
+   close unrelated/shared resources, entire workspaces/sessions, or the Herdr server.
+4. Re-list agents/panes/tabs to verify removal. Record removed IDs, retained resources
+   with reason/owner/next action, and failures in continuity. Do not force-kill processes
+   or broaden closure scope to conceal a failure. Retire relevant adapter observations
+   and preserve their evidence; late events cannot revive retired work.
 
-Check the installed CLI help if syntax or behavior differs. Pruning here means closing
-verified disposable worker panes/tabs; do not invent an `agent prune` command or treat
-clearing lifecycle metadata as terminating an agent.
+Check installed help if syntax differs. Do not invent an `agent prune` command or confuse
+clearing lifecycle metadata with terminating an agent.

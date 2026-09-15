@@ -1,0 +1,21 @@
+{
+  "name": "@ptshih/fsd",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Bounded FSD skill and Herdr-to-Pi coordination adapter",
+  "type": "module",
+  "license": "MIT",
+  "engines": { "node": ">=22.19.0" },
+  "keywords": ["pi-package"],
+  "pi": { "extensions": ["runtime/index.ts"], "skills": ["SKILL.md"] },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-ai": "*",
+    "typebox": "*"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "test:herdr-wire": "node tests/herdr-wire.mjs",
+    "check": "node scripts/check.mjs"
+  }
+}

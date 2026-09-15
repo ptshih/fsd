@@ -1,11 +1,18 @@
 {
   "version": 1,
   "kind": "fsd-owner-preferences",
-  "confirmedOn": "2026-09-14",
+  "confirmedOn": "2026-09-15",
   "coordinationRoute": "herdr-only",
   "workerHarnesses": ["pi", "claude", "codex", "agy"],
   "autoLaunch": false,
   "nativeSubagents": false,
+  "missionDefaults": {
+    "mode": "bounded-outcome",
+    "execution": "adaptive-direct-or-delegated",
+    "routineStaffingAndRecovery": "within-approved-envelope",
+    "steerable": true,
+    "statusUpdates": "when-useful"
+  },
   "coordinationDefaults": {
     "mode": "event-driven",
     "startupAckTimeoutMs": 10000,
@@ -41,7 +48,7 @@
     "tools": "harness-defaults"
   },
   "missionConfirmationRequired": true,
-  "missionConfirmationStyle": "bundled-roster",
+  "missionConfirmationStyle": "outcome-and-envelope",
   "coordinator": {
     "effort": "xhigh",
     "required": true
