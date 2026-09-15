@@ -64,9 +64,11 @@ claim isolation from untrusted workers.
 2. Persist `prepared` intent. If recording fails, do not dispatch.
 3. Reinspect identity, directives, ownership, limits and empty prompt. Before calling
    the native submission command, persist `dispatch-started`.
-4. Submit once using the [Herdr procedure](herdr.md#dispatch). Retain actual stdout,
-   stderr, exit status and native startup evidence; then record `observing`, confirmed
-   `not-sent`, or `uncertain`.
+4. Submit once using the [Herdr procedure](herdr.md#dispatch). With the preferred
+   background-command method, record its provider job ID and pending native outcome;
+   a job receipt is not worker-startup proof. Retain actual stdout, stderr, exit status
+   and native activity/outcome evidence when available, then record `observing`,
+   confirmed `not-sent`, or `uncertain` according to that evidence.
 
 A crash with `dispatch-started` is uncertain even if input may never have occurred.
 A timeout or absent receipt does not prove nondelivery. Never blindly repeat a prompt.

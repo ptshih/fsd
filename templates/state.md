@@ -4,6 +4,7 @@
 - Current status and approach (direct/delegated/mixed):
 - Outcome, scope and authority if this is a small direct goal without a separate packet:
 - Effective selections, original deadline, usage/unknowns and attempts remaining:
+- Selected delivery method, discovery status/evidence and pending provider job IDs:
 - Owned workers/worktrees/paths, including the coordinator's implementation scope:
 - Uncertain submissions, pending messages and unresolved acknowledged follow-ups:
 - Per-assignment verification, integration and dependency readiness:

@@ -39,6 +39,12 @@ Loading the skill, finding a task file, or receiving a worker message is not app
 
 ## Prepare only what is needed
 
+The default environment is **Pi as coordinator inside Herdr**. For automatic delegation,
+start with the [preferred Pi/Herdr method](references/pi-herdr.md): an approved
+`pi-interactive-shell` headless dispatch runs the bounded Herdr controller command and
+notifies Pi when it settles. This is a separate host capability, not builtin background
+bash or permission to install anything. Honor explicit harness/delivery choices instead.
+
 Read [setup](references/setup.md) on first use or when the environment changes. Preserve
 approved model, effort, tool and trust selections; verify required settings and disclose
 only approved fallbacks. Do not silently substitute settings unsupported by this harness.
@@ -48,9 +54,12 @@ review independence or context isolation outweigh startup, repeated reads and co
 There is no mandatory planner/builder/reviewer pipeline. Required independent review
 uses a fresh, implementation-read-only context, not the implementer's self-review.
 
-For a small direct task, a short progress/evidence note is enough; do not create an inbox,
-workers or a heartbeat. For delegation or work needing durable handoffs, establish the
-private [filesystem protocol](references/filesystem.md) before dispatch. Use the
+Direct work requires no worker-completion wakeup. If optional delegation is unavailable,
+continue directly when the outcome and required review permit it; do not label the whole
+goal blocked or take over unsettled work. For a small direct task, a short progress/evidence
+note is enough; do not create an inbox, workers or a heartbeat. For delegation or durable
+handoffs, establish the private [filesystem protocol](references/filesystem.md) before
+dispatch. Use the
 [record templates](templates/goal.md) as needed, not as mandatory paperwork for every task.
 
 Use one coordinator and one implementation writer per working directory, including the
@@ -60,19 +69,25 @@ Ownership is a cooperative rule, not filesystem isolation or a global lock servi
 
 ## Deliver
 
-1. **Prepare an assignment.** Give it a goal revision, assignment/attempt ID, focused
-   outcome, exact worker identity and cwd, owned paths, dependencies, checks, report
-   channel and limits. Supply the absolute installed [worker guide](references/worker.md)
-   path and useful entry points/contracts, not the whole transcript or coordinator setup.
-   Verify a dependency's actual artifact before downstream work starts.
-2. **Establish delivery.** Before affected delegation, verify the chosen
-   [native wakeup mode](references/delivery.md), including blocked-work coverage. Use
-   [Herdr](references/herdr.md) for native workers; do not switch to another delegation
-   route or recursive spawning merely because it is available.
+Direct execution skips worker setup and dispatch; do the work, verify it, and finish.
+For delegated work:
+
+1. **Establish delivery first.** Inspect the preferred method's actual tools and applicable
+   [native evidence](references/delivery.md) before allocating task workers. Distinguish
+   **unverified**, **verified** and **unavailable**; missing proof is not a discovered
+   failure. Complete read-only discovery and any already-authorized qualification before
+   escalating a concrete missing capability or permission. Reuse still-valid proof.
+2. **Prepare an assignment.** Use [Herdr](references/herdr.md) for native workers, never
+   another delegation route or recursive spawning. Give the packet a goal revision,
+   assignment/attempt ID, exact worker identity/cwd, scope, paths, dependencies, checks,
+   report channel and limits. Supply the absolute installed [worker guide](references/worker.md)
+   path and useful contracts, not the whole transcript or coordinator setup. Verify
+   dependency artifacts before downstream work starts.
 3. **Submit once.** Persist dispatch intent before input, verify native readiness and
-   an empty prompt, submit with a bounded startup receipt, and retain the real result.
-   Uncertain delivery means reconcile, not resend. Repairs, replacements and report
-   requests get new attempt IDs and consume the approved dispatch allowance.
+   an empty prompt, then submit through the selected bounded method. Track a background
+   job receipt separately from native startup/outcome evidence; do not claim worker
+   startup from job acceptance. Uncertain delivery means reconcile, not resend. Repairs,
+   replacements and report requests get new attempt IDs and consume the original allowance.
 4. **Work or yield.** Do independent authorized work; otherwise return control. On a
    native event, approved heartbeat, or owner request, scan the inbox and unresolved
    work. Notifications are hints; retained records survive duplicate or missed hints.

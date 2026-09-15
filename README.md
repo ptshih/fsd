@@ -9,6 +9,13 @@ extension hooks, server, scheduler or extra coordinating model. Normal harness t
 Herdr, Git and private files do the work. Automatic wakeups depend on verified native
 facilities; a file appearing on disk does not itself resume an agent.
 
+The default deployment is **Pi coordinating inside Herdr**. The
+[preferred automatic method](references/pi-herdr.md) uses the separately approved
+`pi-interactive-shell` host extension to run a bounded Herdr controller command in
+headless dispatch mode. It is not bundled or auto-installed by FSD. Pi core alone has
+no background bash, and `pi-subagents` is not this method's transport. Direct work
+needs neither extension nor a worker-completion wakeup.
+
 ## Use
 
 > Use FSD: fix the parser regression, run the tests, and stop. No public API changes.
@@ -79,7 +86,8 @@ to rewrite goal evidence or import another user's preferences.
 - [Worker guide](references/worker.md): focused execution and reporting without coordinator setup.
 - [Filesystem protocol](references/filesystem.md): ownership, messages, evidence and recovery.
 - [Filesystem examples](references/recipes.md): tested one-shot commands using normal tools.
-- [Native delivery](references/delivery.md): wakeups, heartbeats and unsupported modes.
+- [Preferred Pi/Herdr method](references/pi-herdr.md): concrete transport, discovery and dispatch.
+- [Native delivery](references/delivery.md): qualification, alternatives and bounded heartbeats.
 - [Herdr operations](references/herdr.md): dispatch, integration and cleanup.
 
 ## Development checks

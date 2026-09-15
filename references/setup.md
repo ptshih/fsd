@@ -10,9 +10,11 @@
    to substitute a different selection.
 3. Establish the requested outcome and only the missing consequential limits or choices.
    Do not demand a roster, every supported harness, or a project configuration file.
-4. Only if delegation is useful and authorized, check [Herdr](herdr.md) and choose a
-   [delivery mode](delivery.md). A missing delegation capability need not block suitable
-   direct work. Do not take over unresolved delegated work without reconciliation.
+4. Only if delegation is useful and authorized, use an explicitly selected allowed mode
+   or check the [preferred method](pi-herdr.md) for the default Pi-in-Herdr profile. Inspect
+   actual tools and applicable evidence; **unverified** is not **unavailable**. A missing
+   delegation capability need not block suitable direct work. Do not take over
+   unresolved delegated work or waive required independent review.
 
 Keep setup proportional. Do not install dependencies, edit harness settings, enable
 trust, create workers or schedule a heartbeat merely to perform a readiness check.
@@ -49,7 +51,14 @@ one model's effort label equivalent to another's: verify the effective selection
 
 ## Capability check
 
-Record only what the goal needs:
+The default deployment is a Pi coordinator inside Herdr. Its preferred automatic route
+is `pi-interactive-shell` headless dispatch of a bounded Herdr controller command—not
+Pi builtin background bash, a helper model, or `pi-subagents`. This host extension is
+separate from FSD and requires owner-approved setup if absent. Follow the concrete
+[discovery and dispatch procedure](pi-herdr.md); do not invent tool arguments or treat
+this default as permission to change the owner's current harness.
+
+Record only what the goal needs, reusing still-applicable evidence:
 
 | Capability | Evidence |
 | --- | --- |
@@ -62,8 +71,11 @@ Record only what the goal needs:
 | Heartbeat | Existing scheduler, owned job ID, cadence, expiry and stop control |
 
 Do not equate an installed binary, toast, scheduled job or environment variable with
-successful delivery. Do not run a live worker experiment under setup-only authority.
-If proof needs a bounded live check, include it in the approved goal envelope or ask.
+successful delivery. Record the selected method, discovery status (unverified, verified
+or unavailable), actual tool/provider/version and concrete evidence or missing capability.
+Do not stop at “no verified wakeup” before read-only discovery. Do not run a live worker
+experiment under setup-only authority. If proof needs a bounded live check, include it
+in the approved goal envelope or ask once for that specific authority.
 
 ## Upgrades and multiple machines
 

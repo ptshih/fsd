@@ -4,11 +4,30 @@ A durable inbox is useful even when notifications are duplicated or missed. It c
 wake a model by itself. FSD does not install hooks, write watchers, create schedulers,
 run a service or add a monitoring model. Use existing native facilities only.
 
+## Preferred method first
+
+The default environment is **Pi orchestrating inside Herdr**. Start with the concrete
+[preferred Pi/Herdr method](pi-herdr.md): `pi-interactive-shell` headless dispatch runs a
+bounded Herdr prompt-and-wait command, and its native completion notification resumes
+Pi. Herdr still owns the worker. Disable quiet auto-close; do not spawn an agent through
+the shell extension. Pi core alone does not supply this background-command facility.
+
+Inspect that provider's actual availability and applicable proof before reporting a
+blocker. **Unverified** means discovery/qualification remains; **unavailable** requires a
+specific missing tool/contract or failed check. Reuse valid proof instead of repeating
+a campaign for every assignment. Read-only discovery is not permission to install,
+launch workers or run a live probe. Loading FSD or doing direct work needs no wakeup.
+
+The modes below describe alternatives only when selected and authorized; they are not
+an instruction to search indefinitely or invent a bridge when the preferred method is
+missing. Continue suitable direct/independent work; pause only work that really requires
+the missing delegation capability.
+
 ## Choose a real mode
 
 | Mode | Requirement |
 | --- | --- |
-| Event-driven | A verified native message, file monitor, or background-task completion facility |
+| Event-driven (preferred) | The verified background-command method above, or an explicitly selected equivalent |
 | Event-driven with recovery heartbeat | Event delivery plus an existing, approved bounded scheduler |
 | Heartbeat-driven | Explicitly approved periodic resumption, bounded cadence/count/deadline, and known detection latency |
 | Manual | Explicit owner agreement to resume/inspect; no unattended claim |
@@ -37,8 +56,10 @@ Under the goal's authority, use harmless uniquely identified test events to esta
   pane/session, and the receiver can identify its source.
 
 Record actual receipt and the facility/host/version/session, not an invented acknowledgment.
-Repeat relevant proof when activation, session, host or delivery facility changes. A
-setup-only request does not authorize workers or a live qualification campaign.
+Reuse proof while those bindings and capabilities remain valid. Repeat only relevant
+proof when activation, session, host or delivery facility changes. Missing evidence is
+not evidence of failure: inspect first and identify the specific check needed. A setup-only
+request does not authorize workers or a live qualification campaign.
 
 Wakeup and worker-state detection are separate. A file-only channel cannot report a
 worker stuck at a permission prompt before it can write a message. Before unattended
@@ -48,8 +69,15 @@ never treat `working` as proof no question is waiting.
 
 ## Connect the inbox
 
-Prefer an existing host-managed monitor that reports new final files in worker inboxes,
-or genuine native cross-agent messages pointing to those files. Keep notifications
+With the preferred method, one verified host-owned background operation covers the
+Herdr command and its completion delivery, including commands that finish before the
+coordinator yields. Do not start an unobserved command first and attach later. Completion
+is the hint to scan the inbox; no separate filesystem watcher is required. Job acceptance
+is not worker-startup proof, and notifications may abbreviate output: retain and inspect
+the full native receipt.
+
+For an explicitly selected file/message mode, use an existing host-managed monitor or
+genuine native cross-agent messages pointing to final inbox files. Keep notifications
 small: goal, attempt, event ID and report location. The coordinator reads and verifies
 the authoritative records through normal tools.
 
@@ -58,9 +86,9 @@ not create wakeup loops. Ignore temporary files, coalesce hints where supported,
 scan for all pending records on every wakeup. Notification loss or duplication must not
 lead to re-dispatch or acceptance without inspection.
 
-Arm the native observation before the final inbox scan and before dispatch so there is
-no scan-then-subscribe gap. On rearming after a one-shot notification, arm first and
-rescan. Record the watch's native ID, owner, observed paths, expiry and stop control.
+For a separate monitor, arm observation before the final inbox scan and before dispatch
+so there is no scan-then-subscribe gap. On rearming after a one-shot notification, arm
+first and rescan. Record the watch's native ID, owner, observed paths, expiry and stop control.
 Do not generate a long-running shell/JavaScript loop to manufacture missing support.
 A static command passed to an existing generic monitor is configuration, not permission
 to add an FSD-specific background program.

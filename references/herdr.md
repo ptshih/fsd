@@ -29,15 +29,22 @@ edit another worker's checkout or silently take over its partial work.
 
 ## Dispatch
 
-Prepare the [assignment](../templates/assignment.md) and
-[attempt record](../templates/attempt.md), and establish [delivery](delivery.md).
+Select and qualify the [preferred Pi/Herdr method](pi-herdr.md), or follow the owner's
+explicit allowed mode, before allocating task-worker resources. Prepare the
+[assignment](../templates/assignment.md) and [attempt record](../templates/attempt.md),
+and establish [delivery](delivery.md).
 Immediately before input, verify the exact native occupant, current directives, budget,
 writer ownership and an empty human prompt. Ready metadata alone is insufficient when
 an interactive UI or human draft is visible.
 
 Persist dispatch intent first, then use native `agent prompt` once. For the installed
 command shape, TARGET and TEXT precede options; preserve the complete prompt as one
-argument. For example, after replacing the placeholders and verifying CLI support:
+argument. In the preferred method, the host background job runs `agent prompt --wait`
+with a bounded completion timeout. Its job receipt and deferred native outcome are
+separate; never submit again merely because startup evidence has not arrived yet.
+
+For a separately authorized observation method needing a short synchronous startup
+receipt, use this variant after replacing placeholders and verifying CLI support:
 
 ```sh
 herdr agent prompt TARGET TEXT --wait --until working --until idle --until done --until blocked --timeout 10000
@@ -54,9 +61,11 @@ changes, delivery is uncertain, or a command stalls/times out, inspect current n
 state and output plus retained receipts before any retry. Never blindly replay input.
 A rejected command can be recorded as not sent only when its evidence establishes that.
 
-Do not turn default `agent prompt --wait` or `agent wait` into a foreground completion
-loop. State-based waiting is useful only through the chosen native delivery facility,
-or as a bounded diagnostic/explicit owner-requested wait. Normal operation yields.
+Do not run default `agent prompt --wait` or `agent wait` as a foreground completion
+loop in Pi's builtin `bash`. The preferred host-owned background command is different:
+it returns a job ID immediately and wakes Pi later. State-based waiting otherwise needs
+a selected native delivery facility or an explicit owner-requested foreground exception.
+Normal coordination yields.
 
 ## Inspect results and prompts
 
