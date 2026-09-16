@@ -8,7 +8,7 @@ import { execFileSync } from 'node:child_process';
 export const templateFields = {
   goal: ['goal_id', 'revision', 'fsd_version', 'status', 'started_at', 'deadline', 'goal_path',
     'coordinator_host', 'coordinator_session', 'supervision', 'max_workers', 'max_attempts'],
-  assignment: ['goal_id', 'revision', 'assignment_id', 'attempt_id', 'goal_path', 'worker_guide', 'worker_host',
+  assignment: ['goal_id', 'revision', 'assignment_id', 'attempt_id', 'goal_path', 'worker_guide', 'role_file', 'worker_host',
     'worker_pane', 'worker_tab', 'worker_terminal', 'worker_session', 'worker_kind', 'cwd',
     'branch_and_base', 'role', 'implementation_write_paths', 'output_write_paths', 'report_channel', 'deadline'],
   attempt: ['goal_id', 'revision', 'assignment_id', 'attempt_id', 'worker_session', 'status', 'created_at', 'deadline'],
@@ -36,7 +36,7 @@ export function validate(root) {
   for (const key of ['dependencies', 'peerDependencies', 'optionalDependencies'])
     assert.equal(pkg[key], undefined, 'Skill package must not require executable dependencies');
   assert.deepEqual(pkg.scripts, { test: 'node --test tests/*.test.mjs', check: 'node scripts/check.mjs' });
-  assert.deepEqual(pkg.files, ['SKILL.md', 'README.md', 'LICENSE', 'references/', 'templates/', '.claude-plugin/']);
+  assert.deepEqual(pkg.files, ['SKILL.md', 'README.md', 'LICENSE', 'references/', 'templates/', 'agents/', '.claude-plugin/']);
   assert.deepEqual(Object.keys(plugin).sort(), ['author', 'description', 'license', 'name', 'repository', 'version']);
   assert.equal(plugin.name, 'fsd');
   assert.equal(market.name, 'fsd');
@@ -63,7 +63,7 @@ export function validate(root) {
     const ext = extname(path);
     assert(name === 'LICENSE' || name === '.gitignore' || ['.md', '.json', '.mjs'].includes(ext), `Unexpected file: ${name}`);
     if (ext === '.mjs') assert(/^(scripts|tests)\//.test(name), `Executable outside development checks: ${name}`);
-    const documents = ['LICENSE', '.gitignore', 'README.md', 'SKILL.md'].includes(name) || /^(references|templates)\/.+\.md$/.test(name);
+    const documents = ['LICENSE', '.gitignore', 'README.md', 'SKILL.md'].includes(name) || /^(references|templates|agents)\/.+\.md$/.test(name);
     const manifests = ['package.json', '.claude-plugin/plugin.json', '.claude-plugin/marketplace.json'].includes(name);
     const development = /^(scripts|tests)\/.+\.mjs$/.test(name);
     assert(documents || manifests || development, `Unexpected package artifact: ${name}`);

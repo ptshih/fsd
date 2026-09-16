@@ -55,18 +55,37 @@ Follow [cleanup](#cleanup) for these owned tabs; preserve unrelated resources an
 
 ## Dispatch
 
-Establish an already-available [native wakeup facility](delivery.md) before allocating
+Establish the [native wakeup facility](delivery.md) once per goal before allocating
 task-worker resources. Prepare the [assignment](../templates/assignment.md) and
-[attempt record](../templates/attempt.md), with filesystem report paths and native
-observation armed before input.
-Immediately before input, verify the exact native occupant, current directives, budget,
-writer ownership and an empty human prompt. Ready metadata alone is insufficient when
-an interactive UI or human draft is visible.
+[attempt record](../templates/attempt.md) with filesystem report paths; arm any inbox
+watch before input. Copy `revision` and the deadline from the current `goal.md` when the
+packet is written; a retry or replacement packet must not inherit an earlier packet's
+values. Immediately before input, verify the exact native occupant, current directives,
+budget, writer ownership and an empty human prompt. Ready metadata alone is insufficient
+when an interactive UI or human draft is visible.
 
-Persist dispatch intent first, then submit through native `agent prompt` exactly once.
-TARGET and TEXT precede options; replace placeholders and preserve the complete prompt
-as one shell argument. Use this bounded startup acknowledgment after checking installed
-CLI support:
+The launch sequence for one worker, after its tab exists, uses these checked commands.
+Replace placeholders. `LAUNCH_ARGS` are the role file's `launch_args` for that harness
+with `ROLE_FILE` resolved, plus the approved model and approval flags; omit the trailing
+`--` when there are none. `PACKET_TEXT` is the complete prompt as one shell argument.
+
+<!-- fsd-example: herdr-worker-start -->
+```sh
+herdr agent start WORKER_NAME --kind HARNESS --pane ROOT_PANE_ID --timeout 30000 -- LAUNCH_ARGS
+```
+
+If `agent start` returns `agent_not_ready`, the pane is at a startup dialog such as
+workspace trust: inspect it, handle only the exact prompt covered by owner consent, then
+wait for `idle` (not `blocked`) before continuing.
+
+Then verify the effective launch, not the typed one: `herdr pane process-info --pane
+ROOT_PANE_ID` shows the real argv including anything the pane's interactive shell injected
+(a shell alias can silently add flags such as `--dangerously-skip-permissions`, which
+overrides `--permission-mode plan`), and the harness footer shows the required mode. Under
+Claude Code, cycle modes with `agent send-keys WORKER_NAME shift+tab` and read the footer
+back until it matches. Then inspect the pane (`herdr agent read WORKER_NAME --source
+visible`) for an empty prompt and no trust or permission dialog. Persist dispatch intent,
+then submit through native `agent prompt` exactly once. TARGET and TEXT precede options:
 
 ```sh
 herdr agent prompt TARGET TEXT --wait --until working --until idle --until done --until blocked --timeout 10000
@@ -77,15 +96,29 @@ Use the shorter remaining goal/attempt allowance when necessary. Retain the exac
 command result, stdout/stderr and post-submission native activity. Do not claim startup
 from successful byte delivery or a pre-existing idle state.
 
+Immediately after the receipt, arm the worker's settled-state wait through the host's
+background facility, with a timeout inside the remaining goal allowance:
+
+<!-- fsd-example: herdr-worker-wait -->
+```sh
+herdr agent wait WORKER_NAME --timeout REMAINING_MS
+```
+
+Its exit is the wake: `idle`/`done` means inspect the inbox and pane, `blocked` means a
+dialog needs owner-consented handling, `timeout` means reconcile and renew. Record the
+background task handle in the attempt.
+
 `agent prompt` is not an atomic compare-and-submit operation against the coordinator's
 prior screen/identity inspection. Exclusive ownership remains necessary. If identity
 changes, delivery is uncertain, or a command stalls/times out, inspect current native
 state and output plus retained receipts before any retry. Never blindly replay input.
 A rejected command can be recorded as not sent only when its evidence establishes that.
 
-Do not run default `agent prompt --wait` or `agent wait` as a task-completion wait,
-wrap them in a background controller, or poll until completion. After the short startup
-receipt, work independently or yield to the already-armed native wakeup facility.
+Do not run default `agent prompt --wait` or `agent wait` as a task-completion wait in
+the model turn, wrap them in a custom controller, or poll until completion. `agent wait`
+belongs only inside the host's already-available background facility, which turns its
+exit into a native notification. After the short startup receipt, work independently or
+yield to the already-armed native wakeup facility.
 
 ## Inspect results and prompts
 
@@ -112,11 +145,15 @@ Require reports to identify assignment/attempt, affected paths, actual checks/re
 skips/unknowns and remaining work. Preserve them in authorized evidence paths. A truly
 read-only worker uses native reporting, not an unapproved temporary-file fallback.
 If a report is incomplete, recover available output first; any follow-up prompt is a
-new bounded attempt, only after verified readiness.
+new bounded attempt, only after verified readiness. A reply to a worker's `question`
+message is likewise a new attempt on the same assignment: persist intent, prompt once,
+then re-arm that worker's settled-state wait.
 
 Inspect every actual trust/question/permission UI before responding. Apply only the
 owner's existing consent to its stated path/action; use supported navigation, read back
-the selected choice, then confirm and verify readiness. Prefer session-only trust where
+the selected choice, then confirm and verify readiness.
+After answering a dialog, wait for `working` or `idle` only; a first wait that includes
+`blocked` matches the stale pre-answer state immediately. Prefer session-only trust where
 approved. Never generalize exact-folder consent to parent/global trust, another prompt
 or another user. Native auto-approval expands neither the goal nor release authority.
 Unknown authority means ask when supervised or defer when unsupervised.
@@ -138,10 +175,15 @@ or services have stopped, or that its changes have been accepted.
 On completion, cancellation or an agreed limit:
 
 1. Stop new affected dispatch; preserve reports, partial work and the next owner/action.
+   Capture any native report to evidence first with `agent read --source recent-unwrapped`;
+   exiting the harness or closing the pane discards it.
 2. Rediscover the caller and owned targets. Inspect current agent state, actual output
    and pane process information. Reconcile unfinished operations and shared services.
 3. Use supported native interruption for owned work when authorized, then verify it
    settled. Do not claim a stop from a file change, observer cancellation or sent key.
+   Exit the harness with its native key sequence before closing a pane (Claude Code:
+   `agent send-keys ctrl+c` twice; a `/exit` sent through `agent prompt` did not exit it)
+   and verify `pane process-info` shows the shell.
 4. Close only disposable, verified goal-owned panes. Close a tab only when every pane
    in it is verified disposable. Reuse alone does not grant closure authority. Preserve
    the coordinator, human drafts, unrelated resources, worktrees, branches and evidence.

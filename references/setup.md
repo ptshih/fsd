@@ -66,6 +66,26 @@ Only save preferences at the owner's request. Keep them private and outside the 
 skill. Never include credentials, transcripts or goal reports. Machine paths and trust
 state remain local; sharing a profile between the same owner's machines is explicit.
 
+## Role files
+
+A role file under the skill's `agents/` directory fixes a worker's scope, report shape and
+harness launch arguments; an owner file at `$XDG_CONFIG_HOME/fsd/agents/<name>.md` overrides
+the shipped one by name. Role files never carry model names: `roles.<name>` in preferences
+supplies harness, model and effort, and `executionAgentDefaults` supplies approval policy.
+Before `herdr agent start`, replace `ROLE_FILE` in `launch_args` with the role file's
+absolute path, append the approved model and approval flags for that harness, and pass
+everything after `--`. `hardened_launch_args` remove write ability at the harness, so a
+hardened worker reports natively and the coordinator captures the result with
+`herdr agent read`. Check each flag against the installed harness's `--help` once per goal,
+as with other command shapes. Record the exact file used in the assignment's `role_file`.
+Hardened Claude Code plan mode still permits read-only shell commands, so a hardened reviewer
+can run assigned checks; Pi `--tools read,grep,find,ls` cannot. Verify the effective mode
+after start ([dispatch](herdr.md#dispatch)): a shell alias in the worker pane can silently
+rewrite launch flags.
+Shipped roles: [scout](../agents/scout.md), [builder](../agents/builder.md),
+[workhorse](../agents/workhorse.md), [reviewer](../agents/reviewer.md) and
+[judge](../agents/judge.md).
+
 ## Improving FSD itself
 
 Before edits, pin the exact source revision and preserve a read-only runbook containing

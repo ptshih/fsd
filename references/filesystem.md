@@ -118,7 +118,8 @@ On a native wakeup, normal coordinator turn, startup or owner request:
    Old-revision evidence may be useful, but cannot satisfy current criteria without a
    new check. Foreign, malformed and superseded messages do not revive work.
 3. Record the pending inspection/next action in coordinator state, then publish a
-   separate acknowledgment for that exact event. Retain invalid/stale reports with an
+   separate acknowledgment for that exact event. A native report has no inbox event:
+   record receipt, the captured evidence path and disposition in its attempt record instead. Retain invalid/stale reports with an
    explicit disposition instead of treating them as current work.
 4. Inspect actual artifacts and checks before acceptance. Record source snapshot
    (commit plus uncommitted/untracked changes as applicable), command, cwd, exit, log,
@@ -153,7 +154,7 @@ not a fresh allowance.
 ## Close
 
 Reconcile all owned work, verify necessary integration/checks, and record terminal outcome,
-remaining issues and explicit retained-resource ownership. Cancel owned monitors and
+remaining issues and explicit retained-resource ownership. Cancel owned waits, watches and
 scheduled check-ins and verify cleanup. Never remove the only evidence or close unrelated
 resources. Preserve goal records, reports, worktrees and branches unless deletion is
 separately authorized. Late messages remain evidence but cannot reopen a closed goal.

@@ -10,7 +10,7 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 function fixture(t) {
   const destination = mkdtempSync(join(tmpdir(), 'fsd-skill-check-'));
   t.after(() => rmSync(destination, { recursive: true, force: true }));
-  for (const path of ['SKILL.md', 'README.md', 'LICENSE', 'package.json', '.claude-plugin', 'references', 'templates'])
+  for (const path of ['SKILL.md', 'README.md', 'LICENSE', 'package.json', '.claude-plugin', 'references', 'templates', 'agents'])
     cpSync(join(root, path), join(destination, path), { recursive: true });
   return destination;
 }
@@ -23,12 +23,12 @@ function changeJson(dir, path, update) {
 
 test('package, links, frontmatter, templates and development scripts validate', () => {
   const result = validate(root);
-  assert.equal(result.version, '1.0.0');
+  assert.equal(result.version, '1.1.0');
   assert(result.links > 20);
 });
 
 test('copied distribution validates without Pi, Claude, Herdr or private preferences', t => {
-  assert.equal(validate(fixture(t)).version, '1.0.0');
+  assert.equal(validate(fixture(t)).version, '1.1.0');
 });
 
 test('release versions must agree', t => {
@@ -103,8 +103,34 @@ test('unlisted root configuration cannot silently add host behavior', t => {
 });
 
 test('published documents do not include an owner profile or machine paths', () => {
-  for (const name of ['SKILL.md', 'README.md', 'references/setup.md', 'references/filesystem.md', 'references/herdr.md', 'references/delivery.md', 'references/worker.md', 'references/recipes.md']) {
+  for (const name of ['SKILL.md', 'README.md', 'references/setup.md', 'references/filesystem.md', 'references/herdr.md', 'references/delivery.md', 'references/worker.md', 'references/recipes.md', 'agents/reviewer.md', 'agents/builder.md', 'agents/scout.md', 'agents/judge.md', 'agents/workhorse.md', 'references/example.md']) {
     const text = readFileSync(join(root, name), 'utf8');
     assert.doesNotMatch(text, /\/Users\/|approvedOn|confirmedOn|gpt-\d|startupPromptApprovals/);
   }
+});
+
+test('role files fix scope, launch arguments and report shape without deployment policy', () => {
+  for (const name of ['reviewer', 'builder', 'scout', 'judge', 'workhorse']) {
+    const text = readFileSync(join(root, `agents/${name}.md`), 'utf8');
+    const flat = text.replace(/\s+/g, ' ');
+    assert.match(text, new RegExp(`^name: ${name}$`, 'm'));
+    for (const field of ['description', 'implementation_write', 'report_write', 'model', 'default_limits', 'launch_args'])
+      assert.match(text, new RegExp(`^${field}:`, 'm'), `Missing ${name}.${field}`);
+    assert.match(text, /^model: owner-preferences roles\./m, 'Role files point at owner preferences for model routing');
+    assert.match(text, /"ROLE_FILE"/, 'Launch arguments inject the role file, not inline prompt text');
+    assert.match(flat, /kind: "question"/, 'Role files define the escalation message');
+    assert.match(flat, /A report requests inspection; it is not acceptance/);
+    assert(text.trim().split(/\s+/).length <= 550, `Keep the ${name} role under 550 words`);
+  }
+  for (const name of ['reviewer', 'scout', 'judge'])
+    assert.match(readFileSync(join(root, `agents/${name}.md`), 'utf8'), /^hardened_report_channel: native$/m, `Read-only role ${name} reports natively when hardened`);
+  for (const name of ['builder', 'workhorse'])
+    assert.match(readFileSync(join(root, `agents/${name}.md`), 'utf8'), /^implementation_write: assigned-worktree-only$/m);
+});
+
+test('worked example traces a real goal including its corrections', () => {
+  const example = readFileSync(join(root, 'references/example.md'), 'utf8').replace(/\s+/g, ' ');
+  for (const phrase of ['agent_not_ready', 'shift+tab', 'herdr agent wait', 'Merge verdict: BLOCK', 'revision: 1', 'Closed — delivered'])
+    assert(example.includes(phrase), `Example should mention ${phrase}`);
+  assert.match(readFileSync(join(root, 'SKILL.md'), 'utf8'), /\(references\/example\.md\)/);
 });

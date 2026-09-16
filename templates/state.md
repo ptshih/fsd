@@ -12,7 +12,7 @@
 - Per-assignment verification, integration and dependency readiness:
 - Checks: criterion, source snapshot, command, cwd, exit, evidence, skips/unknowns:
 - Material decisions and owner steering:
-- Owned native watch/check-in handles, deadline notification and verified cleanup status:
+- Owned native wait/watch/check-in handles, deadline notification and verified cleanup status:
 - Next authorized action and whether the owner needs to act:
 - Terminal outcome, remaining uncertainty and retained-resource owner/next action:
 

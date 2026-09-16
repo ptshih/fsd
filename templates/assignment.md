@@ -7,6 +7,7 @@ assignment_id: "REPLACE"
 attempt_id: "REPLACE"
 goal_path: "REPLACE"
 worker_guide: "REPLACE_WITH_ABSOLUTE_APPROVED_WORKER_GUIDE_PATH"
+role_file: "REPLACE_WITH_ABSOLUTE_ROLE_FILE_PATH_OR_NONE"
 worker_host: "REPLACE"
 worker_pane: "REPLACE"
 worker_tab: "REPLACE"
@@ -15,21 +16,22 @@ worker_session: "REPLACE_WITH_NATIVE_SESSION_ID_OR_PATH_OR_UNKNOWN"
 worker_kind: "REPLACE"
 cwd: "REPLACE_WITH_CANONICAL_PATH"
 branch_and_base: "REPLACE"
-role: "REPLACE_WITH_WRITER_OR_READ_ONLY"
+role: "REPLACE_WITH_ROLE_NAME_OR_WRITER_OR_READ_ONLY"
 implementation_write_paths: []
 output_write_paths: []
 report_channel: "REPLACE_WITH_NATIVE_OR_ABSOLUTE_FINAL_REPORT_PATH"
 deadline: "REPLACE"
 ```
 
-Read the supplied `worker_guide` and this packet first. You are executing an existing
-assignment, not starting a new goal; do not repeat coordinator setup. The guide path
-must be absolute; it may point to a pinned runbook when the goal changes FSD itself.
-Use the [message template's quoting convention](message.md) for strings, including path
-array entries. Replace placeholders and the example revision with actual values. Keep
-pane/terminal details separate. If a native session is not exposed yet, use `"unknown"`
-with the verified pane/terminal
-binding, then reconcile the actual session once available. Never invent an ID.
+Read the supplied `worker_guide`, the `role_file` if one is set, and this packet first.
+You are executing an existing assignment, not starting a new goal; do not repeat
+coordinator setup. The guide path must be absolute; it may point to a pinned runbook
+when the goal changes FSD itself. Use the [message template's quoting convention](message.md)
+for strings, including path array entries. Replace placeholders and the example revision
+with actual values. Take `revision` and `deadline` from the current `goal.md` when the
+packet is written; never copy them from an earlier packet. Keep pane/terminal details
+separate. If a native session is not exposed yet, use `"unknown"` with the verified
+pane/terminal binding, then reconcile the actual session once available. Never invent an ID.
 
 ## Outcome
 

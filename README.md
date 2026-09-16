@@ -4,15 +4,19 @@
 conversations: work directly or coordinate visible Herdr workers, verify the result,
 and finish deliberately.
 
-FSD 1.0.0 is instructions, references and record templates. **Herdr is the only runtime
+FSD 1.1.0 is instructions, references, role files and record templates. **Herdr is the only runtime
 dependency** beyond your coding harness and its ordinary tools. Assume Herdr's harness
 integrations are installed. FSD adds no executable, extension, package dependency,
 server, scheduler or helper model. Use Git where the project requires it.
 
 There is one workflow: **Herdr tabs → filesystem reports → existing native wakeup →
-coordinator verification**. Small work stays direct. For unattended delegation, FSD
-uses only a wakeup facility already exposed by Herdr or the active harness. Files
-preserve state but cannot wake an idle agent by themselves. If the host lacks a usable
+coordinator verification**. Small work stays direct. Each worker runs under a
+[role file](references/setup.md#role-files) (`scout`, `builder`, `workhorse`, `reviewer`,
+`judge`) that fixes its scope, harness launch arguments and report shape; the owner's
+preferences supply model routing. For unattended delegation, FSD uses only a wakeup
+facility already exposed by Herdr or the active harness: Herdr's settled-state
+`agent wait`, run in the host's background facility, with an inbox watch as fallback.
+Files preserve state but cannot wake an idle agent by themselves. If the host lacks a usable
 facility, FSD reports that gap before dispatch—not an installation task, a custom
 bridge, or an undisclosed manual fallback. See [native wakeup](references/delivery.md).
 
@@ -24,11 +28,11 @@ Supervised is the default. Request unsupervised work explicitly; that changes ho
 in-scope decisions are handled, not permissions or available host capabilities. Neither
 mode authorizes ongoing backlog work. Steer, pause or cancel through the conversation.
 
-Small direct tasks need no worker setup. Delegated goals use one coordinator, isolated
-implementation worktrees, immutable inbox messages and separate acknowledgment and
-acceptance. Prepare once, reuse still-applicable evidence, and recheck live identity/UI
-before input. Workers receive a focused read list and resolved report contract, not a
-coordination research task. The [skill](SKILL.md) gives the workflow.
+Small direct tasks need no worker setup. Delegated goals use one coordinator, a role file per worker, isolated implementation
+worktrees, immutable inbox messages (or native reports from hardened read-only workers)
+and separate acknowledgment and acceptance. Prepare once, reuse still-applicable evidence, and recheck live identity/UI
+before input. Workers receive a role file, a focused read list and a resolved report contract, not
+a coordination research task. The [skill](SKILL.md) gives the workflow.
 
 ## Install and update
 
@@ -87,17 +91,19 @@ a separate checkout; proposed instructions cannot change the running goal's auth
 ## References
 
 - [Setup and preferences](references/setup.md): minimal first use, local choices, upgrades.
-- [Worker guide](references/worker.md): focused execution and reporting without coordinator setup.
+- [Worker guide](references/worker.md): focused execution, escalation and reporting without coordinator setup.
+- [Role files](references/setup.md#role-files): shipped roles under `agents/`, owner overrides, launch arguments.
 - [Filesystem protocol](references/filesystem.md): ownership, messages, evidence and recovery.
 - [Filesystem examples](references/recipes.md): tested one-shot commands using normal tools.
-- [Native wakeup](references/delivery.md): use existing host facilities; no custom machinery.
+- [Worked example](references/example.md): one hardened reviewer end to end, including the mistakes.
+- [Native wakeup](references/delivery.md): settled-state waits and inbox watches through existing host facilities; no custom machinery.
 - [Herdr operations](references/herdr.md): dispatch, integration and cleanup.
 
 ## Development checks
 
 From a source checkout with Node 22 or later, run `npm test` and `npm run check`. No
-dependency installation is needed. These validate packaging, documentation, templates and
-exact filesystem examples in disposable local fixtures—not agent compliance or end-to-end
+dependency installation is needed. These validate packaging, documentation, role files, templates
+and exact filesystem examples in disposable local fixtures—not agent compliance or end-to-end
 delivery. Install/update behavior and autonomous coordination must be checked
 on each supported host profile; cross-harness live qualification is not claimed.
 

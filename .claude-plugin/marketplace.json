@@ -1,12 +1,12 @@
 {
   "name": "fsd",
-  "description": "FSD: a pure skill for bounded, filesystem-coordinated delivery",
+  "description": "FSD: a pure skill for bounded delivery with role-defined Herdr workers",
   "owner": { "name": "ptshih" },
   "plugins": [
     {
       "name": "fsd",
       "source": "./",
-      "description": "Pure-skill bounded delivery with filesystem coordination"
+      "description": "Pure-skill bounded delivery with role-defined Herdr workers and filesystem handoffs"
     }
   ]
 }

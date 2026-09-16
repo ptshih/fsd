@@ -1,6 +1,6 @@
 // Development-only documentation contracts. No host tools, agents or watches are run.
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { test } from 'node:test';
 
 const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
@@ -12,7 +12,6 @@ test('one Herdr/filesystem/native-wakeup path has no prescribed extension depend
   assert.match(skill, /## One usage path/);
   assert.match(skill, /already-available native host facility/);
   assert.match(text('README.md'), /Herdr tabs → filesystem reports → existing native wakeup → coordinator verification/);
-  assert(!existsSync(new URL('../references/pi-herdr.md', import.meta.url)), 'Remove the superseded transport guide');
   const docs = ['SKILL.md', 'README.md'];
   for (const dir of ['references', 'templates']) {
     for (const name of readdirSync(new URL(`../${dir}/`, import.meta.url))) {
@@ -96,4 +95,42 @@ test('records distinguish native watch registration, startup, reports and accept
   assert.match(text('templates/state.md'), /Already-available native wakeup facility/);
   assert.match(text('references/filesystem.md'), /Neither sent bytes nor an armed watch prove worker startup or completion/);
   assert.match(text('README.md'), /not agent compliance or end-to-end delivery/);
+});
+
+test('workers wake the coordinator through a background settled-state wait, with inbox watch as fallback', () => {
+  const delivery = text('references/delivery.md');
+  const herdr = read('references/herdr.md');
+  assert.match(delivery, /Settled-state wait \(preferred\)/);
+  assert.match(delivery, /one wait per worker attempt, armed immediately after the startup receipt/);
+  assert.match(delivery, /A worker that already settled returns at once/);
+  assert.match(delivery, /Inbox watch \(fallback and supplement\)/);
+  assert.match(delivery, /block the model turn on a completion wait/);
+  assert.match(text('references/herdr.md'), /`agent wait` belongs only inside the host's already-available background facility/);
+  const start = herdr.match(/<!-- fsd-example: herdr-worker-start -->\n```sh\n([\s\S]*?)\n```/)?.[1];
+  assert.equal(start, 'herdr agent start WORKER_NAME --kind HARNESS --pane ROOT_PANE_ID --timeout 30000 -- LAUNCH_ARGS');
+  const wait = herdr.match(/<!-- fsd-example: herdr-worker-wait -->\n```sh\n([\s\S]*?)\n```/)?.[1];
+  assert.equal(wait, 'herdr agent wait WORKER_NAME --timeout REMAINING_MS');
+  assert.match(text('SKILL.md'), /arm the worker's settled-state wait/);
+  assert.match(text('templates/attempt.md'), /settled-state wait handle/);
+});
+
+test('smoke-qualified lessons: effective launch, dialog waits, native exit, current revision', () => {
+  const herdr = text('references/herdr.md');
+  assert.match(herdr, /a shell alias can silently add flags such as `--dangerously-skip-permissions`, which overrides `--permission-mode plan`/);
+  assert.match(herdr, /read the footer back until it matches/);
+  assert.match(herdr, /After answering a dialog, wait for `working` or `idle` only/);
+  assert.match(herdr, /`agent send-keys ctrl\+c` twice/);
+  assert.match(herdr, /a retry or replacement packet must not inherit an earlier packet's values/);
+  assert.match(text('templates/assignment.md'), /never copy them from an earlier packet/);
+  assert.match(text('references/setup.md'), /Hardened Claude Code plan mode still permits read-only shell commands/);
+  assert.match(text('agents/reviewer.md'), /run them only if your mode permits shell commands/);
+});
+
+test('native reports are captured before teardown and startup dialogs are handled before dispatch', () => {
+  const herdr = text('references/herdr.md');
+  assert.match(herdr, /Capture any native report to evidence first with `agent read --source recent-unwrapped`/);
+  assert.match(herdr, /If `agent start` returns `agent_not_ready`, the pane is at a startup dialog/);
+  assert.match(text('references/filesystem.md'), /A native report has no inbox event/);
+  assert.match(text('references/delivery.md'), /and the facility's own maximum; renew on expiry after reconciling/);
+  assert.match(text('SKILL.md'), /or report natively when hardened read-only/);
 });

@@ -15,7 +15,8 @@ deadline: REPLACE
 
 - Assignment packet and exact native identity/cwd:
 - Prompt or private immutable prompt reference:
-- Armed native watch handle, assigned inbox paths and owning coordinator session:
+- Armed native watch handle and settled-state wait handle, assigned inbox paths and
+  owning coordinator session:
 - Verified ownership, effective settings and empty prompt evidence:
 - Dispatch allowance consumed/remaining, including prior attempts:
 - Prepared intent retained; `dispatch-started` retained immediately before native input:
