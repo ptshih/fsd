@@ -4,7 +4,7 @@ description: "Deliver a bounded goal using ordinary tools, Herdr tabs and filesy
 license: MIT
 compatibility: "Herdr is the only runtime dependency beyond the coding harness and its ordinary file/shell tools. Use Git where the project requires it. No additional extensions, packages, runners or services. Files preserve state but do not wake an idle agent."
 metadata:
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # FSD

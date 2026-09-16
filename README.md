@@ -4,7 +4,7 @@
 conversations: work directly or coordinate visible Herdr workers, verify the result,
 and finish deliberately.
 
-FSD 1.1.0 is instructions, references, role files and record templates. **Herdr is the only runtime
+FSD 1.2.0 is instructions, references, role files and record templates. **Herdr is the only runtime
 dependency** beyond your coding harness and its ordinary tools. Assume Herdr's harness
 integrations are installed. FSD adds no executable, extension, package dependency,
 server, scheduler or helper model. Use Git where the project requires it.

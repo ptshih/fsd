@@ -1,6 +1,6 @@
 {
   "name": "@ptshih/fsd",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "description": "A pure skill for bounded delivery with role-defined Herdr workers, filesystem handoffs and native wakeups",
   "type": "module",
