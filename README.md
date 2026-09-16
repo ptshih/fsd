@@ -2,6 +2,18 @@
 
 **Coordinate coding agents from implementation through review and integration.**
 
+[![Version](https://img.shields.io/github/v/tag/ptshih/fsd?label=version&sort=semver&color=1f6feb)](CHANGELOG.md)
+[![License: MIT](https://img.shields.io/github/license/ptshih/fsd?color=1f6feb)](LICENSE)
+[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-D97757?logo=claude&logoColor=white)](#quick-start)
+[![Pi skill](https://img.shields.io/badge/Pi-skill-6E56CF)](#quick-start)
+[![Runs on Herdr](https://img.shields.io/badge/runs%20on-Herdr-2ea043)](https://herdr.dev)
+[![Pure skill, no runtime](https://img.shields.io/badge/runtime-none%20%C2%B7%20pure%20skill-8b949e)](#how-it-works)
+
+![FSD coordinating one hardened reviewer: the coordinator pins the runbook, opens a Herdr tab, dispatches a packet, waits in the background, wakes on the report and verifies it before closing the goal](assets/demo.gif)
+
+*Illustration of the [worked example](references/example.md): a real reviewer goal, condensed
+and redrawn from its trace rather than screen-recorded.*
+
 FSD is an agent skill for organizing coding work across specialized builders, reviewers
 and scouts. A coordinator — the coding agent you are already talking to — assigns focused
 tasks, checks the results itself, and integrates the changes. Small tasks stay with one

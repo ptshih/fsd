@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- README: demo animation under `assets/` drawn from the worked example, badges, and a
+  repository description and topics on GitHub. `check.mjs` admits `.gif`/`.png` only
+  under `assets/`; the package `files` list is unchanged.
 - Evidence capture rule: one footer line before dispatch; a native report from identity
   header to verdict; nothing wider unless diagnosing a defect.
 

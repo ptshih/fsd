@@ -61,12 +61,13 @@ export function validate(root) {
     const name = relative(root, path);
     const text = readFileSync(path, 'utf8');
     const ext = extname(path);
-    assert(name === 'LICENSE' || name === '.gitignore' || ['.md', '.json', '.mjs'].includes(ext), `Unexpected file: ${name}`);
+    assert(name === 'LICENSE' || name === '.gitignore' || ['.md', '.json', '.mjs', '.gif', '.png'].includes(ext), `Unexpected file: ${name}`);
     if (ext === '.mjs') assert(/^(scripts|tests)\//.test(name), `Executable outside development checks: ${name}`);
     const documents = ['LICENSE', '.gitignore', 'README.md', 'SKILL.md', 'CHANGELOG.md'].includes(name) || /^(references|templates|agents)\/.+\.md$/.test(name);
     const manifests = ['package.json', '.claude-plugin/plugin.json', '.claude-plugin/marketplace.json'].includes(name);
     const development = /^(scripts|tests)\/.+\.mjs$/.test(name);
-    assert(documents || manifests || development, `Unexpected package artifact: ${name}`);
+    const assets = /^assets\/[^/]+\.(gif|png)$/.test(name);
+    assert(documents || manifests || development || assets, `Unexpected package artifact: ${name}`);
     if (ext === '.json') JSON.parse(text);
     if (ext === '.mjs') execFileSync(process.execPath, ['--check', path], { stdio: 'pipe' });
     if (ext !== '.md') continue;

@@ -10,7 +10,7 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 function fixture(t) {
   const destination = mkdtempSync(join(tmpdir(), 'fsd-skill-check-'));
   t.after(() => rmSync(destination, { recursive: true, force: true }));
-  for (const path of ['SKILL.md', 'README.md', 'LICENSE', 'package.json', '.claude-plugin', 'references', 'templates', 'agents'])
+  for (const path of ['SKILL.md', 'README.md', 'LICENSE', 'package.json', '.claude-plugin', 'references', 'templates', 'agents', 'assets'])
     cpSync(join(root, path), join(destination, path), { recursive: true });
   return destination;
 }
@@ -94,6 +94,12 @@ test('pure distribution rejects executable assets', t => {
   const dir = fixture(t);
   writeFileSync(join(dir, 'templates/helper.mjs'), 'export const helper = true;');
   assert.throws(() => validate(dir), /Executable outside development checks/);
+});
+
+test('README media lives only under assets/', t => {
+  const dir = fixture(t);
+  writeFileSync(join(dir, 'templates/demo.gif'), '');
+  assert.throws(() => validate(dir), /Unexpected package artifact/);
 });
 
 test('unlisted root configuration cannot silently add host behavior', t => {
