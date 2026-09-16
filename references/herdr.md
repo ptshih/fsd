@@ -228,8 +228,10 @@ On completion, cancellation or an agreed limit:
 3. Use supported native interruption for owned work when authorized, then verify it
    settled. Do not claim a stop from a file change, observer cancellation or sent key.
    Exit the harness with its native key sequence before closing a pane (Claude Code and
-   Codex: `agent send-keys ctrl+c` twice; Pi: `ctrl+d`; a `/exit` sent through
-   `agent prompt` did not exit Claude Code)
+   Codex: `agent send-keys TARGET ctrl+c ctrl+c`, both presses in one call, because
+   Claude Code only exits on a second ctrl+c inside its short confirmation window and
+   two presses sent as separate commands did not exit it; Pi: `ctrl+d`; a `/exit` sent
+   through `agent prompt` did not exit Claude Code)
    and verify `pane process-info` shows the shell.
 4. Close only disposable, verified goal-owned panes. Close a tab only when every pane
    in it is verified disposable. Reuse alone does not grant closure authority. Preserve

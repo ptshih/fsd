@@ -7,6 +7,9 @@
   under `assets/`; the package `files` list is unchanged.
 - Evidence capture rule: one footer line before dispatch; a native report from identity
   header to verdict; nothing wider unless diagnosing a defect.
+- Cleanup: exit Claude Code workers with both ctrl+c presses in one `agent send-keys`
+  call; a second press sent as a separate command arrives after the confirmation
+  window and does not exit (observed 2026-09-16).
 
 ## 1.2.0 — 2026-09-16
 

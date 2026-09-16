@@ -54,7 +54,7 @@ report followed the reviewer shape exactly, which the packet never described: pr
 role file reached the worker. P0 for the removed guard, P1 for missing coverage,
 `node --test` run in plan mode with exit 0, `Merge verdict: BLOCK`. Acceptance recorded.
 
-Cleanup: `ctrl+c` twice → `process-info` shows the shell → `herdr tab close w5:tC` →
+Cleanup: `ctrl+c ctrl+c` in one send-keys call → `process-info` shows the shell → `herdr tab close w5:tC` →
 tab list and agent list show nothing. `state.md`: Closed — delivered.
 
 ## The coordinator's two mistakes

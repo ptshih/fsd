@@ -122,7 +122,7 @@ test('smoke-qualified lessons: effective launch, dialog waits, native exit, curr
   assert.match(text('references/setup.md'), /hardened Claude workers start with the alias bypassed/);
   assert.match(herdr, /read the footer back until it matches/);
   assert.match(herdr, /After answering a dialog, wait for `working` or `idle` only/);
-  assert.match(herdr, /`agent send-keys ctrl\+c` twice/);
+  assert.match(herdr, /`agent send-keys TARGET ctrl\+c ctrl\+c`, both presses in one call/);
   assert.match(herdr, /a retry or replacement packet must not inherit an earlier packet's values/);
   assert.match(text('templates/assignment.md'), /never copy them from an earlier packet/);
   assert.match(text('references/setup.md'), /Hardened Claude Code plan mode still permits read-only shell commands/);
@@ -155,7 +155,7 @@ test('coordinator names itself, drafts are private, and harness exit keys are na
 test('codex workers get a writable inbox, unknown native identity, and a named exit key', () => {
   assert.match(text('references/setup.md'), /Replace `REPORT_INBOX` with the attempt's inbox directory/);
   assert.match(text('references/setup.md'), /a Codex worker reports `worker_session: "unknown"`/);
-  assert.match(text('references/herdr.md'), /Claude Code and Codex: `agent send-keys ctrl\+c` twice; Pi: `ctrl\+d`/);
+  assert.match(text('references/herdr.md'), /Claude Code and Codex: `agent send-keys TARGET ctrl\+c ctrl\+c`, both presses in one call, because Claude Code only exits on a second ctrl\+c inside its short confirmation window and two presses sent as separate commands did not exit it; Pi: `ctrl\+d`/);
   assert.match(text('references/herdr.md'), /can also return `agent_started`\/`idle` while such a dialog is showing/);
 });
 
