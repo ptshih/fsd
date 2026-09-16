@@ -10,9 +10,9 @@ terminal that you can watch and steer.
 
 FSD runs through tools you already have. [Herdr](https://herdr.dev), a terminal
 multiplexer for coding agents, runs each worker in its own tab; Git worktrees keep
-concurrent implementation apart; plain files carry assignments and reports. There is no
-server, package dependency or background process: FSD 1.2.0 is instructions, references,
-role files and record templates that any skill-capable coding agent (the *harness* —
+concurrent implementation apart; plain files carry assignments and reports. FSD adds no
+runtime or service of its own: FSD 1.2.0 is instructions, references, role files and
+record templates that any skill-capable coding agent (the *harness* —
 Claude Code, Pi, Codex) can follow.
 
 ## What it looks like
@@ -48,7 +48,9 @@ handled, not permissions or available host capabilities. Steer, pause or cancel 
 the conversation.
 
 **Prerequisites:** Herdr with its harness integrations installed, at least one supported
-harness, and Git where your project requires it. Owner preferences (model routing per
+harness, and Git where your project requires it. Unattended delegation also needs a way
+to wake the coordinator: the harness's native background-task notifications (Claude Code
+and Pi have them) or a native file watcher for the report inboxes. Owner preferences (model routing per
 role, approval policy, standing limits) live at `$XDG_CONFIG_HOME/fsd/preferences.json`.
 
 ## Workflow options
