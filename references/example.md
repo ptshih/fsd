@@ -27,7 +27,8 @@ the selection, sent `enter`. A first wait with `--until idle --until blocked` re
 stale `blocked` at once; the rule to exclude `blocked` after answering a dialog comes from
 here. `pane process-info` then showed that an owner shell alias had prepended
 `--dangerously-skip-permissions`, and the footer read "bypass permissions on". Four
-`shift+tab` presses with footer read-back reached "plan mode on".
+`shift+tab` presses with footer read-back reached "plan mode on". The skill now starts hardened
+Claude workers with `command claude` through `herdr pane run`, which avoids the alias.
 
 An API overload during the first attempt led the owner to cancel it and authorize a
 relaunch as goal revision 2. What follows is the second attempt.

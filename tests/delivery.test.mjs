@@ -116,7 +116,10 @@ test('workers wake the coordinator through a background settled-state wait, with
 
 test('smoke-qualified lessons: effective launch, dialog waits, native exit, current revision', () => {
   const herdr = text('references/herdr.md');
-  assert.match(herdr, /a shell alias can silently add flags such as `--dangerously-skip-permissions`, which overrides `--permission-mode plan`/);
+  assert.match(herdr, /Many owners alias `claude` to add `--dangerously-skip-permissions`/);
+  const startCommand = read('references/herdr.md').match(/<!-- fsd-example: herdr-worker-start-command -->\n```sh\n([\s\S]*?)\n```/)?.[1];
+  assert.equal(startCommand, 'herdr pane run ROOT_PANE_ID "command claude LAUNCH_ARGS"');
+  assert.match(text('references/setup.md'), /hardened Claude workers start with the alias bypassed/);
   assert.match(herdr, /read the footer back until it matches/);
   assert.match(herdr, /After answering a dialog, wait for `working` or `idle` only/);
   assert.match(herdr, /`agent send-keys ctrl\+c` twice/);

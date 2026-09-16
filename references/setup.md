@@ -79,9 +79,10 @@ hardened worker reports natively and the coordinator captures the result with
 `herdr agent read`. Check each flag against the installed harness's `--help` once per goal,
 as with other command shapes. Record the exact file used in the assignment's `role_file`.
 Hardened Claude Code plan mode still permits read-only shell commands, so a hardened reviewer
-can run assigned checks; Pi `--tools read,grep,find,ls` cannot. Verify the effective mode
-after start ([dispatch](herdr.md#dispatch)): a shell alias in the worker pane can silently
-rewrite launch flags.
+can run assigned checks; Pi `--tools read,grep,find,ls` cannot. Many owners alias `claude` to add
+`--dangerously-skip-permissions`; that suits writers under a yolo policy but defeats plan
+mode, so hardened Claude workers start with the alias bypassed and every worker's effective
+mode is verified after start ([dispatch](herdr.md#dispatch)).
 Shipped roles: [scout](../agents/scout.md), [builder](../agents/builder.md),
 [workhorse](../agents/workhorse.md), [reviewer](../agents/reviewer.md) and
 [judge](../agents/judge.md).

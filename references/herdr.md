@@ -104,12 +104,27 @@ If `agent start` returns `agent_not_ready`, the pane is at a startup dialog such
 workspace trust: inspect it, handle only the exact prompt covered by owner consent, then
 wait for `idle` (not `blocked`) before continuing.
 
+Many owners alias `claude` to add `--dangerously-skip-permissions`. That suits writer
+roles under a yolo approval policy, but it overrides `--permission-mode plan`, so start a
+hardened Claude worker with the alias bypassed: run the real binary through the pane, wait
+for readiness, then name it. Herdr recognizes the agent by pane, and `agent` commands
+accept the pane ID until the name is set.
+
+<!-- fsd-example: herdr-worker-start-command -->
+```sh
+herdr pane run ROOT_PANE_ID "command claude LAUNCH_ARGS"
+```
+
+```sh
+herdr agent wait ROOT_PANE_ID --until idle --until blocked --timeout 30000
+herdr agent rename ROOT_PANE_ID WORKER_NAME
+```
+
 Then verify the effective launch, not the typed one: `herdr pane process-info --pane
-ROOT_PANE_ID` shows the real argv including anything the pane's interactive shell injected
-(a shell alias can silently add flags such as `--dangerously-skip-permissions`, which
-overrides `--permission-mode plan`), and the harness footer shows the required mode. Under
-Claude Code, cycle modes with `agent send-keys WORKER_NAME shift+tab` and read the footer
-back until it matches. Then inspect the pane (`herdr agent read WORKER_NAME --source
+ROOT_PANE_ID` shows the real argv including anything the pane's shell added, and the
+harness footer shows the required mode. If a Claude Code footer still shows the wrong
+mode, cycle with `agent send-keys WORKER_NAME shift+tab` and read the footer back until
+it matches. Then inspect the pane (`herdr agent read WORKER_NAME --source
 visible`) for an empty prompt and no trust or permission dialog. Persist dispatch intent,
 then submit through native `agent prompt` exactly once. TARGET and TEXT precede options:
 
