@@ -182,7 +182,10 @@ Treat status as a hint, not an input/cleanup gate by itself:
 Inspect at startup, immediately before input, on wakeups/bounded check-ins, and before
 cleanup—not in a polling loop. If the UI is unavailable or ambiguous, preserve that
 uncertainty instead of inferring readiness. Retain concise observable UI facts, selected
-choices and receipts, not worker deliberation text or full transcripts.
+choices and receipts, not worker deliberation text or full transcripts. Concretely: before
+dispatch keep the single footer line that shows the effective model, thinking level and
+permission mode; for a native report keep the text from its identity header to its verdict
+or final line; capture anything wider only when diagnosing a defect.
 
 Require reports to identify assignment/attempt, affected paths, actual checks/results,
 skips/unknowns and remaining work. Preserve them in authorized evidence paths. A truly

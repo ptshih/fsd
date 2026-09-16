@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Evidence capture rule: one footer line before dispatch; a native report from identity
+  header to verdict; nothing wider unless diagnosing a defect.
+
 ## 1.2.0 — 2026-09-16
 
 - Goal records default to `$XDG_STATE_HOME/fsd/goals/<project-slug>/<goal-id>/`, outside

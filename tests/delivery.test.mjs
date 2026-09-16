@@ -158,3 +158,9 @@ test('codex workers get a writable inbox, unknown native identity, and a named e
   assert.match(text('references/herdr.md'), /Claude Code and Codex: `agent send-keys ctrl\+c` twice; Pi: `ctrl\+d`/);
   assert.match(text('references/herdr.md'), /can also return `agent_started`\/`idle` while such a dialog is showing/);
 });
+
+test('evidence captures are bounded: one footer line and header-to-verdict reports', () => {
+  const herdr = text('references/herdr.md');
+  assert.match(herdr, /keep the single footer line that shows the effective model, thinking level and permission mode/);
+  assert.match(herdr, /for a native report keep the text from its identity header to its verdict or final line/);
+});
