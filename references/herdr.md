@@ -40,8 +40,9 @@ At close, restore the prior tab label if you changed it and clear or update the 
 name (`herdr agent rename "$HERDR_PANE_ID" --clear`); a finished goal's name on a live
 pane misleads.
 
-Use visible native workers in dedicated tabs as described below. Creating a worker does not authorize unrelated layout changes or closure of reused
-resources. Native subagents and recursive spawning are not the FSD delegation route.
+Use visible native workers in dedicated tabs as described below. Creating a worker does
+not authorize unrelated layout changes or closure of reused resources. Native subagents
+and recursive spawning are not the FSD delegation route.
 
 Verify effective executable/arguments, harness/model/effort, tools and approval mode.
 Preserve the owner's selections. Recognized agent kind and launch flags alone do not
