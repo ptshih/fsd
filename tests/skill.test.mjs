@@ -136,3 +136,12 @@ test('worked example traces a real goal including its corrections', () => {
     assert(example.includes(phrase), `Example should mention ${phrase}`);
   assert.match(readFileSync(join(root, 'SKILL.md'), 'utf8'), /\(references\/example\.md\)/);
 });
+
+test('compositions name the shapes from role files and never carry executable examples', () => {
+  const text = readFileSync(join(root, 'references/compositions.md'), 'utf8');
+  for (const heading of ['## Parallel review', '## Review loop', '## Scout, build, review', '## Judge', '## Mechanical batch'])
+    assert(text.includes(heading), `Missing ${heading}`);
+  assert.doesNotMatch(text, /fsd-example/, 'compositions are guidance, not executed recipes');
+  assert.match(text, /Default cap: three rounds/);
+  assert.match(readFileSync(join(root, 'SKILL.md'), 'utf8'), /\(references\/compositions\.md\)/);
+});

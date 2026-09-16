@@ -96,6 +96,7 @@ a separate checkout; proposed instructions cannot change the running goal's auth
 - [Filesystem protocol](references/filesystem.md): ownership, messages, evidence and recovery.
 - [Filesystem examples](references/recipes.md): tested one-shot commands using normal tools.
 - [Worked example](references/example.md): one hardened reviewer end to end, including the mistakes.
+- [Compositions](references/compositions.md): parallel review, review loop, scout/build/review, judge, mechanical batch.
 - [Native wakeup](references/delivery.md): settled-state waits and inbox watches through existing host facilities; no custom machinery.
 - [Herdr operations](references/herdr.md): dispatch, integration and cleanup.
 

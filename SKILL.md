@@ -52,7 +52,8 @@ Use the approved model, effort and tools in the current Herdr session; an unsupp
 requirement blocks only the affected work and does not authorize substitution.
 
 Keep small, understood work local: a short progress/evidence note, no workers or
-mailbox. There is no mandatory planner/builder/reviewer pipeline. Required independent
+mailbox. There is no mandatory planner/builder/reviewer pipeline; when delegation earns
+its cost, pick the smallest [composition](references/compositions.md) that fits. Required independent
 review uses a fresh worker that is read-only with respect to the implementation.
 
 For delegation, set up the private [filesystem protocol](references/filesystem.md)
