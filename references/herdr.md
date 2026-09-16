@@ -102,7 +102,9 @@ herdr agent start WORKER_NAME --kind HARNESS --pane ROOT_PANE_ID --timeout 30000
 
 If `agent start` returns `agent_not_ready`, the pane is at a startup dialog such as
 workspace trust: inspect it, handle only the exact prompt covered by owner consent, then
-wait for `idle` (not `blocked`) before continuing.
+wait for `idle` (not `blocked`) before continuing. `agent start` can also return
+`agent_started`/`idle` while such a dialog is showing (observed with Codex), so read the
+visible screen before any input regardless of the reported status.
 
 Many owners alias `claude` to add `--dangerously-skip-permissions`. That suits writer
 roles under a yolo approval policy, but it overrides `--permission-mode plan`, so start a
@@ -222,9 +224,9 @@ On completion, cancellation or an agreed limit:
    and pane process information. Reconcile unfinished operations and shared services.
 3. Use supported native interruption for owned work when authorized, then verify it
    settled. Do not claim a stop from a file change, observer cancellation or sent key.
-   Exit the harness with its native key sequence before closing a pane (Claude Code:
-   `agent send-keys ctrl+c` twice; Pi: `ctrl+d`; a `/exit` sent through `agent prompt`
-   did not exit Claude Code)
+   Exit the harness with its native key sequence before closing a pane (Claude Code and
+   Codex: `agent send-keys ctrl+c` twice; Pi: `ctrl+d`; a `/exit` sent through
+   `agent prompt` did not exit Claude Code)
    and verify `pane process-info` shows the shell.
 4. Close only disposable, verified goal-owned panes. Close a tab only when every pane
    in it is verified disposable. Reuse alone does not grant closure authority. Preserve

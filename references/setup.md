@@ -78,6 +78,10 @@ everything after `--`. `hardened_launch_args` remove write ability at the harnes
 hardened worker reports natively and the coordinator captures the result with
 `herdr agent read`. Check each flag against the installed harness's `--help` once per goal,
 as with other command shapes. Record the exact file used in the assignment's `role_file`.
+Replace `REPORT_INBOX` with the attempt's inbox directory: Codex's workspace sandbox writes only
+inside the cwd, so without `--add-dir` a Codex writer can edit but cannot publish. Inside that
+sandbox `herdr` is unreachable, so a Codex worker reports `worker_session: "unknown"` and the
+coordinator supplies identity from the assignment's pane and tab.
 Hardened Claude Code plan mode still permits read-only shell commands, so a hardened reviewer
 can run assigned checks; Pi `--tools read,grep,find,ls` cannot. Many owners alias `claude` to add
 `--dangerously-skip-permissions`; that suits writers under a yolo policy but defeats plan

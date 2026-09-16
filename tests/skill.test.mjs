@@ -126,6 +126,8 @@ test('role files fix scope, launch arguments and report shape without deployment
     assert.match(readFileSync(join(root, `agents/${name}.md`), 'utf8'), /^hardened_report_channel: native$/m, `Read-only role ${name} reports natively when hardened`);
   for (const name of ['builder', 'workhorse'])
     assert.match(readFileSync(join(root, `agents/${name}.md`), 'utf8'), /^implementation_write: assigned-worktree-only$/m);
+  for (const name of ['builder', 'workhorse'])
+    assert.match(readFileSync(join(root, `agents/${name}.md`), 'utf8'), /"--add-dir", "REPORT_INBOX"/, `Codex writer  must make the inbox writable`);
 });
 
 test('worked example traces a real goal including its corrections', () => {

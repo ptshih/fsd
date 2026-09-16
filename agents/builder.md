@@ -10,7 +10,7 @@ default_limits:
 launch_args:
   claude: ["--append-system-prompt-file", "ROLE_FILE"]
   pi: ["--append-system-prompt", "ROLE_FILE"]
-  codex: ["--sandbox", "workspace-write"]
+  codex: ["--sandbox", "workspace-write", "--add-dir", "REPORT_INBOX"]
 ---
 
 # Builder

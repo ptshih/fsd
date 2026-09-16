@@ -151,3 +151,10 @@ test('coordinator names itself, drafts are private, and harness exit keys are na
   assert.match(text('references/worker.md'), /set `umask 077`, write a complete private `\.tmp-` draft/);
   assert.match(text('references/recipes.md'), /set `umask 077` before writing them/);
 });
+
+test('codex workers get a writable inbox, unknown native identity, and a named exit key', () => {
+  assert.match(text('references/setup.md'), /Replace `REPORT_INBOX` with the attempt's inbox directory/);
+  assert.match(text('references/setup.md'), /a Codex worker reports `worker_session: "unknown"`/);
+  assert.match(text('references/herdr.md'), /Claude Code and Codex: `agent send-keys ctrl\+c` twice; Pi: `ctrl\+d`/);
+  assert.match(text('references/herdr.md'), /can also return `agent_started`\/`idle` while such a dialog is showing/);
+});
