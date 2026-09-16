@@ -108,7 +108,7 @@ permission to ignore later owner steering or higher-priority instructions.
 
 ## Updates and multiple machines
 
-Use the harness's native skill-package mechanism from the [README](../README.md#install-and-update).
+Use the harness's native skill-package mechanism from the [README](../README.md#quick-start).
 Keep one installation per harness. Settle owned work before updating; retain the FSD
 version in goal notes. Refresh skill discovery through the supported host mechanism,
 not commands injected into a human editor. Updating does not restore workers or move
