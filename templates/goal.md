@@ -32,6 +32,7 @@ max_attempts: REPLACE_WITH_APPROVED_DISPATCH_LIMIT
 
 - Readiness record: checked contracts/selections and reusable evidence references:
 - Pinned runbook revision/path when this goal changes FSD itself:
+- Coordinator Herdr agent name, tab label and the tab's prior label; goal slug for worker names:
 - Already-available native wakeup facility, coordinator binding and discovery evidence:
 - Actual busy/idle receipts, blocked-work coverage and deadline notification:
 - Owned native wait/watch/check-in handles, expiry, stop controls and cleanup owner:

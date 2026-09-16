@@ -58,7 +58,8 @@ The assignment must authorize this inbox and the draft's write location. Set `IN
 to your existing canonical attempt inbox, `EVENT_ID` to a new globally unique path-safe
 ID, and `MESSAGE` to your complete, closed draft file. Fill the [message template](../templates/message.md)
 with current IDs and actual evidence first. If the draft is inside an inbox, its name
-must start with `.tmp-` so readers ignore it until publication. Keep drafts private.
+must start with `.tmp-` so readers ignore it until publication. Keep drafts private:
+set `umask 077` before writing them, not only inside this block.
 
 <!-- fsd-example: publish-message -->
 ```sh

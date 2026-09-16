@@ -134,3 +134,17 @@ test('native reports are captured before teardown and startup dialogs are handle
   assert.match(text('references/delivery.md'), /and the facility's own maximum; renew on expiry after reconciling/);
   assert.match(text('SKILL.md'), /or report natively when hardened read-only/);
 });
+
+test('coordinator names itself, drafts are private, and harness exit keys are named', () => {
+  const herdr = read('references/herdr.md');
+  const agent = herdr.match(/<!-- fsd-example: herdr-coordinator-agent -->\n```sh\n([\s\S]*?)\n```/)?.[1];
+  assert.equal(agent, 'herdr agent rename "$HERDR_PANE_ID" fsd-GOAL_SLUG');
+  const tab = herdr.match(/<!-- fsd-example: herdr-coordinator-tab -->\n```sh\n([\s\S]*?)\n```/)?.[1];
+  assert.equal(tab, 'herdr tab rename "$HERDR_TAB_ID" "FSD GOAL_SLUG"');
+  assert.match(text('references/herdr.md'), /rename your own tab only when it is dedicated to this goal/);
+  assert.match(text('references/herdr.md'), /Pi: `ctrl\+d`/);
+  assert.match(text('SKILL.md'), /name yourself in Herdr/);
+  assert.match(text('templates/goal.md'), /Coordinator Herdr agent name, tab label and the tab's prior label/);
+  assert.match(text('references/worker.md'), /set `umask 077`, write a complete private `\.tmp-` draft/);
+  assert.match(text('references/recipes.md'), /set `umask 077` before writing them/);
+});

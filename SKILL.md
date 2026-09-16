@@ -43,6 +43,8 @@ supply approval; do not re-ask settled choices or invent an allowance.
 Approve an envelope, not a roster: choose direct work, staffing, independent review and
 repair within it. Supervised is the default; unsupervised means deciding in-scope
 questions without asking, not new authority. Limits never reset on replacement or resume.
+Then name yourself in Herdr: rename your agent to `fsd-<slug>` and, when your tab is
+dedicated to the goal, your tab to `FSD <slug>` ([procedure](references/herdr.md#name-the-coordinator)).
 
 ## Prepare proportionally
 

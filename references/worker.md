@@ -53,10 +53,10 @@ put pane/terminal details in the body. Copy `created_at` from an observed UTC cl
 immediately before publication, or use `"unknown"`; never guess. Timestamps do not
 establish acceptance or causal order.
 
-For filesystem reports, write a complete private `.tmp-` draft in your own inbox and
-publish one immutable final `.md` with the [atomic no-overwrite recipe](recipes.md#publish-an-immutable-message).
+For filesystem reports, set `umask 077`, write a complete private `.tmp-` draft in your
+own inbox, and publish one immutable final `.md` with the [atomic no-overwrite recipe](recipes.md#publish-an-immutable-message).
 On uncertainty, inspect the final path before recovery; never blindly republish or edit
 a published message. If publication fails, report that natively without claiming delivery.
 
-Return the final report path and stop. Do not wait for acknowledgment, self-accept,
+Return the final report path and stop. Do not await acknowledgment, self-accept,
 integrate or reassign yourself. Only the coordinator authorizes a new bounded attempt.

@@ -14,7 +14,31 @@ label or an old transcript. Record server/socket context, pane, tab, terminal, n
 agent session, kind and canonical cwd. Reconcile after any occupant/session change.
 
 Keep the coordinator in the ordinary conversation. Name only owned resources as useful,
-and preserve focus. Use visible native workers in dedicated tabs as described below.
+and preserve focus.
+
+### Name the coordinator
+
+At goal start, name yourself so the owner can see which pane coordinates which goal.
+Choose a goal slug of at most 12 characters matching `[a-z0-9-]`. Rename your own agent,
+and rename your own tab only when it is dedicated to this goal (your pane is its only
+pane); otherwise keep the owner's label. Record both names and the tab's prior label in
+`goal.md`. Workers use the same slug: `fsd-SLUG-ROLE`. Agent names must match
+`[a-z][a-z0-9_-]{0,31}` and be unique among live agents; renaming changes no focus or
+layout.
+
+<!-- fsd-example: herdr-coordinator-agent -->
+```sh
+herdr agent rename "$HERDR_PANE_ID" fsd-GOAL_SLUG
+```
+
+<!-- fsd-example: herdr-coordinator-tab -->
+```sh
+herdr tab rename "$HERDR_TAB_ID" "FSD GOAL_SLUG"
+```
+
+At close, restore the prior tab label if you changed it and clear or update the agent
+name (`herdr agent rename "$HERDR_PANE_ID" --clear`); a finished goal's name on a live
+pane misleads. Use visible native workers in dedicated tabs as described below.
 Creating a worker does not authorize unrelated layout changes or closure of reused
 resources. Native subagents and recursive spawning are not the FSD delegation route.
 
@@ -182,7 +206,8 @@ On completion, cancellation or an agreed limit:
 3. Use supported native interruption for owned work when authorized, then verify it
    settled. Do not claim a stop from a file change, observer cancellation or sent key.
    Exit the harness with its native key sequence before closing a pane (Claude Code:
-   `agent send-keys ctrl+c` twice; a `/exit` sent through `agent prompt` did not exit it)
+   `agent send-keys ctrl+c` twice; Pi: `ctrl+d`; a `/exit` sent through `agent prompt`
+   did not exit Claude Code)
    and verify `pane process-info` shows the shell.
 4. Close only disposable, verified goal-owned panes. Close a tab only when every pane
    in it is verified disposable. Reuse alone does not grant closure authority. Preserve
