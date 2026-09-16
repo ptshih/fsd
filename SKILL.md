@@ -56,10 +56,11 @@ mailbox. There is no mandatory planner/builder/reviewer pipeline; when delegatio
 its cost, pick the smallest [composition](references/compositions.md) that fits. Required independent
 review uses a fresh worker that is read-only with respect to the implementation.
 
-For delegation, set up the private [filesystem protocol](references/filesystem.md)
-before dispatch, using the [record templates](templates/goal.md) as needed. Give each
-worker a [role file](references/setup.md#role-files) so the packet carries only the
-task. Read references only for the current step. Retain checked commands, selections
+For delegation, pin the installed skill into the goal's `runbook/` and set up the private
+[filesystem protocol](references/filesystem.md) before dispatch, using the
+[record templates](templates/goal.md) as needed. Give each worker one of the five
+[role files](agents/reviewer.md) in `agents/` ([how they work](references/setup.md#role-files))
+so the packet carries only the task. Read references only for the current step. Retain checked commands, selections
 and wakeup proof in goal state, but recheck live identity, UI, authority and remaining
 allowance before every input ([details](references/setup.md#prepare-once-then-recheck-live-state)).
 

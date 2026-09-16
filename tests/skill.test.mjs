@@ -145,3 +145,14 @@ test('compositions name the shapes from role files and never carry executable ex
   assert.match(text, /Default cap: three rounds/);
   assert.match(readFileSync(join(root, 'SKILL.md'), 'utf8'), /\(references\/compositions\.md\)/);
 });
+
+test('goal records live in XDG state and every goal pins its runbook', () => {
+  const fsdoc = readFileSync(join(root, 'references/filesystem.md'), 'utf8').replace(/\s+/g, ' ');
+  assert.match(fsdoc, /\$XDG_STATE_HOME\/fsd\/goals\/<project-slug>\/<goal-id>\//);
+  assert.match(fsdoc, /Do not put goal records under a project's `\.agents\/`/);
+  assert.match(fsdoc, /copy the installed skill's `SKILL\.md`, `references\/`, `templates\/` and `agents\/` into `<goal>\/runbook\/`/);
+  assert.doesNotMatch(fsdoc, /`\.agents\/fsd\/<goal-id>\/`/, 'the old in-repo default is gone');
+  assert.match(readFileSync(join(root, 'references/recipes.md'), 'utf8'), /"\$goal\/runbook"/);
+  assert.match(readFileSync(join(root, 'SKILL.md'), 'utf8'), /\[role files\]\(agents\/reviewer\.md\)/, 'role files are one hop from SKILL.md');
+  assert.match(readFileSync(join(root, 'templates/goal.md'), 'utf8'), /^runbook_pin: /m);
+});

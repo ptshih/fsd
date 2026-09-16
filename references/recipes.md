@@ -25,8 +25,9 @@ or raw reasoning in drafts or reports.
 
 ## Create a private delegated goal
 
-Coordinator only. Set `GOAL_PARENT` to an existing approved canonical directory and
-`GOAL_ID` to a fresh path-safe ID. This deliberately uses `mkdir` without `-p`: an
+Coordinator only. Set `GOAL_PARENT` to the project's goals directory,
+`${XDG_STATE_HOME:-$HOME/.local/state}/fsd/goals/<project-slug>`, created beforehand with
+`mkdir -p -m 700`, and `GOAL_ID` to a fresh path-safe ID. This deliberately uses `mkdir` without `-p`: an
 existing goal, file or symlink must fail, not be adopted or overwritten. Small direct
 work does not need this directory tree.
 
@@ -43,11 +44,13 @@ test "$GOAL_PARENT" = "$(cd "$GOAL_PARENT" && pwd -P)"
 goal="$GOAL_PARENT/$GOAL_ID"
 mkdir "$goal"
 mkdir "$goal/assignments" "$goal/attempts" "$goal/inbox" \
-  "$goal/acknowledgments" "$goal/evidence"
+  "$goal/acknowledgments" "$goal/evidence" "$goal/runbook"
 printf '%s\n' "$goal"
 ```
 
-Write the actual directives with normal file tools, keeping files private (`0600`).
+Copy the installed skill's `SKILL.md`, `references/`, `templates/` and `agents/` into
+`runbook/` next, then write the actual directives with normal file tools, keeping files
+private (`0600`).
 Create each attempt's private inbox separately and explicitly assign its sole publisher.
 If setup fails partway through, inspect the owned partial directory; rerunning this
 block is not recovery and does not authorize deleting existing records.

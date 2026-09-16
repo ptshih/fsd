@@ -10,7 +10,8 @@ fsd_version: "1.1.0"
 status: active
 started_at: REPLACE
 deadline: REPLACE_WITH_APPROVED_ABSOLUTE_EXPIRY
-goal_path: REPLACE_WITH_CANONICAL_PRIVATE_PATH
+goal_path: REPLACE_WITH_XDG_STATE_GOAL_PATH
+runbook_pin: REPLACE_WITH_INSTALLED_FSD_VERSION_AND_COMMIT
 coordinator_host: REPLACE
 coordinator_session: REPLACE
 supervision: supervised

@@ -77,7 +77,9 @@ another harness's wakeup or effort settings carry over, and do not add dependenc
 ### Keep updates separate from your work
 
 Owner preferences live at `$XDG_CONFIG_HOME/fsd/preferences.json`, defaulting to
-`~/.config/fsd/preferences.json`. Goal records live outside the installed skill.
+`~/.config/fsd/preferences.json`. Goal records live at
+`$XDG_STATE_HOME/fsd/goals/<project-slug>/<goal-id>/`, outside every repository and the
+installed skill, and each goal pins its own copy of the skill in `runbook/`.
 No personal models, credentials or trust approvals are shipped with FSD. See
 [setup and preferences](references/setup.md).
 

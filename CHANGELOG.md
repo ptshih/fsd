@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Goal records default to `$XDG_STATE_HOME/fsd/goals/<project-slug>/<goal-id>/`, outside
+  every repository; never under a project's `.agents/`, which other tools scan.
+- Every delegated goal pins the installed skill into `<goal>/runbook/` and reads from that
+  copy, so updating the installed skill cannot change a running goal.
+- SKILL.md links role files directly (one hop, per the Agent Skills guidance).
+
 ## 1.1.0 — 2026-09-16
 
 - SKILL.md condensed to the positive procedure; caveats live in the references.

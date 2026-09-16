@@ -8,16 +8,27 @@ use them only within already authorized scope.
 
 ## Establish one private goal directory
 
-Use a fresh canonical path outside the installed skill, normally
-`.agents/fsd/<goal-id>/` in a stable coordinator checkout. If that checkout is disposable,
-choose an approved persistent local location. Disclose the absolute path and pass it in
-assignments; workers must not derive it from their own cwd.
+Use a fresh canonical path outside every repository and outside the installed skill:
+`$XDG_STATE_HOME/fsd/goals/<project-slug>/<goal-id>/`, defaulting to
+`~/.local/state/fsd/goals/…`. The project slug is the coordinator's canonical working
+directory with `/` replaced by `-` and the leading dash dropped, so one `ls` lists every
+goal for a project. Do not put goal records under a project's `.agents/` (other tools scan
+it for agent definitions) or anywhere a repository could track them. If the owner
+explicitly chooses a repository-local location instead, exclude it through
+`.git/info/exclude` and verify it contains no tracked files; Git-ignore is not privacy.
+Disclose the absolute path and pass it in assignments; workers must not derive it from
+their own cwd.
 
-Create owner-private directories before writing (normally `0700`, files `0600`), and
-Git-ignore repository-local goal data. Verify it contains no tracked files. Git-ignore
-is not privacy. Never store credentials or raw reasoning. Do not overwrite an existing
-goal to start a new one. Use simple path-safe IDs, never traversal segments or arbitrary
-owner/worker text as filenames.
+Create owner-private directories before writing (normally `0700`, files `0600`). Never
+store credentials or raw reasoning. Do not overwrite an existing goal to start a new one.
+Use simple path-safe IDs, never traversal segments or arbitrary owner/worker text as
+filenames.
+
+Pin the operating instructions first: copy the installed skill's `SKILL.md`, `references/`,
+`templates/` and `agents/` into `<goal>/runbook/`, record the installed version and commit
+in `goal.md`, and read from that copy for the rest of the goal. Workers receive the
+runbook's guide and role-file paths. An installed-skill update then never changes a
+running goal, and the goal's evidence names the revision that governed it.
 
 Create only the records needed:
 

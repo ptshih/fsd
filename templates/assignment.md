@@ -25,8 +25,7 @@ deadline: "REPLACE"
 
 Read the supplied `worker_guide`, the `role_file` if one is set, and this packet first.
 You are executing an existing assignment, not starting a new goal; do not repeat
-coordinator setup. The guide path must be absolute; it may point to a pinned runbook
-when the goal changes FSD itself. Use the [message template's quoting convention](message.md)
+coordinator setup. The guide path must be absolute and point to the goal's pinned runbook copy. Use the [message template's quoting convention](message.md)
 for strings, including path array entries. Replace placeholders and the example revision
 with actual values. Take `revision` and `deadline` from the current `goal.md` when the
 packet is written; never copy them from an earlier packet. Keep pane/terminal details
