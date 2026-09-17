@@ -118,6 +118,19 @@ test('workers wake the coordinator through a background settled-state wait, with
   assert.match(text('templates/attempt.md'), /settled-state wait handle/);
 });
 
+test('the settled-state wait is primary only where qualified; agy, codex and pi pair it with inbox observation', () => {
+  const delivery = text('references/delivery.md');
+  assert.match(delivery, /stays primary on every harness where it is qualified/);
+  assert.match(delivery, /Qualified so far: Claude Code \(2026-09-17\)/);
+  assert.match(delivery, /on an Antigravity \(`agy`\) worker is now qualified as \*\*unreliable\*\*/);
+  assert.match(delivery, /on a `codex` or `pi` worker \(as of 2026-09-17\), so both remain \*\*unverified\*\*/);
+  assert.match(delivery, /\*\*On any harness whose settled-state wait is not qualified — `agy` \(unreliable\), `codex` and `pi` \(unverified\) — always pair the wait with inbox observation or visible output inspection\.\*\*/);
+  assert.match(delivery, /the inbox poll is the primary completion signal/);
+  assert.match(delivery, /a hint to inspect, not proof of settlement/);
+  assert.match(delivery, /A harness leaves this list only when its qualifying observation is recorded above/);
+  assert.match(text('references/herdr.md'), /On a harness whose wait is not qualified \(`agy`, `codex` and `pi` as of 2026-09-17\), also arm the inbox observation/);
+});
+
 test('smoke-qualified lessons: effective launch, dialog waits, native exit, current revision', () => {
   const herdr = text('references/herdr.md');
   assert.match(herdr, /Many owners alias `claude` to add `--dangerously-skip-permissions`/);

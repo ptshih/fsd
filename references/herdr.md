@@ -171,7 +171,10 @@ herdr agent wait WORKER_NAME --timeout REMAINING_MS
 
 Its exit is the wake: `idle`/`done` means inspect the inbox and pane, `blocked` means a
 dialog needs owner-consented handling, `timeout` means reconcile and renew. Record the
-background task handle in the attempt.
+background task handle in the attempt. On a harness whose wait is not qualified (`agy`,
+`codex` and `pi` as of 2026-09-17), also arm the inbox observation, or inspect visible
+output on each wake for a native reporter, as
+[Two wake sources](delivery.md#two-wake-sources) requires, recording any second handle.
 
 `agent prompt` is not an atomic compare-and-submit operation against the coordinator's
 prior screen/identity inspection. Exclusive ownership remains necessary. If identity
