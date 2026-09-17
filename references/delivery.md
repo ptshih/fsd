@@ -57,9 +57,24 @@ echo "POLL_EXPIRED $(date -u +%H:%M:%SZ)"
 The settled-state wait stays primary on every harness. Evidence so far: a settled-state
 wait on a Claude Code worker returned reliably; on an Antigravity worker only a
 blocked-only wait was armed, which by construction cannot fire on `idle`/`done`, and the
-inbox observation delivered the report after a fourteen-minute build (2026-09-17). That
-says nothing about a full settled-state wait on that harness: arm the full wait and the
-inbox observation together there until the wait is qualified.
+inbox observation delivered the report after a fourteen-minute build (2026-09-17).
+
+A full settled-state wait on an Antigravity (`agy`) worker is now qualified as
+**unreliable**: a wait with `--until idle --until done --until blocked` returned `done`
+repeatedly while the agent was still actively reading files and running commands
+(observed 2026-09-17, Herdr 0.9.1, Antigravity CLI 1.2.5, Gemini 3.8 Flash). The
+`done` status was transient — the agent reported `done` briefly between tool calls, then
+returned to `working`. Re-arming the wait produced the same false signal each time. The
+agent's visible output showed active tool execution (spinners, "Running command..."
+indicators) throughout, contradicting the reported status. This makes the settled-state
+wait unsuitable as the sole completion signal for `agy` workers.
+
+**For `agy` workers, always pair the settled-state wait with inbox observation or visible
+output inspection.** When the worker reports to a filesystem inbox, the inbox poll is the
+primary completion signal; when the worker reports natively (hardened read-only), inspect
+the visible output for report-shaped text on each wake rather than trusting the status
+alone. A wait that returns `done` or `idle` for an `agy` worker is a hint to inspect, not
+proof of settlement.
 
 Both are hints. On any wake, inspect the actual pane (`herdr agent get`,
 `agent read --source visible`) and the inbox: neither `working` nor `idle` metadata proves
