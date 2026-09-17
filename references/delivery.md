@@ -2,8 +2,10 @@
 
 FSD uses **Herdr tabs → filesystem reports → existing native wakeup → coordinator
 verification**. Herdr is the only runtime dependency beyond the current coding harness
-and its ordinary tools. Assume Herdr's harness integrations are installed. Do not add
-packages, extensions, services, helper models or custom watcher/controller code. The
+and its ordinary tools. Assume Herdr's harness integrations are installed, and on Pi the
+[background-dispatch extension](setup.md#pi-coordinators) a coordinator requires. Do not
+add packages, extensions, services, helper models or custom watcher/controller code
+during a goal: prerequisites are verified, never installed by the coordinator. The
 bounded inbox poll below is a command the host's facility runs, like `agent wait`, not
 machinery of FSD's own.
 
@@ -104,8 +106,13 @@ readiness, and a wait that returned `idle` can accompany a trust dialog or an ac
    after it becomes genuinely idle, without typing into or changing the human editor,
    with a retained native handle, bounded expiry, failure/timeout notification and
    specific-handle stop controls. A timeout that silently stops observation is not a
-   deadline notification. Typical facilities: Claude Code's background shell task or
-   monitor tool; Pi's monitor tool. Verify the installed contract; names change.
+   deadline notification. Facilities: Claude Code's background shell task or monitor
+   tool; on Pi, the required extension's background dispatch
+   ([setup](setup.md#pi-coordinators)), run with quiet-output auto-exit disabled and the
+   tool's own timeout above the wait's, so a silent wait is never reported finished;
+   Codex has none and uses [active-turn waits](codex.md). A shell tool that returns only
+   when its command exits is not a facility: a wait run through it holds the turn.
+   Verify the installed contract; names change.
 3. Reuse applicable proof for this facility and coordinator session. If proof is missing,
    qualify only the missing behavior with a harmless identified event under the approved
    envelope and record the actual receipt. A new goal or worker does not by itself
@@ -125,7 +132,9 @@ attach a controller later, or block the model turn on a completion wait.
 
 Distinguish **unverified** (proof missing) from **unavailable** (a concrete missing
 interface or failed check). Complete read-only discovery before reporting a gap. An
-installed Herdr integration supplies only the behavior it actually exposes.
+installed Herdr integration supplies only the behavior it actually exposes. A Pi
+coordinator whose session lacks the required extension has an unavailable facility, not
+an unverified one ([setup](setup.md#pi-coordinators)).
 
 If neither wake source is usable, stop affected unattended delegation before launching
 workers. State the exact missing capability. Continue independent direct work when the

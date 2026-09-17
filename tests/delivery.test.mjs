@@ -10,7 +10,7 @@ import { test } from 'node:test';
 const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const text = path => read(path).replace(/\s+/g, ' ');
 
-test('one Herdr/filesystem/native-wakeup path has no prescribed extension dependency', () => {
+test('one Herdr/filesystem/native-wakeup path prescribes no extension beyond Pi background dispatch', () => {
   const skill = text('SKILL.md');
   assert.match(skill, /Herdr is the only runtime dependency/);
   assert.match(skill, /## One usage path/);
@@ -23,7 +23,30 @@ test('one Herdr/filesystem/native-wakeup path has no prescribed extension depend
     }
   }
   for (const path of docs)
-    assert.doesNotMatch(read(path), /pi-interactive-shell|interactive_shell|pi-inbox|pi-herdr\.md|fsd_runtime|provider job ID|observerTimeoutMs/, path);
+    assert.doesNotMatch(read(path), /pi-inbox|pi-herdr\.md|fsd_runtime|provider job ID|observerTimeoutMs/, path);
+});
+
+test('pi coordinators require the background-dispatch extension and never wait through the blocking shell tool', () => {
+  const setup = text('references/setup.md');
+  const delivery = text('references/delivery.md');
+  assert.match(setup, /## Pi coordinators/);
+  assert.match(setup, /Pi's built-in shell tool returns only when its command exits/);
+  assert.match(setup, /requires the `pi-interactive-shell` extension — `pi install npm:pi-interactive-shell`, confirmed by `pi list`/);
+  assert.match(setup, /`mode: "dispatch"` with `background: true`, `handsFree: \{ autoExitOnQuiet: false \}`/);
+  assert.match(setup, /a `timeout` above the wait's own/);
+  assert.match(setup, /Verified 2026-09-15 with 0\.15\.2/);
+  assert.match(setup, /the coordinator never installs, updates or configures it for a goal/);
+  assert.match(setup, /Without it the facility is \*\*unavailable\*\*/);
+  assert.match(setup, /Pi workers do not need it/);
+  assert.match(delivery, /on Pi, the required extension's background dispatch/);
+  assert.match(delivery, /run with quiet-output auto-exit disabled and the tool's own timeout above the wait's/);
+  assert.match(delivery, /A shell tool that returns only when its command exits is not a facility: a wait run through it holds the turn/);
+  assert.match(delivery, /prerequisites are verified, never installed by the coordinator/);
+  assert.match(delivery, /lacks the required extension has an unavailable facility, not an unverified one/);
+  assert.match(text('SKILL.md'), /a Pi coordinator's tools must include the \[background-dispatch extension\]\(references\/setup\.md#pi-coordinators\)/);
+  assert.match(text('SKILL.md'), /never the built-in shell tool, which holds the turn until its command exits/);
+  assert.match(text('README.md'), /pi install npm:pi-interactive-shell/);
+  assert.doesNotMatch(text('README.md'), /Claude Code and Pi have them/);
 });
 
 test('Herdr harness integrations are an installed baseline, not a setup project', () => {

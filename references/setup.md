@@ -8,8 +8,29 @@ project. Assume Herdr's integration for each coding harness is installed; do not
 integration installer, edit a managed integration or change harness settings for FSD.
 
 Loading the skill starts nothing. Do not install extra packages, extensions, services
-or runners. Do not build wakeup machinery beyond the bounded commands the host's facility
-runs ([wakeup](delivery.md)), or launch test workers merely to check readiness.
+or runners; the prerequisites below are the owner's to install, and a coordinator only
+verifies them. Do not build wakeup machinery beyond the bounded commands the host's
+facility runs ([wakeup](delivery.md)), or launch test workers merely to check readiness.
+
+## Pi coordinators
+
+Pi's built-in shell tool returns only when its command exits, so with core tools alone a
+Pi coordinator cannot arm a settled-state wait without holding the turn (observed
+2026-09-14: a coordinator ran 24 waits of 60–300 s each through that tool and blocked on
+every one). A Pi coordinator therefore requires the `pi-interactive-shell` extension —
+`pi install npm:pi-interactive-shell`, confirmed by `pi list` — whose `interactive_shell`
+tool is the [background facility](delivery.md#establish-the-facility-once-per-goal) FSD
+needs: a background dispatch returns at once, its completion (exit, timeout or kill)
+arrives as a new turn, and its file-watch mode is a native inbox watcher. As of 0.15.2 the
+wait runs as `mode: "dispatch"` with `background: true`, `handsFree: { autoExitOnQuiet:
+false }` (a silent wait is not a finished one) and a `timeout` above the wait's own.
+Verified 2026-09-15 with 0.15.2: completions arrived while the coordinator was busy and
+after its turn had ended, a dispatched settled-state wait returned as a new turn, file
+watches fired on worker reports, and a watch timeout was notified, not silent. Verify the
+installed contract each goal; names and defaults change. The owner installs the extension
+once; the coordinator never installs, updates or configures it for a goal. Without it the
+facility is **unavailable**: stop unattended delegation and make the one specific install
+request. Pi workers do not need it.
 
 ## Start once
 
