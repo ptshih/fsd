@@ -58,7 +58,9 @@ A role's `fallback.when` names the trigger: `harness-unavailable` (the executabl
 Herdr integration cannot start), `model-limit` (the harness starts but the provider refuses
 the selected model for usage, quota or rate reasons) or `auth-failure`; an older value such as
 `claude-unavailable` covers all three for that harness. A fallback fires only after the
-refused attempt is recorded as `not-started` and disclosed, never silently.
+refused attempt is recorded (`not-sent` when the harness never started, `not-started`
+when it refused the delivered prompt; [uncounted once per selection](filesystem.md#dispatch-intent-before-input))
+and disclosed, never silently.
 
 A missing profile is not an error and does not require creating one. Default to supervised
 work, no automatic launch, no borrowed trust consent and no invented allowance. Named
@@ -85,8 +87,10 @@ everything after `--`. `hardened_launch_args` remove write ability at the harnes
 hardened worker reports natively and the coordinator captures the result with
 `herdr agent read`. Check each flag against the installed harness's `--help` once per goal,
 as with other command shapes. Record the exact file used in the assignment's `role_file`.
-A harness with no system-prompt flag (Antigravity's `agy` today) takes the role text as its
-first prompt or through the packet's read list; then the packet's report contract must spell
+A harness with no system-prompt flag (Antigravity's `agy` today) has no `launch_args`
+entry: start it with the approved model and approval flags only and put the role file's
+absolute path first in the packet's read list, so the single submission still carries the
+role; never send the role as a first prompt. Then the packet's report contract must spell
 out the literal header block with every key, because a worker will not open a second
 template to learn the field names (observed 2026-09-17: a complete report with a renamed
 header). Replace `REPORT_INBOX` with the attempt's inbox directory: Codex's workspace sandbox writes only

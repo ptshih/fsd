@@ -3,7 +3,9 @@
 FSD uses **Herdr tabs → filesystem reports → existing native wakeup → coordinator
 verification**. Herdr is the only runtime dependency beyond the current coding harness
 and its ordinary tools. Assume Herdr's harness integrations are installed. Do not add
-packages, extensions, services, helper models or custom watcher/controller code.
+packages, extensions, services, helper models or custom watcher/controller code. The
+bounded inbox poll below is a command the host's facility runs, like `agent wait`, not
+machinery of FSD's own.
 
 Files are the source of truth. A native notification is a hint to inspect them, not
 acceptance or authority. A file appearing, a desktop toast, and an installed integration
@@ -25,25 +27,35 @@ command facility, or alongside waits when a worker's pane state is unreliable. A
 observation before the final inbox scan and before dispatch, so an early report cannot
 fall between a scan and subscription. Watch only worker inboxes; ignore temporary files.
 
-On a host without a native filesystem watcher (macOS), a one-second poll under the host's
-monitor facility is the portable fallback; it emits one line per new final report and
-ignores `.tmp-*` drafts:
+On a host with a background facility but no native filesystem watcher (macOS), the
+facility can run a bounded inbox poll as a supplement, the same way it runs `agent wait`:
+it is observed, bounded and stoppable through the facility's handle, keeps no state of
+its own, and each line is a hint to inspect the inbox. It needs the same facility as the
+settled-state wait, so it never fills the gap described under
+[missing capability](#handle-a-missing-capability). The block is POSIX `sh` and runs
+unchanged under `zsh`; replace `ATTEMPT_INBOX` (quoted as one argument) and
+`REMAINING_S` (seconds inside the remaining allowance). It emits one line per newly
+published `.md` of any kind, ignores `.tmp-*` drafts, and ends with an expiry line so
+its stop is a notification, not silence:
 
+<!-- fsd-example: inbox-poll -->
 ```sh
-INBOX=ATTEMPT_INBOX; seen=""
-while true; do
-  for f in "$INBOX"/*.md; do
-    [ -f "$f" ] || continue
-    case "$seen" in *"|$f|"*) ;; *) seen="$seen|$f|"; echo "REPORT_PUBLISHED $(date -u +%H:%M:%SZ) $(basename "$f")";; esac
+INBOX=ATTEMPT_INBOX; remaining=REMAINING_S; seen=""
+while [ "$remaining" -gt 0 ]; do
+  for name in $(find "$INBOX" -maxdepth 1 -type f -name '*.md' ! -name '.*' | sed 's|.*/||'); do
+    case "$seen" in *"|$name|"*) ;; *) seen="$seen|$name|"; echo "INBOX_EVENT $(date -u +%H:%M:%SZ) $name";; esac
   done
-  sleep 1
+  sleep 1; remaining=$((remaining - 1))
 done
+echo "POLL_EXPIRED $(date -u +%H:%M:%SZ)"
 ```
 
-Which source is primary depends on the harness: a settled-state wait on a Claude Code
-worker returned reliably, while a blocked-only wait on an Antigravity worker never fired
-during a fourteen-minute build in which the inbox watch delivered the report (2026-09-17).
-For that harness arm the inbox watch as primary and keep the wait for blocked detection.
+The settled-state wait stays primary on every harness. Evidence so far: a settled-state
+wait on a Claude Code worker returned reliably; on an Antigravity worker only a
+blocked-only wait was armed, which by construction cannot fire on `idle`/`done`, and the
+inbox observation delivered the report after a fourteen-minute build (2026-09-17). That
+says nothing about a full settled-state wait on that harness: arm the full wait and the
+inbox observation together there until the wait is qualified.
 
 Both are hints. On any wake, inspect the actual pane (`herdr agent get`,
 `agent read --source visible`) and the inbox: neither `working` nor `idle` metadata proves
@@ -70,9 +82,10 @@ readiness, and a wait that returned `idle` can accompany a trust dialog or an ac
    attempt, with a timeout inside both the original deadline (leaving time for inspection,
    repair and cleanup) and the facility's own maximum; renew on expiry after reconciling.
 
-Use the facility through its documented interface with bounded configuration. Do not
-write a script, start an unobserved process, attach a controller later, or block the
-model turn on a completion wait.
+Use the facility through its documented interface with bounded configuration; the only
+commands it runs for FSD are Herdr's `agent wait` and the inbox poll above. Do not build
+a watcher of your own, start an unobserved process, attach a controller later, or block
+the model turn on a completion wait.
 
 ## Handle a missing capability
 

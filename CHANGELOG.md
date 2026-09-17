@@ -2,24 +2,31 @@
 
 ## Unreleased
 
-- Attempt dispositions: `not-started` for a dispatch the provider refused before any
-  model work (usage cap, credentials, outage) and an owner-steering cancellation with no
-  work product; neither consumes the role's allowance. Preferences' `fallback.when`
+- Attempt dispositions: `not-started` for a delivered prompt the provider refused before
+  any model work (usage cap, credentials, outage). It, a `not-sent` attempt whose harness
+  never started, and an owner `cancelled` attempt with no work product are uncounted,
+  once per selection; the rule lives in filesystem.md's dispatch section, and a refused
+  selection is never resubmitted without owner steering. Preferences' `fallback.when`
   names `harness-unavailable`, `model-limit` or `auth-failure`; a fallback fires only
   after the refused attempt is recorded and disclosed (observed 2026-09-17: a hardened
   Claude reviewer settled in seconds on "You've reached your Fable limit").
-- Dispatch: the submitting `agent prompt` command writes its own receipt into the attempt
-  record, so a tool result lost to an interrupt is reconciled from the file, not guessed.
-- Packets written ahead of dispatch mark late-bound fields `SET_AT_DISPATCH` and resolve
-  them in one pass, asserting none remain before input.
-- Role files name the full report header (`event_id` and `kind` were missing), the
-  assignment template spells the header out with values, and setup notes that a harness
-  without a system-prompt flag takes the role as its first prompt or read-list entry.
-- Trust dialogs: Claude Code's defaults to "No, exit", Antigravity's to "Yes"; read the
-  default before answering.
-- Delivery: a portable one-second inbox poll for hosts without a filesystem watcher, and
-  the observation that the inbox watch, not the settled-state wait, delivered an
-  Antigravity worker's report.
+- Dispatch: the submitting `agent prompt` command writes its own receipt to
+  `evidence/<attempt>.receipt.json` (stdout) and `.receipt.err` (stderr, exit status)
+  under `set -C`, so a tool result lost to an interrupt is reconciled from the files and
+  an existing receipt is never overwritten.
+- Packets written ahead of dispatch mark binding fields `SET_AT_DISPATCH` and resolve
+  them in one pass, asserting none remain before input; `revision` and `deadline` are
+  still copied from `goal.md` when the packet is written.
+- Role files name the full report header (`event_id` and `kind` were missing); the
+  assignment template spells the header out with identity values filled and the
+  per-message fields left to the worker; setup notes that a harness without a
+  system-prompt flag takes the role through the packet's read list, never a first prompt.
+- Trust dialogs: read the default and the read-back before answering; Claude Code's has
+  started on "No, exit", Antigravity's on "Yes".
+- Delivery: a bounded, `sh`/`zsh`-portable inbox poll the host's facility can run as a
+  supplement where it has no filesystem watcher, exercised by `npm test`; the Antigravity
+  observation (a blocked-only wait never fired, the inbox observation delivered) does not
+  demote the settled-state wait, which stays primary on every harness.
 - Compositions: a "Waived review" floor for when the owner waives independent review.
 - README: demo animation under `assets/` illustrating the review loop, badges, and a
   repository description and topics on GitHub. `check.mjs` admits `.gif`/`.png` only

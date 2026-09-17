@@ -1,6 +1,9 @@
 // Development-only documentation contracts. No host tools, agents or watches are run.
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { test } from 'node:test';
 
 const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
@@ -163,4 +166,29 @@ test('evidence captures are bounded: one footer line and header-to-verdict repor
   const herdr = text('references/herdr.md');
   assert.match(herdr, /keep the single footer line that shows the effective model, thinking level and permission mode/);
   assert.match(herdr, /for a native report keep the text from its identity header to its verdict or final line/);
+});
+
+test('the inbox poll is bounded, ignores drafts and survives an empty inbox under sh and zsh', { skip: process.platform === 'win32' && 'Requires a POSIX shell' }, t => {
+  const block = readFileSync(new URL('../references/delivery.md', import.meta.url), 'utf8')
+    .match(/<!-- fsd-example: inbox-poll -->\n```sh\n([\s\S]*?)\n```/)?.[1];
+  assert(block, 'inbox poll example required');
+  assert.equal(spawnSync('/bin/sh', ['-n'], { input: block, encoding: 'utf8', timeout: 5000 }).status, 0);
+  // A path with a space checks the quoted replacement; a leading-dot draft must stay invisible.
+  const inbox = mkdtempSync(join(tmpdir(), 'fsd poll-'));
+  t.after(() => rmSync(inbox, { recursive: true, force: true }));
+  const script = block.replace('ATTEMPT_INBOX', JSON.stringify(inbox)).replace('REMAINING_S', '1');
+  const shells = ['/bin/sh'];
+  if (spawnSync('/bin/sh', ['-c', 'command -v zsh'], { encoding: 'utf8', timeout: 5000 }).status === 0) shells.push('zsh');
+  for (const shell of shells) {
+    writeFileSync(join(inbox, '.tmp-draft.md'), '');
+    const empty = spawnSync(shell, ['-c', script], { encoding: 'utf8', timeout: 10000 });
+    assert.ifError(empty.error);
+    assert.equal(empty.status, 0, `${shell}: ${empty.stderr}`);
+    assert.match(empty.stdout, /^POLL_EXPIRED \d\d:\d\d:\d\dZ\n$/, `${shell} must not fail on an empty inbox`);
+    writeFileSync(join(inbox, 'E1.md'), '');
+    const published = spawnSync(shell, ['-c', script], { encoding: 'utf8', timeout: 10000 });
+    assert.equal(published.status, 0, `${shell}: ${published.stderr}`);
+    assert.match(published.stdout, /^INBOX_EVENT \d\d:\d\d:\d\dZ E1\.md\nPOLL_EXPIRED \d\d:\d\d:\d\dZ\n$/, shell);
+    rmSync(join(inbox, 'E1.md'));
+  }
 });

@@ -40,7 +40,8 @@ assignments/<assignment>.md     Coordinator's task packet
 attempts/<attempt>.md           Dispatch intent, native receipt reference, disposition
 inbox/<attempt>/<event>.md      Immutable messages from one authorized publisher
 acknowledgments/<event>.md      Coordinator's receipt, not acceptance
-evidence/                      Retained reports, patches and check results
+evidence/                       Retained reports, patches and check results
+evidence/<attempt>.receipt.json Startup receipt stdout; `.receipt.err` holds stderr and exit
 ```
 
 A small direct goal can use just `state.md`. Delegation needs enough records to identify
@@ -75,8 +76,9 @@ claim isolation from untrusted workers.
 2. Persist `prepared` intent. If recording fails, do not dispatch.
 3. Reinspect identity, directives, ownership, limits and empty prompt. Before calling
    the native submission command, persist `dispatch-started`.
-4. Submit once using the [Herdr procedure](herdr.md#dispatch). Retain actual stdout,
-   stderr, exit status and post-submission native activity from the bounded startup
+4. Submit once using the [Herdr procedure](herdr.md#dispatch). The submission writes
+   its stdout, stderr and exit status to the attempt's receipt files under `evidence/`;
+   read them back and retain post-submission native activity from the bounded startup
    receipt. Record the separately armed native watch handle, then `observing`, confirmed
    `not-sent`, or `uncertain` according to the evidence. Neither sent bytes nor an armed
    watch prove worker startup or completion.
@@ -85,7 +87,14 @@ A crash with `dispatch-started` is uncertain even if input may never have occurr
 A timeout or absent receipt does not prove nondelivery. Never blindly repeat a prompt.
 Reconcile current native identity/output and partial files first. New attempts, including
 report requests, count toward the approved dispatch allowance; replacement IDs do not
-reset it. These records guide recovery but do not enforce idempotency automatically.
+reset it. Two dispositions are uncounted: a refusal before any model work — `not-sent`
+because the harness could not start, or `not-started` because the provider refused the
+delivered prompt (usage cap, missing credentials, outage) — and `cancelled` by owner
+steering before any work product. The allowance guards against runaway retries, not
+against outages or the owner's decisions, so a refusal is uncounted once per selection:
+record and disclose it, then switch to the approved fallback or ask; never resubmit the
+refused selection in the same goal without owner steering. These records guide recovery
+but do not enforce idempotency automatically.
 
 ## Publish a message
 
