@@ -59,6 +59,14 @@ test('worker packet resolves reporting and discourages coordination bootstrap sc
   assert.match(assignment, /## Resolved report contract/);
   assert.match(assignment, /Exact final path \(or native channel\), event ID\/prefix and resolved identity metadata/);
   assert.match(assignment, /retain all private-path, symlink and no-overwrite safeguards/);
+  // The packet and the protocol name every header key; role files defer to the packet.
+  for (const key of templateFields.message) {
+    assert(assignment.includes(`\`${key}\``), `assignment names ${key}`);
+    assert(text('references/filesystem.md').includes(`\`${key}\``), `filesystem protocol names ${key}`);
+  }
+  assert.match(assignment, /`worker_session` from its own discovery or `"unknown"`/);
+  for (const name of ['reviewer', 'builder', 'scout', 'judge', 'workhorse'])
+    assert.match(text(`agents/${name}.md`), /the packet's keys and identity values; your own `event_id`, `kind`, `created_at` and discovered `worker_session`; nothing else/, name);
 });
 
 test('worker focus retains required checks, conflict stops, steering and source evidence', () => {

@@ -45,9 +45,9 @@ acceptable.
 
 ## Report
 
-One final report to the assigned inbox, with the identity header the packet spells out
-(event_id, goal_id, revision, assignment_id, attempt_id, worker_session, kind, created_at;
-set event_id, kind and created_at yourself per message; nothing else), then:
+One final report to the assigned inbox, with the identity header (the packet's keys and
+identity values; your own `event_id`, `kind`, `created_at` and discovered
+`worker_session`; nothing else), then:
 
 ```text
 Specified changes: <count> — applied: <count> — skipped: <count, with reasons>

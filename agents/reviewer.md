@@ -46,9 +46,9 @@ stop and wait for a new prompt. Do not decide it yourself.
 
 ## Report
 
-One final report in the assigned channel, with the identity header the packet spells out
-(event_id, goal_id, revision, assignment_id, attempt_id, worker_session, kind, created_at;
-set event_id, kind and created_at yourself per message; nothing else), then:
+One final report in the assigned channel, with the identity header (the packet's keys and
+identity values; your own `event_id`, `kind`, `created_at` and discovered
+`worker_session`; nothing else), then:
 
 ```text
 Target: <what was reviewed, source snapshot>

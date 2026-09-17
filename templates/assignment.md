@@ -46,11 +46,13 @@ Fill this before dispatch so the worker need not study other goals or FSD's vali
 
 - Exact final path (or native channel), event ID/prefix and resolved identity metadata;
   keep the path consistent with the recipe (the standard recipe uses `<event_id>.md`).
-  Spell out the header block the worker copies, from the [message template](message.md):
-  fill `goal_id`, `revision`, `assignment_id`, `attempt_id` and `worker_session` (or
-  `"unknown"`) with actual values; leave `event_id` (unique per message, from the assigned
-  prefix), `kind` and `created_at` (a clock reading at publication, never prefilled) for
-  the worker to set per message. A native report uses the same keys as its first lines:
+  Name the header keys verbatim — `event_id`, `goal_id`, `revision`, `assignment_id`,
+  `attempt_id`, `worker_session`, `kind`, `created_at` — so the worker never opens a
+  second template to learn them ([message template](message.md)). Identity values come
+  from this packet's front matter, one copy, so a retry cannot leave a stale header; the
+  worker sets `event_id` (from the assigned prefix), `kind` and `created_at` (a clock
+  reading at publication) per message, and `worker_session` from its own discovery or
+  `"unknown"`. A native report uses the same keys as its first lines:
 - Required result/evidence and useful length bound; unrequired checks stay not run:
 - Applicable publication recipe/section, with authorized paths supplied; retain all
   private-path, symlink and no-overwrite safeguards when supplying a command excerpt:

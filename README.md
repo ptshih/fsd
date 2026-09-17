@@ -36,7 +36,7 @@ The coordinator confirms only what is genuinely undecided, does small work itsel
 for anything larger opens one Herdr tab per worker: a `builder` in an isolated worktree,
 fresh `reviewer`s with distinct angles, a `scout` when the code is unfamiliar. Each worker
 gets a role file and a short packet, publishes an immutable report, and the coordinator is
-woken when it finishes — no polling. Results are verified by the coordinator, not taken
+woken when it finishes rather than polling for it. Results are verified by the coordinator, not taken
 on trust.
 
 For a complete trace of a real goal, including two coordinator mistakes and how they were

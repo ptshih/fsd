@@ -87,14 +87,15 @@ A crash with `dispatch-started` is uncertain even if input may never have occurr
 A timeout or absent receipt does not prove nondelivery. Never blindly repeat a prompt.
 Reconcile current native identity/output and partial files first. New attempts, including
 report requests, count toward the approved dispatch allowance; replacement IDs do not
-reset it. Two dispositions are uncounted: a refusal before any model work — `not-sent`
-because the harness could not start, or `not-started` because the provider refused the
-delivered prompt (usage cap, missing credentials, outage) — and `cancelled` by owner
-steering before any work product. The allowance guards against runaway retries, not
-against outages or the owner's decisions, so a refusal is uncounted once per selection:
-record and disclose it, then switch to the approved fallback or ask; never resubmit the
-refused selection in the same goal without owner steering. These records guide recovery
-but do not enforce idempotency automatically.
+reset it. Three dispositions are uncounted because no model work happened: `not-sent`
+(the prompt never reached the worker: a harness that could not start, a Herdr rejection,
+a failed submission command), `not-started` (the delivered prompt was refused before any
+model work: usage cap, missing credentials, outage) and `cancelled` by owner steering
+before any work product. The allowance guards against runaway retries, not against
+outages or the owner's decisions. After a refusal, record and disclose it, then switch
+to the approved fallback or ask; do not resubmit the refused selection without owner
+steering. A limit or failure after work began is `incomplete` and counts, whatever the
+cause. These records guide recovery but do not enforce idempotency automatically.
 
 ## Publish a message
 

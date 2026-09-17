@@ -30,22 +30,26 @@ fall between a scan and subscription. Watch only worker inboxes; ignore temporar
 On a host with a background facility but no native filesystem watcher (macOS), the
 facility can run a bounded inbox poll as a supplement, the same way it runs `agent wait`:
 it is observed, bounded and stoppable through the facility's handle, keeps no state of
-its own, and each line is a hint to inspect the inbox. It needs the same facility as the
-settled-state wait, so it never fills the gap described under
+its own, and its exit is the hint to inspect the inbox. It needs the same facility as
+the settled-state wait, so it never fills the gap described under
 [missing capability](#handle-a-missing-capability). The block is POSIX `sh` and runs
 unchanged under `zsh`; replace `ATTEMPT_INBOX` (quoted as one argument) and
-`REMAINING_S` (seconds inside the remaining allowance). It emits one line per newly
-published `.md` of any kind, ignores `.tmp-*` drafts, and ends with an expiry line so
-its stop is a notification, not silence:
+`REMAINING_S` (an integer count of seconds inside the remaining allowance). It snapshots
+the inbox when armed — arm it before the final scan, as above — exits `INBOX_CHANGED` on
+the first new final `.md` (re-arm after reconciling, as with a returned wait), ignores
+`.tmp-*` drafts, exits `POLL_EXPIRED` at the deadline, and exits non-zero on a missing,
+symlinked or unreplaced input rather than watching nothing:
 
 <!-- fsd-example: inbox-poll -->
 ```sh
-INBOX=ATTEMPT_INBOX; remaining=REMAINING_S; seen=""
+INBOX=ATTEMPT_INBOX; remaining=REMAINING_S
+test -d "$INBOX" && test "$INBOX" = "$(cd "$INBOX" && pwd -P)" || exit 1
+case "$remaining" in ''|*[!0-9]*) exit 1;; esac
+list() { find "$INBOX" -maxdepth 1 -type f -name '*.md' ! -name '.*' | sort; }
+before=$(list)
 while [ "$remaining" -gt 0 ]; do
-  for name in $(find "$INBOX" -maxdepth 1 -type f -name '*.md' ! -name '.*' | sed 's|.*/||'); do
-    case "$seen" in *"|$name|"*) ;; *) seen="$seen|$name|"; echo "INBOX_EVENT $(date -u +%H:%M:%SZ) $name";; esac
-  done
   sleep 1; remaining=$((remaining - 1))
+  [ "$(list)" = "$before" ] || { echo "INBOX_CHANGED $(date -u +%H:%M:%SZ)"; exit 0; }
 done
 echo "POLL_EXPIRED $(date -u +%H:%M:%SZ)"
 ```
@@ -82,10 +86,10 @@ readiness, and a wait that returned `idle` can accompany a trust dialog or an ac
    attempt, with a timeout inside both the original deadline (leaving time for inspection,
    repair and cleanup) and the facility's own maximum; renew on expiry after reconciling.
 
-Use the facility through its documented interface with bounded configuration; the only
-commands it runs for FSD are Herdr's `agent wait` and the inbox poll above. Do not build
-a watcher of your own, start an unobserved process, attach a controller later, or block
-the model turn on a completion wait.
+Use the facility through its documented interface with bounded configuration; the
+commands it runs for FSD are Herdr's `agent wait`, an already-exposed native watch, or
+the inbox poll above. Do not build a watcher of your own, start an unobserved process,
+attach a controller later, or block the model turn on a completion wait.
 
 ## Handle a missing capability
 

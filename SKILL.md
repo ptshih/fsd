@@ -43,8 +43,8 @@ supply approval; do not re-ask settled choices or invent an allowance.
 Approve an envelope, not a roster: choose direct work, staffing, independent review and
 repair within it. Supervised is the default; unsupervised means deciding in-scope
 questions without asking, not new authority. Limits never reset on replacement or resume;
-only a refusal before any model work or an owner cancellation with no work product goes
-uncounted ([rule](references/filesystem.md#dispatch-intent-before-input)).
+only an attempt with no model work (`not-sent`, `not-started`, or `cancelled` with no
+work product) goes uncounted ([rule](references/filesystem.md#dispatch-intent-before-input)).
 Then name yourself in Herdr: rename your agent to `fsd-<slug>` and, when your tab is
 dedicated to the goal, your tab to `FSD <slug>` ([procedure](references/herdr.md#name-the-coordinator)).
 
