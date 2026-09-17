@@ -57,7 +57,11 @@ echo "POLL_EXPIRED $(date -u +%H:%M:%SZ)"
 The settled-state wait stays primary on every harness. Evidence so far: a settled-state
 wait on a Claude Code worker returned reliably; on an Antigravity worker only a
 blocked-only wait was armed, which by construction cannot fire on `idle`/`done`, and the
-inbox observation delivered the report after a fourteen-minute build (2026-09-17).
+inbox observation delivered the report after a fourteen-minute build (2026-09-17). The
+settled-state wait for **Codex** and **Pi** workers is **unqualified** — no full
+settled-state wait has been observed to completion on either harness. Treat both as
+unreliable until qualified: always pair the wait with inbox observation or visible output
+inspection, the same as `agy`.
 
 A full settled-state wait on an Antigravity (`agy`) worker is now qualified as
 **unreliable**: a wait with `--until idle --until done --until blocked` returned `done`
