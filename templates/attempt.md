@@ -17,6 +17,8 @@ deadline: REPLACE
 - Prompt or private immutable prompt reference:
 - Armed native watch handle and settled-state wait handle, assigned inbox paths and
   owning coordinator session:
+- For Codex active-turn observation: shell `session_id`, any code-mode `cell_id`,
+  bounded timeout, last collected result and cancellation disposition:
 - Verified ownership, effective settings and empty prompt evidence:
 - Dispatch allowance consumed/remaining, including prior attempts:
 - Prepared intent retained; `dispatch-started` retained immediately before native input:

@@ -7,6 +7,8 @@
 - Readiness record: checked contracts/selections, proof references and invalidated facts:
 - Pinned runbook revision/path when applicable; proposed skill edits are not goal authority:
 - Already-available native wakeup facility, coordinator binding and delivery evidence:
+- Observation mode (`codex-active-turn` for Codex by default, `native-wakeup` otherwise), any owner override
+  and terminal-tool contracts/handles when applicable:
 - Owned workers/worktrees/paths, including the coordinator's implementation scope:
 - Uncertain submissions, pending messages and unresolved acknowledged follow-ups:
 - Per-assignment verification, integration and dependency readiness:

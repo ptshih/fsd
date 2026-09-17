@@ -11,6 +11,12 @@ Files are the source of truth. A native notification is a hint to inspect them, 
 acceptance or authority. A file appearing, a desktop toast, and an installed integration
 are not proof that an idle coordinator will resume.
 
+This page describes `observation_mode: native-wakeup`, the default for coordinators
+other than Codex. A Codex coordinator defaults to `observation_mode: codex-active-turn`
+and follows the [bounded tool-wait procedure](codex.md) instead of qualifying idle
+wakeups. The worker wait qualification rule below applies in both modes. Record the
+mode before dispatch; an explicit owner requirement for idle wakeup still governs.
+
 ## Two wake sources
 
 **Settled-state wait (preferred).** Herdr's `agent wait TARGET --timeout MS` returns when
@@ -54,10 +60,17 @@ done
 echo "POLL_EXPIRED $(date -u +%H:%M:%SZ)"
 ```
 
-The settled-state wait stays primary on every harness. Evidence so far: a settled-state
-wait on a Claude Code worker returned reliably; on an Antigravity worker only a
-blocked-only wait was armed, which by construction cannot fire on `idle`/`done`, and the
-inbox observation delivered the report after a fourteen-minute build (2026-09-17).
+The settled-state wait stays primary on every harness where it is qualified: a full
+settled-state wait (one that returns on `idle`, `done` or `blocked`, not a blocked-only
+wait) has been observed returning on a genuine settlement, with the report already in the
+inbox or visible output at the wake, and the observation is recorded here with its date
+and versions. Qualified so far: Claude Code (2026-09-17). On an Antigravity worker only a
+blocked-only wait was first armed, which by construction cannot fire on `idle`/`done`, and
+the inbox observation delivered the report after a fourteen-minute build (2026-09-17). No
+full settled-state wait has been observed to completion on a `codex` or `pi` worker (as
+of 2026-09-17), so both remain **unverified**: proof missing, not failure observed.
+The [Codex active-turn check](codex.md#turn-boundaries) exercised timeout collection,
+later report inspection and cleanup; it did not qualify a wait returning on completion.
 
 A full settled-state wait on an Antigravity (`agy`) worker is now qualified as
 **unreliable**: a wait with `--until idle --until done --until blocked` returned `done`
@@ -69,12 +82,14 @@ agent's visible output showed active tool execution (spinners, "Running command.
 indicators) throughout, contradicting the reported status. This makes the settled-state
 wait unsuitable as the sole completion signal for `agy` workers.
 
-**For `agy` workers, always pair the settled-state wait with inbox observation or visible
-output inspection.** When the worker reports to a filesystem inbox, the inbox poll is the
+**On any harness whose settled-state wait is not qualified — `agy` (unreliable), `codex`
+and `pi` (unverified) — always pair the wait with inbox observation or visible output
+inspection.** When the worker reports to a filesystem inbox, the inbox poll is the
 primary completion signal; when the worker reports natively (hardened read-only), inspect
 the visible output for report-shaped text on each wake rather than trusting the status
-alone. A wait that returns `done` or `idle` for an `agy` worker is a hint to inspect, not
-proof of settlement.
+alone. A wait that returns `done` or `idle` on such a worker is a hint to inspect, not
+proof of settlement. A harness leaves this list only when its qualifying observation is
+recorded above.
 
 Both are hints. On any wake, inspect the actual pane (`herdr agent get`,
 `agent read --source visible`) and the inbox: neither `working` nor `idle` metadata proves
@@ -117,6 +132,9 @@ workers. State the exact missing capability. Continue independent direct work wh
 outcome and required review permit it. Do not silently switch to manual resumption,
 create machinery or install a dependency. A change to the
 requested outcome or operating envelope belongs to the owner.
+[Codex active-turn coordination](codex.md) is the Codex default. It keeps the turn open
+and provides no idle-resumption guarantee, so it cannot replace an explicit requirement
+for idle wakeup without owner steering.
 
 ## Multiple workers
 

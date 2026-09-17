@@ -55,7 +55,8 @@ edit another worker's checkout or silently take over its partial work.
 
 ## Worker tabs
 
-After establishing [native wakeup](delivery.md) and within the approved delegation envelope, create
+After establishing [native wakeup](delivery.md) or [Codex active-turn observation](codex.md),
+and within the approved delegation envelope, create
 **one new, goal-owned Herdr tab per worker**. Do not use `herdr pane split` or put new
 workers into the coordinator's or an unrelated existing tab. This FSD topology takes
 precedence over Herdr's generic sibling-pane default. Keep the user's focus unchanged.
@@ -81,7 +82,7 @@ Follow [cleanup](#cleanup) for these owned tabs; preserve unrelated resources an
 
 ## Dispatch
 
-Establish the [native wakeup facility](delivery.md) once per goal before allocating
+Establish the [selected observation mode](delivery.md) once per goal before allocating
 task-worker resources. Prepare the [assignment](../templates/assignment.md) and
 [attempt record](../templates/attempt.md) with filesystem report paths; arm any inbox
 watch before input. Copy `revision` and the deadline from the current `goal.md` when the
@@ -162,16 +163,21 @@ never `not-sent`: the prompt may already have landed. Do not claim startup from
 successful byte delivery or a pre-existing idle state.
 
 Immediately after the receipt, arm the worker's settled-state wait through the host's
-background facility, with a timeout inside the remaining goal allowance:
+background facility, or through the [Codex terminal tools](codex.md#dispatch-and-collect)
+for a Codex coordinator. Keep the timeout inside the remaining goal allowance:
 
 <!-- fsd-example: herdr-worker-wait -->
 ```sh
 herdr agent wait WORKER_NAME --timeout REMAINING_MS
 ```
 
-Its exit is the wake: `idle`/`done` means inspect the inbox and pane, `blocked` means a
-dialog needs owner-consented handling, `timeout` means reconcile and renew. Record the
-background task handle in the attempt.
+Its exit is the wake (or the collected Codex tool result): `idle`/`done` means inspect the
+inbox and pane, `blocked` means a dialog needs owner-consented handling, `timeout` means
+reconcile and renew. Record the background task handle or Codex shell `session_id` in
+the attempt. On a harness whose wait is not qualified (`agy`,
+`codex` and `pi` as of 2026-09-17), also arm the inbox observation, or inspect visible
+output on each wake or collected tool result for a native reporter, as
+[Two wake sources](delivery.md#two-wake-sources) requires, recording any second handle.
 
 `agent prompt` is not an atomic compare-and-submit operation against the coordinator's
 prior screen/identity inspection. Exclusive ownership remains necessary. If identity
@@ -179,11 +185,13 @@ changes, delivery is uncertain, or a command stalls/times out, inspect current n
 state and output plus retained receipts before any retry. Never blindly replay input.
 A rejected command can be recorded as not sent only when its evidence establishes that.
 
-Do not run default `agent prompt --wait` or `agent wait` as a task-completion wait in
-the model turn, wrap them in a custom controller, or poll until completion. `agent wait`
+In native-wakeup mode, do not run default `agent prompt --wait` or `agent wait` as a
+task-completion wait in the model turn, wrap them in a custom controller, or poll until
+completion. `agent wait`
 belongs only inside the host's already-available background facility, which turns its
 exit into a native notification. After the short startup receipt, work independently or
-yield to the already-armed native wakeup facility.
+yield to the already-armed native wakeup facility. The default
+[Codex active-turn mode](codex.md) collects bounded waits and keeps the turn open.
 
 ## Inspect results and prompts
 
