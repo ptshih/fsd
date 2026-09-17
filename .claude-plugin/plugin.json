@@ -1,6 +1,6 @@
 {
   "name": "fsd",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Deliver a bounded goal through role-defined Herdr workers, private filesystem handoffs and native wakeups, then stop",
   "author": { "name": "ptshih" },
   "repository": "https://github.com/ptshih/fsd",

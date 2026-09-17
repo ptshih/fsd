@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.3.0 — 2026-09-17
 
 - Attempt dispositions: `not-started` for a delivered prompt the provider refused before
   any model work (usage cap, credentials, outage). It, `not-sent`, and an owner
