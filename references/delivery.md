@@ -25,6 +25,26 @@ command facility, or alongside waits when a worker's pane state is unreliable. A
 observation before the final inbox scan and before dispatch, so an early report cannot
 fall between a scan and subscription. Watch only worker inboxes; ignore temporary files.
 
+On a host without a native filesystem watcher (macOS), a one-second poll under the host's
+monitor facility is the portable fallback; it emits one line per new final report and
+ignores `.tmp-*` drafts:
+
+```sh
+INBOX=ATTEMPT_INBOX; seen=""
+while true; do
+  for f in "$INBOX"/*.md; do
+    [ -f "$f" ] || continue
+    case "$seen" in *"|$f|"*) ;; *) seen="$seen|$f|"; echo "REPORT_PUBLISHED $(date -u +%H:%M:%SZ) $(basename "$f")";; esac
+  done
+  sleep 1
+done
+```
+
+Which source is primary depends on the harness: a settled-state wait on a Claude Code
+worker returned reliably, while a blocked-only wait on an Antigravity worker never fired
+during a fourteen-minute build in which the inbox watch delivered the report (2026-09-17).
+For that harness arm the inbox watch as primary and keep the wait for blocked detection.
+
 Both are hints. On any wake, inspect the actual pane (`herdr agent get`,
 `agent read --source visible`) and the inbox: neither `working` nor `idle` metadata proves
 readiness, and a wait that returned `idle` can accompany a trust dialog or an active tool.

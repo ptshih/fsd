@@ -44,8 +44,8 @@ and was not changed.
 
 ## Report
 
-One final report to the assigned inbox, with the identity header (goal_id, revision, assignment_id, attempt_id, worker_session,
-created_at; nothing else), then:
+One final report to the assigned inbox, with the identity header (event_id, goal_id, revision, assignment_id, attempt_id,
+worker_session, kind, created_at, exactly as the packet spells it; nothing else), then:
 
 ```text
 Implemented: <one line>

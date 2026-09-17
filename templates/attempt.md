@@ -32,7 +32,11 @@ deadline: REPLACE
 ## Disposition
 
 - Verified quiescence or retained handoff owner/next action:
-- Unverified, accepted, incomplete, cancelled, superseded or not-sent; supporting evidence:
+- Unverified, accepted, incomplete, cancelled, superseded, not-started or not-sent; supporting evidence:
+  `not-started`: delivery succeeded but the harness refused before any model work (usage cap,
+  missing credentials, outage); it does not consume the role's attempt allowance. An attempt
+  `cancelled` by owner steering before it produced any work product is recorded but likewise
+  not counted; the allowance guards against runaway retries, not against the owner's decisions:
 - Integration and current-criteria checks still outstanding:
 
 A timeout, missing receipt or missing acknowledgment never proves nondelivery.

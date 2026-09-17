@@ -47,8 +47,8 @@ prompt.
 
 ## Report
 
-One final report in the assigned channel, with the identity header (goal_id, revision, assignment_id, attempt_id, worker_session,
-created_at; nothing else), then:
+One final report in the assigned channel, with the identity header (event_id, goal_id, revision, assignment_id, attempt_id,
+worker_session, kind, created_at, exactly as the packet spells it; nothing else), then:
 
 ```text
 Decision asked: <as assigned>
