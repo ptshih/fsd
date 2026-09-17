@@ -3,7 +3,9 @@
 FSD uses **Herdr tabs → filesystem reports → existing native wakeup → coordinator
 verification**. Herdr is the only runtime dependency beyond the current coding harness
 and its ordinary tools. Assume Herdr's harness integrations are installed. Do not add
-packages, extensions, services, helper models or custom watcher/controller code.
+packages, extensions, services, helper models or custom watcher/controller code. The
+bounded inbox poll below is a command the host's facility runs, like `agent wait`, not
+machinery of FSD's own.
 
 Files are the source of truth. A native notification is a hint to inspect them, not
 acceptance or authority. A file appearing, a desktop toast, and an installed integration
@@ -24,6 +26,40 @@ exposes them, triggers the same inspection. Use it when the host has no backgrou
 command facility, or alongside waits when a worker's pane state is unreliable. Arm
 observation before the final inbox scan and before dispatch, so an early report cannot
 fall between a scan and subscription. Watch only worker inboxes; ignore temporary files.
+
+On a host with a background facility but no native filesystem watcher (macOS), the
+facility can run a bounded inbox poll as a supplement, the same way it runs `agent wait`:
+it is observed, bounded and stoppable through the facility's handle, keeps no state of
+its own, and its exit is the hint to inspect the inbox. It needs the same facility as
+the settled-state wait, so it never fills the gap described under
+[missing capability](#handle-a-missing-capability). The block is POSIX `sh` and runs
+unchanged under `zsh`; replace `ATTEMPT_INBOX` (quoted as one argument) and
+`REMAINING_S` (an integer count of seconds inside the remaining allowance). It snapshots
+the inbox when armed — arm it before the final scan, as above — exits `INBOX_CHANGED` on
+the first new final `.md` (re-arm after reconciling, as with a returned wait), ignores
+`.tmp-*` drafts, exits `POLL_EXPIRED` at the deadline, and exits non-zero on a missing,
+symlinked or unreplaced input rather than watching nothing:
+
+<!-- fsd-example: inbox-poll -->
+```sh
+INBOX=ATTEMPT_INBOX; remaining=REMAINING_S
+test -d "$INBOX" && test "$INBOX" = "$(cd "$INBOX" && pwd -P)" || exit 1
+case "$remaining" in ''|*[!0-9]*) exit 1;; esac
+list() { find "$INBOX" -maxdepth 1 -type f -name '*.md' ! -name '.*' | sort; }
+before=$(list)
+while [ "$remaining" -gt 0 ]; do
+  sleep 1; remaining=$((remaining - 1))
+  [ "$(list)" = "$before" ] || { echo "INBOX_CHANGED $(date -u +%H:%M:%SZ)"; exit 0; }
+done
+echo "POLL_EXPIRED $(date -u +%H:%M:%SZ)"
+```
+
+The settled-state wait stays primary on every harness. Evidence so far: a settled-state
+wait on a Claude Code worker returned reliably; on an Antigravity worker only a
+blocked-only wait was armed, which by construction cannot fire on `idle`/`done`, and the
+inbox observation delivered the report after a fourteen-minute build (2026-09-17). That
+says nothing about a full settled-state wait on that harness: arm the full wait and the
+inbox observation together there until the wait is qualified.
 
 Both are hints. On any wake, inspect the actual pane (`herdr agent get`,
 `agent read --source visible`) and the inbox: neither `working` nor `idle` metadata proves
@@ -50,9 +86,10 @@ readiness, and a wait that returned `idle` can accompany a trust dialog or an ac
    attempt, with a timeout inside both the original deadline (leaving time for inspection,
    repair and cleanup) and the facility's own maximum; renew on expiry after reconciling.
 
-Use the facility through its documented interface with bounded configuration. Do not
-write a script, start an unobserved process, attach a controller later, or block the
-model turn on a completion wait.
+Use the facility through its documented interface with bounded configuration; the
+commands it runs for FSD are Herdr's `agent wait`, an already-exposed native watch, or
+the inbox poll above. Do not build a watcher of your own, start an unobserved process,
+attach a controller later, or block the model turn on a completion wait.
 
 ## Handle a missing capability
 

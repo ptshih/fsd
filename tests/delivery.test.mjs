@@ -1,6 +1,10 @@
-// Development-only documentation contracts. No host tools, agents or watches are run.
+// Development-only documentation contracts. The two tagged shell blocks run against
+// fixtures and a stub `herdr`; no agents, host facilities or watches are started.
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync } from 'node:fs';
+import { spawn, spawnSync } from 'node:child_process';
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { test } from 'node:test';
 
 const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
@@ -163,4 +167,92 @@ test('evidence captures are bounded: one footer line and header-to-verdict repor
   const herdr = text('references/herdr.md');
   assert.match(herdr, /keep the single footer line that shows the effective model, thinking level and permission mode/);
   assert.match(herdr, /for a native report keep the text from its identity header to its verdict or final line/);
+});
+
+const example = (path, name) => read(path).match(new RegExp(`<!-- fsd-example: ${name} -->\\n\`\`\`sh\\n([\\s\\S]*?)\\n\`\`\``))?.[1];
+const quote = value => `'${value.replace(/'/g, "'\\''")}'`;
+const shells = () => ['/bin/sh', ...(spawnSync('zsh', ['-f', '-c', ':'], { timeout: 5000 }).status === 0 ? ['zsh'] : [])];
+const argv = shell => shell === 'zsh' ? ['-f', '-c'] : ['-c'];
+const posix = { skip: process.platform === 'win32' && 'Requires a POSIX shell' };
+function run(shell, script, options = {}) {
+  return new Promise(resolve => {
+    const child = spawn(shell, [...argv(shell), script], { encoding: 'utf8', timeout: 10000, ...options });
+    let stdout = '', stderr = '';
+    child.stdout.on('data', chunk => { stdout += chunk; });
+    child.stderr.on('data', chunk => { stderr += chunk; });
+    child.on('close', status => resolve({ status, stdout, stderr }));
+    options.after?.(child);
+  });
+}
+
+test('the inbox poll exits on the first new report or its deadline and fails loudly on bad input', posix, async t => {
+  const block = example('references/delivery.md', 'inbox-poll');
+  assert(block, 'inbox poll example required');
+  assert.equal(spawnSync('/bin/sh', ['-n'], { input: block, encoding: 'utf8', timeout: 5000 }).status, 0);
+  // Physical paths matter on hosts where the OS temporary-directory path contains symlinks.
+  const root = realpathSync(mkdtempSync(join(tmpdir(), 'fsd poll-')));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const poll = (inbox, remaining) => block.replace('ATTEMPT_INBOX', quote(inbox)).replace('REMAINING_S', remaining);
+  await Promise.all(shells().flatMap(shell => {
+    // A path with a space checks the quoted replacement; a pre-existing report and a
+    // leading-dot draft belong to the snapshot and must not fire.
+    const label = shell.replaceAll('/', '_'), quiet = join(root, `${label} quiet`), live = join(root, `${label} live`);
+    for (const inbox of [quiet, live]) {
+      mkdirSync(inbox);
+      writeFileSync(join(inbox, 'E1.md'), '');
+      writeFileSync(join(inbox, '.tmp-draft.md'), '');
+    }
+    return [
+      run(shell, poll(quiet, '1')).then(result => {
+        assert.equal(result.status, 0, `${shell}: ${result.stderr}`);
+        assert.match(result.stdout, /^POLL_EXPIRED \d\d:\d\d:\d\dZ\n$/, shell);
+      }),
+      run(shell, poll(live, '5'), { after: child => {
+        const timer = setTimeout(() => writeFileSync(join(live, 'E2.md'), ''), 300);
+        child.on('close', () => clearTimeout(timer));
+      } }).then(result => {
+        assert.equal(result.status, 0, `${shell}: ${result.stderr}`);
+        assert.match(result.stdout, /^INBOX_CHANGED \d\d:\d\d:\d\dZ\n$/, `${shell} must exit on the first change`);
+      }),
+      run(shell, poll(join(root, 'missing'), '1')).then(result => assert.equal(result.status, 1, `${shell}: missing inbox`)),
+      run(shell, block.replace('ATTEMPT_INBOX', quote(quiet))).then(result => assert.equal(result.status, 1, `${shell}: unreplaced REMAINING_S`)),
+    ];
+  }));
+});
+
+test('the dispatch receipt keeps stdout, stderr and exit status, refuses to overwrite, and propagates the status', posix, t => {
+  const block = example('references/herdr.md', 'dispatch-receipt');
+  assert(block, 'dispatch receipt example required');
+  assert.equal(spawnSync('/bin/sh', ['-n'], { input: block, encoding: 'utf8', timeout: 5000 }).status, 0);
+  assert.match(block, /^\( umask 077; set -C; /);
+  const root = mkdtempSync(join(tmpdir(), 'fsd receipt-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  // The stub records every invocation, so a refused rerun is proven never to submit.
+  mkdirSync(join(root, 'bin'));
+  writeFileSync(join(root, 'bin', 'herdr'), '#!/bin/sh\nprintf \'%s\\n\' "$*" >> "$FSD_TEST_LOG"\necho \'{"status":"agent_prompted"}\'\necho "stub: timed out" >&2\nexit "$FSD_TEST_EXIT"\n', { mode: 0o700 });
+  const env = { ...process.env, PATH: `${join(root, 'bin')}:${process.env.PATH ?? '/usr/bin:/bin'}`, FSD_TEST_LOG: join(root, 'calls') };
+  const calls = () => { try { return readFileSync(join(root, 'calls'), 'utf8').trim().split('\n'); } catch { return []; } };
+  for (const shell of shells()) {
+    const goal = join(root, `${shell.replaceAll('/', '_')} goal`);
+    mkdirSync(join(goal, 'evidence'), { recursive: true });
+    const script = block.replace('GOAL_DIR', goal).replace('ATTEMPT_ID', 'A1');
+    const receipt = suffix => join(goal, 'evidence', `A1.receipt.${suffix}`);
+    const submit = exit => spawnSync(shell, [...argv(shell), script], { encoding: 'utf8', timeout: 5000, env: { ...env, FSD_TEST_EXIT: String(exit) } });
+    const before = calls().length;
+    const first = submit(3);
+    assert.equal(first.status, 3, `${shell}: Herdr's own exit status is the command's`);
+    assert.equal(calls().length, before + 1);
+    assert.match(calls().at(-1), /^agent prompt TARGET TEXT --wait /);
+    assert.equal(readFileSync(receipt('json'), 'utf8'), '{"status":"agent_prompted"}\n');
+    assert.equal(readFileSync(receipt('err'), 'utf8'), 'stub: timed out\nexit 3\n');
+    for (const suffix of ['json', 'err']) assert.equal(statSync(receipt(suffix)).mode & 0o777, 0o600);
+    const rerun = submit(0);
+    assert.equal(rerun.status, 1, `${shell}: an existing receipt must be refused`);
+    assert.equal(calls().length, before + 1, `${shell}: a refused rerun must not submit`);
+    assert.equal(readFileSync(receipt('err'), 'utf8'), 'stub: timed out\nexit 3\n');
+    rmSync(receipt('json'));
+    assert.equal(submit(0).status, 1, `${shell}: a lone .err is still a retained receipt`);
+    assert.equal(calls().length, before + 1);
+    assert.deepEqual(readdirSync(join(goal, 'evidence')), ['A1.receipt.err']);
+  }
 });

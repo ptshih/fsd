@@ -42,3 +42,13 @@ attempt, and its output is advice: the owner or coordinator still decides.
 `workhorse` for a fully specified, repetitive change (a reviewed fix list, a rename, a
 migration). Specify every location; the workhorse stops at the first ambiguity and asks.
 Follow with one reviewer pass on the diff rather than a full review loop.
+
+## Waived review
+
+Independent review is part of the envelope, so only the owner can waive it, and the waiver
+is recorded in `goal.md` with the reason (a provider limit, a cost decision). A waiver lowers
+the bar to the coordinator's own floor, not to nothing: rerun every assigned check on the
+worker's tree and record cwd/exit; read the diff against each design decision in the packet,
+not the worker's summary of it; confirm scope (no files outside the write paths, no new
+dependencies, no config or documentation edits the packet did not grant); and list what was
+not verified. Then integrate as usual.

@@ -8,7 +8,8 @@ project. Assume Herdr's integration for each coding harness is installed; do not
 integration installer, edit a managed integration or change harness settings for FSD.
 
 Loading the skill starts nothing. Do not install extra packages, extensions, services
-or runners. Do not build wakeup code or launch test workers merely to check readiness.
+or runners. Do not build wakeup machinery beyond the bounded commands the host's facility
+runs ([wakeup](delivery.md)), or launch test workers merely to check readiness.
 
 ## Start once
 
@@ -54,6 +55,12 @@ topology is one dedicated tab per worker: `coordinationDefaults` can retain
 `workerLayout: "tab-per-worker"`, `allowPaneSplits: false`, and `preserveFocus: true`.
 Native wakeup is constrained to already-available host facilities; preferences do not
 authorize installing or building one. They also do not waive required independent review.
+A role's `fallback.when` names the trigger: `harness-unavailable` (the executable, its
+Herdr integration or the provider cannot be reached), `model-limit` (the provider refuses
+the selected model for usage, quota or rate reasons) or `auth-failure`; an older value such as
+`claude-unavailable` covers all three for that harness. A fallback fires only after the
+attempt is recorded with its [disposition](filesystem.md#dispatch-intent-before-input)
+and disclosed, never silently, whether the refusal came before any work or cut it short.
 
 A missing profile is not an error and does not require creating one. Default to supervised
 work, no automatic launch, no borrowed trust consent and no invented allowance. Named
@@ -80,7 +87,13 @@ everything after `--`. `hardened_launch_args` remove write ability at the harnes
 hardened worker reports natively and the coordinator captures the result with
 `herdr agent read`. Check each flag against the installed harness's `--help` once per goal,
 as with other command shapes. Record the exact file used in the assignment's `role_file`.
-Replace `REPORT_INBOX` with the attempt's inbox directory: Codex's workspace sandbox writes only
+A harness with no system-prompt flag (Antigravity's `agy` today) has no `launch_args`
+entry: start it with the approved model and approval flags only and put the role file's
+absolute path first in the packet's read list, so the single submission still carries the
+role; never send the role as a first prompt. Then the packet's report contract must spell
+out the literal header block with every key, because a worker will not open a second
+template to learn the field names (observed 2026-09-17: a complete report with a renamed
+header). Replace `REPORT_INBOX` with the attempt's inbox directory: Codex's workspace sandbox writes only
 inside the cwd, so without `--add-dir` a Codex writer can edit but cannot publish. Inside that
 sandbox `herdr` is unreachable, so a Codex worker reports `worker_session: "unknown"` and the
 coordinator supplies identity from the assignment's pane and tab.

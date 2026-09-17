@@ -86,14 +86,21 @@ task-worker resources. Prepare the [assignment](../templates/assignment.md) and
 [attempt record](../templates/attempt.md) with filesystem report paths; arm any inbox
 watch before input. Copy `revision` and the deadline from the current `goal.md` when the
 packet is written; a retry or replacement packet must not inherit an earlier packet's
-values. Immediately before input, verify the exact native occupant, current directives,
-budget, writer ownership and an empty human prompt. Ready metadata alone is insufficient
-when an interactive UI or human draft is visible.
+values. Fields known only at dispatch (pane, tab, terminal, native session, base commit)
+keep the template's `REPLACE` placeholders in a packet written ahead of time; resolve
+them in one pass — the binding from `pane get`/`agent get` output, the base commit from
+the worker's checkout — and assert no placeholder remains before input. Immediately
+before input, verify the exact native occupant, current directives (the packet's
+`revision` and `deadline` still match `goal.md`; otherwise rewrite the packet), budget,
+writer ownership and an empty human prompt. Ready metadata alone is insufficient when an
+interactive UI or human draft is visible.
 
 The launch sequence for one worker, after its tab exists, uses these checked commands.
 Replace placeholders. `LAUNCH_ARGS` are the role file's `launch_args` for that harness
 with `ROLE_FILE` resolved, plus the approved model and approval flags; omit the trailing
-`--` when there are none. `PACKET_TEXT` is the complete prompt as one shell argument.
+`--` when there are none. A harness absent from `launch_args` gets only the approved
+model and approval flags, with the role file first in the packet's read list
+([setup](setup.md#role-files)). `TEXT` is the complete packet as one shell argument.
 
 <!-- fsd-example: herdr-worker-start -->
 ```sh
@@ -102,7 +109,11 @@ herdr agent start WORKER_NAME --kind HARNESS --pane ROOT_PANE_ID --timeout 30000
 
 If `agent start` returns `agent_not_ready`, the pane is at a startup dialog such as
 workspace trust: inspect it, handle only the exact prompt covered by owner consent, then
-wait for `idle` (not `blocked`) before continuing. `agent start` can also return
+wait for `idle` (not `blocked`) before continuing. Read the dialog's default before
+answering and move to the consented choice by reading the selection back, never by a
+fixed key count: Claude Code's folder-trust dialog has started on "No, exit" and
+Antigravity's on "Yes" (both observed 2026-09-17), so send `enter` only once the
+read-back shows the consented choice. `agent start` can also return
 `agent_started`/`idle` while such a dialog is showing (observed with Codex), so read the
 visible screen before any input regardless of the reported status.
 
@@ -128,16 +139,27 @@ harness footer shows the required mode. If a Claude Code footer still shows the 
 mode, cycle with `agent send-keys WORKER_NAME shift+tab` and read the footer back until
 it matches. Then inspect the pane (`herdr agent read WORKER_NAME --source
 visible`) for an empty prompt and no trust or permission dialog. Persist dispatch intent,
-then submit through native `agent prompt` exactly once. TARGET and TEXT precede options:
+then submit through native `agent prompt` exactly once. TARGET and TEXT precede options.
+The submission writes its own receipt under the goal's `evidence/` — stdout to
+`ATTEMPT_ID.receipt.json`, stderr and the exit status to `ATTEMPT_ID.receipt.err` —
+because the coordinator's tool result can be lost to an interrupt or owner steering
+mid-call. Replace `GOAL_DIR` and `ATTEMPT_ID` inside the quotes. An existing receipt is
+refused without submitting (non-zero exit, nothing written), so a retained receipt is
+never overwritten and a re-prompt is a new attempt with its own files; otherwise the
+exit status is Herdr's own:
 
+<!-- fsd-example: dispatch-receipt -->
 ```sh
-herdr agent prompt TARGET TEXT --wait --until working --until idle --until done --until blocked --timeout 10000
+( umask 077; set -C; r="GOAL_DIR/evidence/ATTEMPT_ID.receipt"; test ! -e "$r.err" && { herdr agent prompt TARGET TEXT --wait --until working --until idle --until done --until blocked --timeout 10000; s=$?; echo "exit $s" >&2; exit $s; } > "$r.json" 2> "$r.err" )
 ```
 
 This requests a bounded **startup acknowledgment**, not a wait through the entire task.
-Use the shorter remaining goal/attempt allowance when necessary. Retain the exact
-command result, stdout/stderr and post-submission native activity. Do not claim startup
-from successful byte delivery or a pre-existing idle state.
+Use the shorter remaining goal/attempt allowance when necessary. Read both receipt files
+back and record their paths in the attempt record; classify `observing`, `not-sent` or
+`uncertain` from their contents and post-submission native activity, not from the tool
+result alone. Empty or exit-less receipt files (a kill during the wait) mean `uncertain`,
+never `not-sent`: the prompt may already have landed. Do not claim startup from
+successful byte delivery or a pre-existing idle state.
 
 Immediately after the receipt, arm the worker's settled-state wait through the host's
 background facility, with a timeout inside the remaining goal allowance:
@@ -178,6 +200,7 @@ Treat status as a hint, not an input/cleanup gate by itself:
 | `idle`/`done` with a spinner or active tool | Work is not settled; do not resend, integrate or close it as completed. |
 | `working` with a visible trust, question or permission dialog | Treat as blocked, not progressing; resolve only within owner consent, never just wait it out. |
 | Final report or response but conflicting native state/UI | Inspect actual output and owned processes; retain uncertainty until settlement is verified. |
+| Settled within seconds of submission and the screen shows a provider refusal (`reached your … limit`, `/usage-credits`, `credentials_not_configured`, an auth or quota error) | No work happened: capture the screen, record the attempt `not-started` ([uncounted](filesystem.md#dispatch-intent-before-input)), then switch to the role's approved fallback after reconciling and disclose the switch; without one, ask. Do not resubmit the refused selection without owner steering. |
 
 Inspect at startup, immediately before input, on wakeups/bounded check-ins, and before
 cleanup—not in a polling loop. If the UI is unavailable or ambiguous, preserve that

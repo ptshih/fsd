@@ -42,7 +42,9 @@ supply approval; do not re-ask settled choices or invent an allowance.
 
 Approve an envelope, not a roster: choose direct work, staffing, independent review and
 repair within it. Supervised is the default; unsupervised means deciding in-scope
-questions without asking, not new authority. Limits never reset on replacement or resume.
+questions without asking, not new authority. Limits never reset on replacement or resume;
+only an attempt with no model work (`not-sent`, `not-started`, or `cancelled` with no
+work product) goes uncounted ([rule](references/filesystem.md#dispatch-intent-before-input)).
 Then name yourself in Herdr: rename your agent to `fsd-<slug>` and, when your tab is
 dedicated to the goal, your tab to `FSD <slug>` ([procedure](references/herdr.md#name-the-coordinator)).
 
@@ -82,19 +84,24 @@ Direct work: do it, run the checks, finish. Delegation (a complete trace:
    contract, not the coordinator's transcript.
 2. **Submit once.** Persist `prepared`, verify readiness through actual UI inspection
    and an empty prompt—not an `idle` label alone—persist `dispatch-started`, then follow
-   [Herdr dispatch](references/herdr.md#dispatch) for a bounded startup receipt, then
-   arm the worker's settled-state wait. Uncertain delivery means reconcile, not resend.
+   [Herdr dispatch](references/herdr.md#dispatch) for a bounded startup receipt that the
+   submitting command itself writes under the goal's `evidence/`, then arm the worker's
+   settled-state wait. Uncertain delivery means reconcile, not resend.
 3. **Work or yield.** Do independent work. At turn boundaries and on wakeups, inspect
    inboxes, worker panes and unresolved work. If only running workers remain, record `waiting` with
    the pending attempts, wait/watch handles and next action, then yield. Never wait, sleep,
-   poll or type into the editor to manufacture a wakeup.
+   poll or type into the editor in your own turn to manufacture a wakeup.
 4. **Inspect and repair.** Match reports to goal, attempt and actual worker. Acknowledge
    receipt separately from acceptance; accept only on inspected artifacts and checks
    actually run. Repair within the envelope; stop or ask when attempts are exhausted or
-   failures show no progress.
+   failures show no progress. A provider refusal before any work follows the
+   [refusal row](references/herdr.md#inspect-results-and-prompts): record it, then fall
+   back or ask.
 5. **Integrate deliberately.** One destination writer. Verify worker quiescence,
    integrate per project policy, and rerun affected checks on the combined tree.
-   Worker-branch success does not prove the integrated result.
+   Worker-branch success does not prove the integrated result. If the owner waives
+   required review, record the waiver and meet the
+   [self-review floor](references/compositions.md#waived-review) first.
 6. **Finish.** Stop on verified delivery, cancellation, an agreed limit, or when no
    authorized work can progress. Settle owned operations, cancel goal-owned watches, and
    run [Herdr cleanup](references/herdr.md#cleanup). Report **delivered**, **blocked**,
@@ -104,7 +111,8 @@ Direct work: do it, run the checks, finish. Delegation (a complete trace:
 ## Steer and resume
 
 The owner's conversation is authoritative: on material steering, preserve the prior
-directive and publish a new revision. Pause stops new dispatch while in-flight work is
+directive and publish a new revision. A revision that changes a role's selection states
+the allowance for the new selection. Pause stops new dispatch while in-flight work is
 reconciled; cancellation uses supported Herdr controls and verifies settlement, since a
 file cannot stop a running tool. On any wakeup or resume, reconcile records against
 actual workers, files, watches and remaining limits before acting; never blindly repeat

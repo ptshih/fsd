@@ -36,7 +36,8 @@ relaunch as goal revision 2. What follows is the second attempt.
 ## Dispatch
 
 Attempt record: `prepared` → `dispatch-started` → `herdr agent prompt … --wait --until
-working … --timeout 10000` → receipt `agent_prompted`/`working` → `observing`. The packet
+working … --timeout 10000` → receipt `agent_prompted`/`working` → `observing`. The skill
+now has the submitting command write that receipt to `evidence/` itself. The packet
 was about 180 words: identity fields, the worker guide path, cwd, "read-only, report
 natively", the target files, the assigned check, the question, the deadline. The role
 file supplied everything else.
