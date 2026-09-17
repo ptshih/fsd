@@ -47,12 +47,12 @@ test('workers get dedicated Herdr tabs with no split-pane fallback', () => {
     assert(text('references/setup.md').includes(choice));
 });
 
-test('direct Herdr submission uses a bounded startup receipt, never a controller completion wait', () => {
+test('Herdr submission has a bounded startup receipt and native-wakeup mode yields to its facility', () => {
   const herdr = text('references/herdr.md');
   assert.match(herdr, /submit through native `agent prompt` exactly once/);
   assert.match(herdr, /herdr agent prompt TARGET TEXT --wait --until working --until idle --until done --until blocked --timeout 10000/);
   assert.match(herdr, /Use the shorter remaining goal\/attempt allowance/);
-  assert.match(herdr, /Do not run default `agent prompt --wait` or `agent wait` as a task-completion wait/);
+  assert.match(herdr, /In native-wakeup mode, do not run default `agent prompt --wait` or `agent wait` as a task-completion wait/);
   assert.match(herdr, /already-armed native wakeup facility/);
 });
 

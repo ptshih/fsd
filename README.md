@@ -24,7 +24,7 @@ terminal that you can watch and steer.
 FSD runs through tools you already have. [Herdr](https://herdr.dev), a terminal
 multiplexer for coding agents, runs each worker in its own tab; Git worktrees keep
 concurrent implementation apart; plain files carry assignments and reports. FSD adds no
-runtime or service of its own: FSD 1.3.0 is instructions, references, role files and
+runtime or service of its own: FSD 1.4.0 is instructions, references, role files and
 record templates that any skill-capable coding agent (the *harness* —
 Claude Code, Pi, Codex) can follow.
 
@@ -38,6 +38,11 @@ fresh `reviewer`s with distinct angles, a `scout` when the code is unfamiliar. E
 gets a role file and a short packet, publishes an immutable report, and the coordinator is
 woken when it finishes rather than polling for it. Results are verified by the coordinator, not taken
 on trust.
+
+Codex coordinators use **active-turn waits by default** through existing terminal tools.
+Codex keeps the turn open, collects bounded Herdr waits, and
+verifies the reports. See [Codex as coordinator](references/codex.md); this mode needs no
+extra service and makes no claim to wake an idle session.
 
 For a complete trace of a real goal, including two coordinator mistakes and how they were
 corrected, see the [worked example](references/example.md).
@@ -61,10 +66,14 @@ handled, not permissions or available host capabilities. Steer, pause or cancel 
 the conversation.
 
 **Prerequisites:** Herdr with its harness integrations installed, at least one supported
-harness, and Git where your project requires it. Unattended delegation also needs a way
-to wake the coordinator: the harness's native background-task notifications (Claude Code
+harness, and Git where your project requires it. Delegation across idle coordinator
+turns also needs a way to wake it: the harness's native background-task notifications (Claude Code
 and Pi have them) or a native file watcher for the report inboxes. Owner preferences (model routing per
 role, approval policy, standing limits) live at `$XDG_CONFIG_HOME/fsd/preferences.json`.
+
+The same `Use FSD: <outcome>, <constraints>, and stop.` request selects active-turn waits
+when the coordinator is Codex; no extra mode selection is needed. An explicit request
+for idle wakeup still requires a verified native facility.
 
 ## Workflow options
 
@@ -77,7 +86,9 @@ the smallest shape that earns its cost, or does the work directly.
 
 ## How it works
 
-**Herdr tabs → filesystem reports → existing native wakeup → coordinator verification.**
+Native-wakeup mode: **Herdr tabs → filesystem reports → existing native wakeup → coordinator verification.**
+Codex follows the same handoffs and verification, collecting terminal-tool waits in its
+active turn.
 
 - One coordinator. One implementation writer per working directory; concurrent writers
   get separate worktrees. Readers can share a checkout.
@@ -109,6 +120,7 @@ permission modes. Cross-machine coordination is not supported.
 - [Filesystem protocol](references/filesystem.md): goal directory, ownership, messages, recovery.
 - [Filesystem examples](references/recipes.md): tested one-shot commands.
 - [Native wakeup](references/delivery.md): settled-state waits and inbox watches.
+- [Codex coordinator](references/codex.md): default bounded waits in the active turn.
 - [Herdr operations](references/herdr.md): launch, dispatch, inspection, cleanup.
 
 ## Development

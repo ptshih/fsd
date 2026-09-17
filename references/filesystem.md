@@ -79,7 +79,8 @@ claim isolation from untrusted workers.
 4. Submit once using the [Herdr procedure](herdr.md#dispatch). The submission writes
    its stdout, stderr and exit status to the attempt's receipt files under `evidence/`;
    read them back and retain post-submission native activity from the bounded startup
-   receipt. Record the separately armed native watch handle, then `observing`, confirmed
+   receipt. Record the separately armed native watch handle (or the Codex terminal wait
+   handle in Codex active-turn mode), then `observing`, confirmed
    `not-sent`, or `uncertain` according to the evidence. Neither sent bytes nor an armed
    watch prove worker startup or completion.
 

@@ -11,6 +11,12 @@ Files are the source of truth. A native notification is a hint to inspect them, 
 acceptance or authority. A file appearing, a desktop toast, and an installed integration
 are not proof that an idle coordinator will resume.
 
+This page describes `observation_mode: native-wakeup`, the default for coordinators
+other than Codex. A Codex coordinator defaults to `observation_mode: codex-active-turn`
+and follows the [bounded tool-wait procedure](codex.md) instead of qualifying idle
+wakeups. The worker wait qualification rule below applies in both modes. Record the
+mode before dispatch; an explicit owner requirement for idle wakeup still governs.
+
 ## Two wake sources
 
 **Settled-state wait (preferred).** Herdr's `agent wait TARGET --timeout MS` returns when
@@ -63,6 +69,8 @@ blocked-only wait was first armed, which by construction cannot fire on `idle`/`
 the inbox observation delivered the report after a fourteen-minute build (2026-09-17). No
 full settled-state wait has been observed to completion on a `codex` or `pi` worker (as
 of 2026-09-17), so both remain **unverified**: proof missing, not failure observed.
+The [Codex active-turn check](codex.md#turn-boundaries) exercised timeout collection,
+later report inspection and cleanup; it did not qualify a wait returning on completion.
 
 A full settled-state wait on an Antigravity (`agy`) worker is now qualified as
 **unreliable**: a wait with `--until idle --until done --until blocked` returned `done`
@@ -124,6 +132,9 @@ workers. State the exact missing capability. Continue independent direct work wh
 outcome and required review permit it. Do not silently switch to manual resumption,
 create machinery or install a dependency. A change to the
 requested outcome or operating envelope belongs to the owner.
+[Codex active-turn coordination](codex.md) is the Codex default. It keeps the turn open
+and provides no idle-resumption guarantee, so it cannot replace an explicit requirement
+for idle wakeup without owner steering.
 
 ## Multiple workers
 

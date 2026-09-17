@@ -21,7 +21,8 @@ runs ([wakeup](delivery.md)), or launch test workers merely to check readiness.
    plus standing preferences can supply approval. Do not demand a roster or re-ask
    settled choices.
 3. Verify required model, effort, tool and approval settings without substituting them.
-4. Do small work directly. For authorized delegation, follow [native wakeup](delivery.md),
+4. Do small work directly. For authorized delegation, use [Codex active-turn waits](codex.md)
+   by default for a Codex coordinator and [native wakeup](delivery.md) otherwise, then follow
    [filesystem coordination](filesystem.md), then [Herdr dispatch](herdr.md#dispatch).
    Configure only a wakeup facility already exposed by the current host. If a required
    capability is missing, report it rather than adding a dependency or custom code.
@@ -55,6 +56,14 @@ topology is one dedicated tab per worker: `coordinationDefaults` can retain
 `workerLayout: "tab-per-worker"`, `allowPaneSplits: false`, and `preserveFocus: true`.
 Native wakeup is constrained to already-available host facilities; preferences do not
 authorize installing or building one. They also do not waive required independent review.
+Observation defaults follow the coordinator harness, not the worker's harness. Codex
+defaults to bounded active-turn waits without a separate approval round. Store any
+owner-requested harness override under `coordinationDefaults.byHarness.<harness>`; it
+takes precedence over generic coordination defaults, including foreground-wait settings.
+An older generic event-driven default alone does not opt Codex out of its default mode.
+Current owner direction, including an explicit requirement for idle wakeup, takes
+precedence. Generic wakeup settings apply only in native-wakeup mode. Do not change
+saved preferences merely to run a goal.
 A role's `fallback.when` names the trigger: `harness-unavailable` (the executable, its
 Herdr integration or the provider cannot be reached), `model-limit` (the provider refuses
 the selected model for usage, quota or rate reasons) or `auth-failure`; an older value such as

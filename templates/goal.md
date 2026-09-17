@@ -6,7 +6,7 @@ work needs explicit ownership, delivery and allowances. Do not infer approval fr
 ```yaml
 goal_id: REPLACE
 revision: 1
-fsd_version: "1.3.0"
+fsd_version: "1.4.0"
 status: active
 started_at: REPLACE
 deadline: REPLACE_WITH_APPROVED_ABSOLUTE_EXPIRY
@@ -35,6 +35,9 @@ max_attempts: REPLACE_WITH_APPROVED_DISPATCH_LIMIT
 - Pinned runbook revision/path when this goal changes FSD itself:
 - Coordinator Herdr agent name, tab label and the tab's prior label; goal slug for worker names:
 - Already-available native wakeup facility, coordinator binding and discovery evidence:
+- Observation mode: `codex-active-turn` by default for a Codex coordinator, `native-wakeup`
+  otherwise; record any owner override;
+  for active-turn mode, record terminal-tool contracts and bounded collection instead of idle-wakeup proof:
 - Actual busy/idle receipts, blocked-work coverage and deadline notification:
 - Owned native wait/watch/check-in handles, expiry, stop controls and cleanup owner:
 - Missing capabilities that block unattended dispatch (no installation or custom bridge):

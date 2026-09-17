@@ -1,7 +1,17 @@
 # Changelog
 
-## Unreleased
+## 1.4.0 — 2026-09-17
 
+- Codex coordinators now default to bounded active-turn waits through existing terminal
+  tools. No separate mode approval or extra service is needed. The guide retains exact
+  terminal handles, distinguishes them from code-mode cells, reconciles reports on
+  timeout and settles owned observations before cleanup. Other coordinators retain
+  native wakeup, and an explicit idle-resumption requirement still needs a verified
+  facility. Harness-specific owner preferences override generic coordination defaults.
+- Live Codex verification covered one native-reporting worker, timeout collection,
+  cancellation, report capture and cleanup. The observation timed out before the worker
+  finished and the final native status was `done`; it does not qualify the worker's
+  settled-state wait or automatic idle resumption.
 - Delivery: the settled-state wait is primary only on harnesses where it is qualified
   (Claude Code so far), superseding 1.3.0's "stays primary everywhere". A full `agy` wait
   returned a transient `done` between tool calls while the worker was still running

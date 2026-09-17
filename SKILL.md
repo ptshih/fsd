@@ -4,7 +4,7 @@ description: "Deliver a bounded goal using ordinary tools, Herdr tabs and filesy
 license: MIT
 compatibility: "Herdr is the only runtime dependency beyond the coding harness and its ordinary file/shell tools. Use Git where the project requires it. No additional extensions, packages, runners or services. Files preserve state but do not wake an idle agent."
 metadata:
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # FSD
@@ -20,17 +20,24 @@ your assignment, then stop. Do not repeat coordinator setup or launch other agen
 ## One usage path
 
 1. Establish the outcome and an approved operating envelope.
-2. Do small work directly. For authorized delegation, establish an already-available native
-   host facility for wakeup once, then open one Herdr tab per worker.
+2. Do small work directly. For authorized delegation, default to
+   [Codex active-turn waits](references/codex.md) when the coordinator is Codex;
+   otherwise establish an already-available native host facility for wakeup.
+   Then open one Herdr tab per worker.
 3. Submit each assignment once. Workers publish immutable reports to assigned inboxes,
    or report natively when hardened read-only; native wakeups tell the coordinator to
-   inspect them.
+   inspect them, or Codex collects the wait result in its active turn.
 4. Verify, integrate deliberately, clean up owned workers, report the outcome, stop.
 
-**Automatic wakeup is required for unattended delegation.** Files preserve state but do
-not wake an idle agent. Use only a facility Herdr or the harness already exposes, per
-the [wakeup procedure](references/delivery.md). If none is usable, report that gap
-before launching workers; never fall back to manual resumption or a workaround.
+Codex keeps the coordinating turn open and collects bounded terminal-tool waits by
+default; no separate mode approval is needed. This changes neither task authority nor
+worker allowances. Other coordinators default to native wakeup.
+
+**Automatic wakeup is required for unattended delegation across idle turns.** Files
+preserve state but do not wake an idle agent. When the owner requires idle resumption,
+use only a facility Herdr or the harness already exposes, per the
+[wakeup procedure](references/delivery.md). If none is usable, report that gap before
+launching workers; never silently substitute active-turn waits or manual resumption.
 
 ## Establish the envelope
 
@@ -78,7 +85,7 @@ the proposed skill is a deliverable, not authority for the running goal.
 Direct work: do it, run the checks, finish. Delegation (a complete trace:
 [example](references/example.md)):
 
-1. **Prepare the packet.** Establish the wakeup facility first, once per goal. Record
+1. **Prepare the packet.** Establish the selected observation mode first, once per goal. Record
    the assignment, attempt and role file. Give the worker the absolute
    [worker guide](references/worker.md) path, a minimal read list and a resolved report
    contract, not the coordinator's transcript.
@@ -89,8 +96,9 @@ Direct work: do it, run the checks, finish. Delegation (a complete trace:
    settled-state wait. Uncertain delivery means reconcile, not resend.
 3. **Work or yield.** Do independent work. At turn boundaries and on wakeups, inspect
    inboxes, worker panes and unresolved work. If only running workers remain, record `waiting` with
-   the pending attempts, wait/watch handles and next action, then yield. Never wait, sleep,
-   poll or type into the editor in your own turn to manufacture a wakeup.
+   the pending attempts, wait/watch handles and next action. In native-wakeup mode, yield;
+   in Codex active-turn mode, collect the bounded wait without ending the turn. Never
+   wait, sleep, poll or type into the editor in your own turn to manufacture a wakeup.
 4. **Inspect and repair.** Match reports to goal, attempt and actual worker. Acknowledge
    receipt separately from acceptance; accept only on inspected artifacts and checks
    actually run. Repair within the envelope; stop or ask when attempts are exhausted or
