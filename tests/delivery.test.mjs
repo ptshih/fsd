@@ -158,21 +158,25 @@ test('workers wake the coordinator through a background settled-state wait, with
   assert.match(text('templates/attempt.md'), /settled-state wait handle/);
 });
 
-test('the settled-state wait is primary only where qualified; agy, codex and pi pair it with inbox observation', () => {
+test('the settled-state wait is primary only where qualified; agy and codex pair it with inbox observation', () => {
   const delivery = text('references/delivery.md');
   assert.match(delivery, /stays primary on every harness where it is qualified/);
-  assert.match(delivery, /Qualified so far: Claude Code \(2026-09-17\) and Pi \(2026-09-18: a builder's wait returned on `done` with its report already in the inbox; Herdr 0\.9\.1, Pi 0\.85\.1\)/);
+  assert.match(delivery, /Qualified so far: Claude Code \(2026-09-17\) and Pi \(2026-09-17, goal `sh-compat-01`: a builder's wait returned with its report already in the inbox, and a status read three seconds later showed `done`; Herdr 0\.9\.1, Pi 0\.85\.1\)/);
   assert.match(delivery, /on an Antigravity \(`agy`\) worker is now qualified as \*\*unreliable\*\*/);
-  assert.match(delivery, /on a `codex` worker \(as of 2026-09-18\), so it remains \*\*unverified\*\*/);
+  assert.match(delivery, /on a `codex` worker \(as of 2026-09-17\), so it remains \*\*unverified\*\*/);
   assert.match(delivery, /\*\*On any harness whose settled-state wait is not qualified — `agy` \(unreliable\) and `codex` \(unverified\) — always pair the wait with inbox observation or visible output inspection\.\*\*/);
   assert.match(delivery, /is evidence about the facility's contract, not this session's proof: a new coordinator session still runs the harmless probe once before its first dispatch/);
-  assert.match(text('SKILL.md'), /owner's preferences file \(`\$XDG_CONFIG_HOME\/fsd\/preferences\.json`, else `~\/\.config\/fsd\/preferences\.json`\) once per goal; a worker's harness, model and effort come from its `roles\.<name>` entry there and go into the packet — "your default model" is not a selection/);
-  assert.match(text('references/setup.md'), /Read the file itself, not only this page: a worker selection is its `roles\.<name>` harness, model and effort, copied into the packet/);
-  assert.match(text('templates/assignment.md'), /Approved effective harness, model, effort, tools and authority \(from preferences `roles\.<name>`; never "your default model"\)/);
   assert.match(delivery, /the inbox poll is the primary completion signal/);
   assert.match(delivery, /a hint to inspect, not proof of settlement/);
   assert.match(delivery, /A harness leaves this list only when its qualifying observation is recorded above/);
-  assert.match(text('references/herdr.md'), /On a harness whose wait is not qualified \(`agy` and `codex` as of 2026-09-18\), also arm the inbox observation/);
+  assert.match(text('references/herdr.md'), /On a harness whose wait is not qualified \(`agy` and `codex` as of 2026-09-17\), also arm the inbox observation/);
+});
+
+test('worker selections come from the owner\'s preferences roster or direction, and the packet\'s worker_kind matches', () => {
+  assert.match(text('SKILL.md'), /owner's preferences file \(`\$XDG_CONFIG_HOME\/fsd\/preferences\.json`, else `~\/\.config\/fsd\/preferences\.json`\) once per goal; a worker's harness, model and effort come from its `roles\.<name>` entry there, or from the owner's current direction, and go into the packet — "your default model" is not a selection/);
+  assert.match(text('references/setup.md'), /Read the file itself, not only this page \(\[role files\]\(#role-files\) say what it supplies\)/);
+  assert.match(text('references/setup.md'), /the packet's `worker_kind` is that harness; anything else is a disclosed substitution/);
+  assert.match(text('templates/assignment.md'), /Approved effective harness, model, effort, tools and authority \(from preferences `roles\.<name>` or the owner's direction; never "your default model"; `worker_kind` above must be this harness\)/);
 });
 
 test('smoke-qualified lessons: effective launch, dialog waits, native exit, current revision', () => {
