@@ -24,7 +24,7 @@ terminal that you can watch and steer.
 FSD runs through tools you already have. [Herdr](https://herdr.dev), a terminal
 multiplexer for coding agents, runs each worker in its own tab; Git worktrees keep
 concurrent implementation apart; plain files carry assignments and reports. FSD adds no
-runtime or service of its own: FSD 1.5.0 is instructions, references, role files and
+runtime or service of its own: FSD 1.6.0 is instructions, references, role files and
 record templates that any skill-capable coding agent (the *harness* —
 Claude Code, Pi, Codex) can follow.
 

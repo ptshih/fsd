@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.6.0 — 2026-09-17
 
 - Pi worker waits are qualified: in goal `sh-compat-01` (2026-09-17, Herdr 0.9.1, Pi
   0.85.1) a builder's settled-state wait returned with its report already in the inbox
