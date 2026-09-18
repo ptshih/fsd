@@ -6,7 +6,7 @@ work needs explicit ownership, delivery and allowances. Do not infer approval fr
 ```yaml
 goal_id: REPLACE
 revision: 1
-fsd_version: "1.4.0"
+fsd_version: "1.5.0"
 status: active
 started_at: REPLACE
 deadline: REPLACE_WITH_APPROVED_ABSOLUTE_EXPIRY

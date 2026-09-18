@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.5.0 — 2026-09-17
 
 - Pi coordinators require the `pi-interactive-shell` extension, installed once by the
   owner and verified (never installed) by the coordinator. Pi's built-in shell tool
