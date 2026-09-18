@@ -52,7 +52,8 @@ corrected, see the [worked example](references/example.md).
 Install once per harness. Installing grants no authority and launches nothing.
 
 ```sh
-# Pi
+# Pi — the first line only where Pi will coordinate; workers do not need it
+pi install npm:pi-interactive-shell
 pi install git:github.com/ptshih/fsd
 
 # Claude Code
@@ -67,8 +68,9 @@ the conversation.
 
 **Prerequisites:** Herdr with its harness integrations installed, at least one supported
 harness, and Git where your project requires it. Delegation across idle coordinator
-turns also needs a way to wake it: the harness's native background-task notifications (Claude Code
-and Pi have them) or a native file watcher for the report inboxes. Owner preferences (model routing per
+turns also needs a way to wake it: the harness's background-task notifications (native in
+Claude Code; on Pi, from the `pi-interactive-shell` extension, which also watches files)
+or a native file watcher for the report inboxes. Owner preferences (model routing per
 role, approval policy, standing limits) live at `$XDG_CONFIG_HOME/fsd/preferences.json`.
 
 The same `Use FSD: <outcome>, <constraints>, and stop.` request selects active-turn waits
@@ -131,5 +133,7 @@ templates and exact filesystem examples in disposable local fixtures — not age
 compliance or end-to-end delivery. Update the installed skill between goals (`pi update
 git:github.com/ptshih/fsd` or `claude plugin update fsd@fsd`), or rely on the per-goal
 runbook pin; pin a release through the package manager when reproducibility matters.
+Update a coordinating Pi's extension the same way (`pi update npm:pi-interactive-shell`),
+between goals, and expect its contract to have moved.
 
 [MIT](LICENSE) © 2026 ptshih.

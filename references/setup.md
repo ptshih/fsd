@@ -8,8 +8,50 @@ project. Assume Herdr's integration for each coding harness is installed; do not
 integration installer, edit a managed integration or change harness settings for FSD.
 
 Loading the skill starts nothing. Do not install extra packages, extensions, services
-or runners. Do not build wakeup machinery beyond the bounded commands the host's facility
-runs ([wakeup](delivery.md)), or launch test workers merely to check readiness.
+or runners; the prerequisites below are the owner's to install, and a coordinator only
+verifies them. Do not build wakeup machinery beyond the bounded commands the host's
+facility runs ([wakeup](delivery.md)), or launch test workers merely to check readiness.
+
+## Pi coordinators
+
+Pi's built-in shell tool returns only when its command exits, so with core tools alone a
+Pi coordinator cannot arm a settled-state wait without holding the turn (observed
+2026-09-14: a coordinator ran 24 waits of 60–300 s each through that tool and blocked on
+every one). Unattended delegation from Pi therefore requires the `pi-interactive-shell`
+extension, which the owner installs once with `pi install npm:pi-interactive-shell`.
+Direct work needs nothing, Pi workers do not need it, and an owner who never coordinates
+from Pi need not install it.
+
+Its `interactive_shell` tool is the [background facility](delivery.md#establish-the-facility-once-per-goal)
+FSD needs. A background dispatch returns at once with a `sessionId` — the handle to record
+in goal state, query (`sessionId` alone) and stop (`kill: true`, or `dismissBackground`
+with that id) — and its completion (exit, timeout or kill) arrives as a new turn. Its
+`monitor` mode with the `file-watch` strategy is a native inbox watcher with its own
+handle: give it an absolute inbox path (a relative one resolves from the cwd),
+`recursive` only where the platform supports it, and the same bounded `timeout`, whose
+expiry is notified. As of pi-interactive-shell 0.15.2 the wait runs as `mode: "dispatch"` with
+`background: true`, `handsFree: { autoExitOnQuiet: false }` (a silent wait is not a
+finished one) and a `timeout` in milliseconds above the wait's own (Herdr's `--timeout`
+is milliseconds; the inbox poll's `REMAINING_S` is seconds). Redirect the wait's output
+to the attempt's evidence directory: the completion notification carries only the last
+lines and the session's scrollback expires. These are per-call parameters, not
+configuration. Use the tool only for `herdr agent wait`, the inbox poll and inbox
+watches; its own guidelines and `spawn` parameter offer agent delegation through the
+shell, which is not the FSD route — workers are Herdr tabs.
+
+Verified 2026-09-15 with pi-interactive-shell 0.15.2: completions arrived while the
+coordinator was busy and after its turn had ended, including a command that exited at
+once; a dispatched settled-state wait returned as a new turn; file watches fired on
+worker reports; a watch timeout was notified, not silent. Still verify the installed
+contract each goal: check your own tool list for `interactive_shell` (a package listing
+is not tool availability), call `enable_interactive_shell` first when the owner's
+deferred setting hides the tool behind that loader, and qualify the facility per
+[delivery](delivery.md#establish-the-facility-once-per-goal). Never install, update or
+change the extension's stored settings for a goal. Without the tool, unattended
+delegation is **unavailable**: continue direct work and make the one specific install
+request. After the owner installs it, the tool appears only in a reloaded or new Pi
+session; treat that as a new coordinator session and reconcile goal state rather than
+claiming continuation.
 
 ## Start once
 

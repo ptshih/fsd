@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+- Pi coordinators require the `pi-interactive-shell` extension, installed once by the
+  owner and verified (never installed) by the coordinator. Pi's built-in shell tool
+  returns only when its command exits, so without it a coordinator can wait only by
+  holding the turn (observed 2026-09-14: 24 blocking waits of 60–300 s in one goal); with
+  it, a background dispatch completes as a new turn and file watches cover the inboxes
+  (verified 2026-09-15 with pi-interactive-shell 0.15.2, including delivery after the
+  turn ended, an immediate exit, and a notified watch timeout). setup.md names the
+  per-call settings that keep a silent wait alive, the handle and stop parameters, the
+  deferred loader, the evidence redirect and the post-install reload; delivery.md states
+  that an exit-only shell tool is not a facility and dates Codex's lack of a verified one;
+  a missing tool is an unavailable facility while direct work continues. README and
+  SKILL.md state the prerequisite; tests pin it and keep the extension's name out of
+  every document except setup, SKILL.md and the README.
+
 ## 1.4.0 — 2026-09-17
 
 - Codex coordinators now default to bounded active-turn waits through existing terminal
