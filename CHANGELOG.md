@@ -7,10 +7,14 @@
   returns only when its command exits, so without it a coordinator can wait only by
   holding the turn (observed 2026-09-14: 24 blocking waits of 60–300 s in one goal); with
   it, a background dispatch completes as a new turn and file watches cover the inboxes
-  (verified 2026-09-15 with 0.15.2, including delivery after the turn ended and a notified
-  watch timeout). delivery.md names the two settings that keep a silent wait alive and
-  states that an exit-only shell tool is not a facility; a missing extension is an
-  unavailable facility. README and SKILL.md state the prerequisite; tests pin it.
+  (verified 2026-09-15 with pi-interactive-shell 0.15.2, including delivery after the
+  turn ended, an immediate exit, and a notified watch timeout). setup.md names the
+  per-call settings that keep a silent wait alive, the handle and stop parameters, the
+  deferred loader, the evidence redirect and the post-install reload; delivery.md states
+  that an exit-only shell tool is not a facility and dates Codex's lack of a verified one;
+  a missing tool is an unavailable facility while direct work continues. README and
+  SKILL.md state the prerequisite; tests pin it and keep the extension's name out of
+  every document except setup, SKILL.md and the README.
 
 ## 1.4.0 — 2026-09-17
 

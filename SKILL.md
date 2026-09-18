@@ -2,7 +2,7 @@
 name: fsd
 description: "Deliver a bounded goal using ordinary tools, Herdr tabs and filesystem handoffs, then stop. Use when the owner requests FSD or outcome-oriented coordination. Loading or updating the skill does not authorize work."
 license: MIT
-compatibility: "Herdr is the only runtime dependency beyond the coding harness and its ordinary file/shell tools; a Pi coordinator's tools must include the background-dispatch extension named in setup. Use Git where the project requires it. No other extensions, packages, runners or services. Files preserve state but do not wake an idle agent."
+compatibility: "Herdr is the only runtime dependency beyond the coding harness and its ordinary file/shell tools; a Pi coordinator's tools must include the pi-interactive-shell extension (background dispatch; see references/setup.md). Use Git where the project requires it. No other extensions, packages, runners or services. Files preserve state but do not wake an idle agent."
 metadata:
   version: "1.4.0"
 ---

@@ -52,7 +52,7 @@ corrected, see the [worked example](references/example.md).
 Install once per harness. Installing grants no authority and launches nothing.
 
 ```sh
-# Pi (a coordinator also needs the background-dispatch extension)
+# Pi — the first line only where Pi will coordinate; workers do not need it
 pi install npm:pi-interactive-shell
 pi install git:github.com/ptshih/fsd
 
@@ -133,5 +133,7 @@ templates and exact filesystem examples in disposable local fixtures — not age
 compliance or end-to-end delivery. Update the installed skill between goals (`pi update
 git:github.com/ptshih/fsd` or `claude plugin update fsd@fsd`), or rely on the per-goal
 runbook pin; pin a release through the package manager when reproducibility matters.
+Update a coordinating Pi's extension the same way (`pi update npm:pi-interactive-shell`),
+between goals, and expect its contract to have moved.
 
 [MIT](LICENSE) © 2026 ptshih.
