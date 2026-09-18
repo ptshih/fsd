@@ -2,12 +2,11 @@
 
 FSD uses **Herdr tabs → filesystem reports → existing native wakeup → coordinator
 verification**. Herdr is the only runtime dependency beyond the current coding harness
-and its ordinary tools. Assume Herdr's harness integrations are installed and, for a Pi
-coordinator, the [background-dispatch extension](setup.md#pi-coordinators) it requires.
-Do not add packages, extensions, services, helper models or custom watcher/controller
-code during a goal: prerequisites are verified, never installed by the coordinator. The
-bounded inbox poll below is a command the host's facility runs, like `agent wait`, not
-machinery of FSD's own.
+and its ordinary tools. Assume Herdr's harness integrations and the coordinator
+harness's [prerequisites](setup.md#baseline) are installed. Do not add packages,
+extensions, services, helper models or custom watcher/controller code. The bounded inbox
+poll below is a command the host's facility runs, like `agent wait`, not machinery of
+FSD's own.
 
 Files are the source of truth. A native notification is a hint to inspect them, not
 acceptance or authority. A file appearing, a desktop toast, and an installed integration
@@ -36,11 +35,10 @@ observation before the final inbox scan and before dispatch, so an early report 
 fall between a scan and subscription. Watch only worker inboxes; ignore temporary files.
 
 On a host with a background facility but no native filesystem watcher (Claude Code on
-macOS), the
-facility can run a bounded inbox poll as a supplement, the same way it runs `agent wait`:
-it is observed, bounded and stoppable through the facility's handle, keeps no state of
-its own, and its exit is the hint to inspect the inbox. It needs the same facility as
-the settled-state wait, so it never fills the gap described under
+macOS), the facility can run a bounded inbox poll as a supplement, the same way it runs
+`agent wait`: it is observed, bounded and stoppable through the facility's handle, keeps
+no state of its own, and its exit is the hint to inspect the inbox. It needs the same
+facility as the settled-state wait, so it never fills the gap described under
 [missing capability](#handle-a-missing-capability). The block is POSIX `sh` and runs
 unchanged under `zsh`; replace `ATTEMPT_INBOX` (quoted as one argument) and
 `REMAINING_S` (an integer count of seconds inside the remaining allowance). It snapshots
@@ -68,9 +66,9 @@ settled-state wait (one that returns on `idle`, `done` or `blocked`, not a block
 wait) has been observed returning on a genuine settlement, with the report already in the
 inbox or visible output at the wake, and the observation is recorded here with its date
 and versions (local dates; goal ids locate the records). Qualified so far: Claude Code
-(2026-09-17) and Pi (2026-09-17, goal `sh-compat-01`: a builder's wait returned with its
-report already in the inbox, and a status read three seconds later showed `done`; Herdr
-0.9.1, Pi 0.85.1). On an Antigravity worker only a blocked-only wait was first armed,
+(2026-09-17) and Pi (2026-09-17, goal `sh-compat-01`, Herdr 0.9.1, Pi 0.85.1: a builder's
+wait returned with its report already in the inbox, and a status read three seconds
+later showed `done`). On an Antigravity worker only a blocked-only wait was first armed,
 which by construction cannot fire on `idle`/`done`, and the inbox observation delivered
 the report after a fourteen-minute build (2026-09-17). No full settled-state wait has
 been observed to completion on a `codex` worker (as of 2026-09-17), so it remains
@@ -105,28 +103,28 @@ readiness, and a wait that returned `idle` can accompany a trust dialog or an ac
 
 1. Identify the coordinator's actual harness/session and live Herdr caller. Read the
    available tools' actual contracts; do not infer availability from a package name,
-   environment variable or another session's transcript.
+   environment variable, another session's transcript or a verification recorded in
+   these references.
 2. Confirm the host's background facility delivers to this coordinator while busy and
    after it becomes genuinely idle, without typing into or changing the human editor,
    with a retained native handle, bounded expiry, failure/timeout notification and
    specific-handle stop controls. A timeout that silently stops observation is not a
-   deadline notification. Facilities: Claude Code's background shell task or monitor
-   tool; on Pi, the required extension's background dispatch
-   ([setup](setup.md#pi-coordinators)), run with quiet-output auto-exit disabled and the
-   tool's own timeout (milliseconds) above the wait's, so a silent wait is never reported
-   finished; Codex has no verified idle-wakeup facility (as of 2026-09-17) and uses
-   [active-turn waits](codex.md). A shell tool that returns only when its command exits
-   is not a facility: a wait run through it holds the turn. Verify the installed
-   contract; names change.
+   deadline notification, and completion means the command exited: disable any
+   output-inactivity auto-exit the facility offers, so a silent wait is never reported
+   finished. Facilities: Claude Code's background shell task or monitor tool; Pi's
+   [background dispatch](pi.md); Codex has no verified idle-wakeup facility (as of
+   2026-09-17) and uses [active-turn waits](codex.md). A shell tool that returns only
+   when its command exits is not a facility: a wait run through it holds the turn.
+   Verify the installed contract; names change.
 3. Reuse applicable proof for this facility and coordinator session. If proof is missing,
    qualify only the missing behavior with a harmless identified event under the approved
    envelope and record the actual receipt. A new goal or worker does not by itself
    invalidate same-session proof; a changed binding, activation or observed failure does.
-   Missing probe authority requires one specific request, not a setup campaign. A
-   verification recorded in these references (setup's Pi record, for one) is evidence
-   about the facility's contract, not this session's proof: a new coordinator session
-   still runs the harmless probe once before its first dispatch (observed 2026-09-17,
-   goal `sh-compat-01`: a Pi coordinator recorded the facility as verified without one).
+   Missing probe authority requires one specific request, not a setup campaign. Proof
+   is this session's own receipt: a verification recorded in these references is
+   evidence about the facility's contract, and a new coordinator session has none until
+   its harmless probe has run (a coordinator once recorded the facility as verified on
+   the references' record alone: 2026-09-17, goal `sh-compat-01`).
 4. Record the facility, binding, proof and handles in goal state. Reusing facility proof
    does not reuse an expired watch or wait: register a current goal-owned handle per
    attempt, with a timeout inside both the original deadline (leaving time for inspection,
@@ -141,10 +139,9 @@ attach a controller later, or block the model turn on a completion wait.
 
 Distinguish **unverified** (proof missing) from **unavailable** (a concrete missing
 interface or failed check). Complete read-only discovery before reporting a gap. An
-installed Herdr integration supplies only the behavior it actually exposes. A Pi
-coordinator whose tool list lacks the required extension's tool (after trying its
-deferred loader) has an unavailable facility, not an unverified one
-([setup](setup.md#pi-coordinators)).
+installed Herdr integration supplies only the behavior it actually exposes. A required
+tool absent from the coordinator's own tool list, after any deferred loader the harness
+offers, is a missing interface.
 
 If neither wake source is usable, stop affected unattended delegation before launching
 workers. State the exact missing capability. Continue independent direct work when the

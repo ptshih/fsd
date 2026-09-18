@@ -109,7 +109,7 @@ test('unlisted root configuration cannot silently add host behavior', t => {
 });
 
 test('published documents do not include an owner profile or machine paths', () => {
-  for (const name of ['SKILL.md', 'README.md', 'references/setup.md', 'references/filesystem.md', 'references/herdr.md', 'references/delivery.md', 'references/worker.md', 'references/recipes.md', 'agents/reviewer.md', 'agents/builder.md', 'agents/scout.md', 'agents/judge.md', 'agents/workhorse.md', 'references/example.md']) {
+  for (const name of ['SKILL.md', 'README.md', 'references/setup.md', 'references/filesystem.md', 'references/herdr.md', 'references/delivery.md', 'references/worker.md', 'references/recipes.md', 'references/codex.md', 'references/pi.md', 'agents/reviewer.md', 'agents/builder.md', 'agents/scout.md', 'agents/judge.md', 'agents/workhorse.md', 'references/example.md']) {
     const text = readFileSync(join(root, name), 'utf8');
     assert.doesNotMatch(text, /\/Users\/|approvedOn|confirmedOn|gpt-\d|startupPromptApprovals/);
   }

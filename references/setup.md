@@ -8,50 +8,11 @@ project. Assume Herdr's integration for each coding harness is installed; do not
 integration installer, edit a managed integration or change harness settings for FSD.
 
 Loading the skill starts nothing. Do not install extra packages, extensions, services
-or runners; the prerequisites below are the owner's to install, and a coordinator only
-verifies them. Do not build wakeup machinery beyond the bounded commands the host's
-facility runs ([wakeup](delivery.md)), or launch test workers merely to check readiness.
-
-## Pi coordinators
-
-Pi's built-in shell tool returns only when its command exits, so with core tools alone a
-Pi coordinator cannot arm a settled-state wait without holding the turn (observed
-2026-09-14: a coordinator ran 24 waits of 60–300 s each through that tool and blocked on
-every one). Unattended delegation from Pi therefore requires the `pi-interactive-shell`
-extension, which the owner installs once with `pi install npm:pi-interactive-shell`.
-Direct work needs nothing, Pi workers do not need it, and an owner who never coordinates
-from Pi need not install it.
-
-Its `interactive_shell` tool is the [background facility](delivery.md#establish-the-facility-once-per-goal)
-FSD needs. A background dispatch returns at once with a `sessionId` — the handle to record
-in goal state, query (`sessionId` alone) and stop (`kill: true`, or `dismissBackground`
-with that id) — and its completion (exit, timeout or kill) arrives as a new turn. Its
-`monitor` mode with the `file-watch` strategy is a native inbox watcher with its own
-handle: give it an absolute inbox path (a relative one resolves from the cwd),
-`recursive` only where the platform supports it, and the same bounded `timeout`, whose
-expiry is notified. As of pi-interactive-shell 0.15.2 the wait runs as `mode: "dispatch"` with
-`background: true`, `handsFree: { autoExitOnQuiet: false }` (a silent wait is not a
-finished one) and a `timeout` in milliseconds above the wait's own (Herdr's `--timeout`
-is milliseconds; the inbox poll's `REMAINING_S` is seconds). Redirect the wait's output
-to the attempt's evidence directory: the completion notification carries only the last
-lines and the session's scrollback expires. These are per-call parameters, not
-configuration. Use the tool only for `herdr agent wait`, the inbox poll and inbox
-watches; its own guidelines and `spawn` parameter offer agent delegation through the
-shell, which is not the FSD route — workers are Herdr tabs.
-
-Verified 2026-09-15 with pi-interactive-shell 0.15.2: completions arrived while the
-coordinator was busy and after its turn had ended, including a command that exited at
-once; a dispatched settled-state wait returned as a new turn; file watches fired on
-worker reports; a watch timeout was notified, not silent. Still verify the installed
-contract each goal: check your own tool list for `interactive_shell` (a package listing
-is not tool availability), call `enable_interactive_shell` first when the owner's
-deferred setting hides the tool behind that loader, and qualify the facility per
-[delivery](delivery.md#establish-the-facility-once-per-goal). Never install, update or
-change the extension's stored settings for a goal. Without the tool, unattended
-delegation is **unavailable**: continue direct work and make the one specific install
-request. After the owner installs it, the tool appears only in a reloaded or new Pi
-session; treat that as a new coordinator session and reconcile goal state rather than
-claiming continuation.
+or runners: a harness prerequisite is the owner's to install and a coordinator only
+verifies it — a Pi coordinator additionally needs the `pi-interactive-shell` extension
+([Pi as coordinator](pi.md)). Do not build wakeup machinery beyond the bounded commands
+the host's facility runs ([wakeup](delivery.md)), or launch test workers merely to check
+readiness.
 
 ## Start once
 
@@ -91,10 +52,10 @@ identity, UI/draft, authority, ownership and remaining limits; these are never c
 
 Read the owner's optional `$XDG_CONFIG_HOME/fsd/preferences.json`; when unset, use
 `~/.config/fsd/preferences.json`. An explicitly supplied owner profile can replace that
-location. Preferences express choices, not executable configuration or new task authority.
-Read the file itself, not only this page ([role files](#role-files) say what it supplies):
-observed 2026-09-17, goal `sh-compat-01`, a Pi coordinator that skipped it launched a Pi
-builder with "your default model" in place of the roster's selection.
+location. Read the file itself, not only this page ([role files](#role-files) say what it
+supplies): a coordinator that skipped it launched a builder on its own harness with "your
+default model" in place of the roster's selection (2026-09-17, goal `sh-compat-01`).
+Preferences express choices, not executable configuration or new task authority.
 
 Preserve approved model, effort, tool, trust, supervision and staffing choices. Worker
 topology is one dedicated tab per worker: `coordinationDefaults` can retain
@@ -135,10 +96,12 @@ A role file under the skill's `agents/` directory fixes a worker's scope, report
 harness launch arguments; an owner file at `$XDG_CONFIG_HOME/fsd/agents/<name>.md` overrides
 the shipped one by name. Role files never carry model names: `roles.<name>` in preferences
 supplies harness, model and effort, and `executionAgentDefaults` supplies approval policy.
+A selection names all three, from that entry or the owner's current direction; a harness
+default ("your default model") is not a selection, and a packet without one is not ready.
 Before `herdr agent start`, replace `ROLE_FILE` in `launch_args` with the role file's
-absolute path, append the approved model and approval flags for that harness (the
-packet's `worker_kind` is that harness; anything else is a disclosed substitution), and pass
-everything after `--`. `hardened_launch_args` remove write ability at the harness, so a
+absolute path, append the approved model and approval flags for that harness — the
+packet's `worker_kind` — and pass everything after `--`. `hardened_launch_args` remove
+write ability at the harness, so a
 hardened worker reports natively and the coordinator captures the result with
 `herdr agent read`. Check each flag against the installed harness's `--help` once per goal,
 as with other command shapes. Record the exact file used in the assignment's `role_file`.

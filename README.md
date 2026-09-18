@@ -123,6 +123,8 @@ permission modes. Cross-machine coordination is not supported.
 - [Filesystem examples](references/recipes.md): tested one-shot commands.
 - [Native wakeup](references/delivery.md): settled-state waits and inbox watches.
 - [Codex coordinator](references/codex.md): default bounded waits in the active turn.
+- [Pi coordinator](references/pi.md): the required background-dispatch extension and its
+  per-call settings.
 - [Herdr operations](references/herdr.md): launch, dispatch, inspection, cleanup.
 
 ## Development

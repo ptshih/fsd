@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+- Simplification pass over the 1.5.0–1.6.0 material, no rule or fact changed. The Pi
+  coordinator page is now `references/pi.md`, shaped like `codex.md` (prerequisite,
+  check the tools, dispatch and observe, dated record with its "for that run" scope),
+  so coordinators on other harnesses no longer read Pi's tool parameters every goal;
+  setup.md keeps one Baseline sentence. delivery.md states the auto-exit rule generically
+  ("disable any output-inactivity auto-exit the facility offers"), lists facilities as
+  pointers, adds "a verification recorded in these references" to what availability may
+  not be inferred from, and drops the Pi-specific "unavailable" example for a
+  harness-neutral one. What counts as a worker selection is defined once under role
+  files; the assignment template asks for the selection's source and binds
+  `worker_kind` through its placeholder and the launch legend's `HARNESS`. herdr.md
+  links to the qualified-harness list instead of copying it. Tests pin one short phrase
+  per rule at its canonical file.
+
 ## 1.6.0 — 2026-09-17
 
 - Pi worker waits are qualified: in goal `sh-compat-01` (2026-09-17, Herdr 0.9.1, Pi
