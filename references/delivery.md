@@ -123,8 +123,8 @@ readiness, and a wait that returned `idle` can accompany a trust dialog or an ac
    Missing probe authority requires one specific request, not a setup campaign. Proof
    is this session's own receipt: a verification recorded in these references is
    evidence about the facility's contract, and a new coordinator session has none until
-   its harmless probe has run (a coordinator once recorded the facility as verified on
-   the references' record alone: 2026-09-17, goal `sh-compat-01`).
+   its harmless probe has run, before its first dispatch (a coordinator once recorded the
+   facility as verified on the references' record alone: 2026-09-17, goal `sh-compat-01`).
 4. Record the facility, binding, proof and handles in goal state. Reusing facility proof
    does not reuse an expired watch or wait: register a current goal-owned handle per
    attempt, with a timeout inside both the original deadline (leaving time for inspection,

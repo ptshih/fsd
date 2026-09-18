@@ -11,25 +11,26 @@ configuration.
 
 ## Check the actual tools
 
-When the owner's deferred setting hides the tool behind a loader, call
-`enable_interactive_shell` first; then check your own tool list for `interactive_shell`
-and qualify the facility for this session per
-[delivery](delivery.md#establish-the-facility-once-per-goal) — the record at the end of
-this page does not stand in for that probe. Without the tool, unattended delegation is
-**unavailable** ([missing capability](delivery.md#handle-a-missing-capability)); the
-request to the owner is the install line above. After the owner installs it, the tool
-appears only in a reloaded or new Pi session — a
-[replaced session](delivery.md#receive-and-reconcile), not a continuation.
+Check your own tool list for `interactive_shell` each goal (call
+`enable_interactive_shell` first when the owner's deferred setting hides it behind that
+loader) and qualify the facility for this session per
+[delivery](delivery.md#establish-the-facility-once-per-goal). Without the tool,
+unattended delegation is **unavailable**
+([missing capability](delivery.md#handle-a-missing-capability)); the request to the
+owner is the install line above. After the owner installs it, the tool appears only in a
+reloaded or new Pi session — a [replaced session](delivery.md#receive-and-reconcile),
+not a continuation.
 
 ## Dispatch and observe
 
 `interactive_shell` is the [background facility](delivery.md#establish-the-facility-once-per-goal)
-FSD needs. Use it only for the commands the facility runs for FSD; its own guidelines
-and `spawn` parameter offer agent delegation through the shell, which is
+FSD needs. Use it only for `herdr agent wait`, the inbox poll and inbox watches; its
+own guidelines and `spawn` parameter offer agent delegation through the shell, which is
 [not the FSD route](herdr.md#identity-and-preparation).
 
-- Run a wait as `mode: "dispatch"` with `background: true`,
-  `handsFree: { autoExitOnQuiet: false }` (a silent wait is not a finished one) and a
+- Run a wait (parameter names as of pi-interactive-shell 0.15.2) as `mode: "dispatch"`
+  with `background: true`, `handsFree: { autoExitOnQuiet: false }` (a silent wait is not
+  a finished one) and a
   `timeout` in milliseconds above the wait's own (Herdr's `--timeout` is milliseconds;
   the inbox poll's `REMAINING_S` is seconds). Redirect the wait's output to the
   attempt's evidence directory: the completion notification carries only the last lines
@@ -46,5 +47,5 @@ Observed 2026-09-15 with pi-interactive-shell 0.15.2: completions arrived while 
 coordinator was busy and after its turn had ended, including a command that exited at
 once; a dispatched settled-state wait returned as a new turn; file watches fired on
 worker reports; a watch timeout was notified, not silent. This verifies the extension's
-contract for that run, not any later session's facility: names and defaults change, so
-verify the installed contract each goal.
+contract for that run; names and defaults change, so verify the installed contract each
+goal.

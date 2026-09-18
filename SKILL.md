@@ -12,9 +12,9 @@ metadata:
 Deliver the requested outcome, verify it, settle owned work, and stop. FSD is
 instructions, not a runtime. **Herdr is the only runtime dependency** beyond the coding
 harness and its ordinary tools; a Pi coordinator's tools must include the
-[background-dispatch extension](references/pi.md). Assume Herdr's
-integration for each coding harness is installed; build or install nothing to make FSD
-run. Loading this skill authorizes no work.
+[background-dispatch extension](references/pi.md). Assume Herdr's integration for each
+coding harness is installed; build or install nothing to make FSD run. Loading this
+skill authorizes no work.
 
 **Already assigned as a worker?** Follow the [worker guide](references/worker.md) and
 your assignment, then stop. Do not repeat coordinator setup or launch other agents.
@@ -34,8 +34,8 @@ your assignment, then stop. Do not repeat coordinator setup or launch other agen
 Codex keeps the coordinating turn open and collects bounded terminal-tool waits by
 default; no separate mode approval is needed. This changes neither task authority nor
 worker allowances. Other coordinators default to native wakeup through a facility
-verified before dispatch; a shell tool that returns only when its command exits is not
-one ([wakeup](references/delivery.md#establish-the-facility-once-per-goal)).
+verified before dispatch
+([wakeup](references/delivery.md#establish-the-facility-once-per-goal)).
 
 **Automatic wakeup is required for unattended delegation across idle turns.** Files
 preserve state but do not wake an idle agent. When the owner requires idle resumption,
@@ -47,12 +47,12 @@ launching workers; never silently substitute active-turn waits or manual resumpt
 
 Read [setup](references/setup.md) and the owner's preferences file
 (`$XDG_CONFIG_HOME/fsd/preferences.json`, else `~/.config/fsd/preferences.json`) once per
-goal; each worker's harness, model and effort come from it or the owner's direction
-([role files](references/setup.md#role-files)). Confirm only consequential choices that
-are genuinely missing: outcome, done criteria, scope and non-goals, supervision,
-authorized models/tools/actions, required checks or review, and time, attempt, cost and
-worker limits. A clear request plus standing preferences can supply approval; do not
-re-ask settled choices or invent an allowance.
+goal; each worker's harness, model and effort come from that file's `roles.<name>` entry
+or the owner's direction ([role files](references/setup.md#role-files)). Confirm only
+consequential choices that are genuinely missing: outcome, done criteria, scope and
+non-goals, supervision, authorized models/tools/actions, required checks or review, and
+time, attempt, cost and worker limits. A clear request plus standing preferences can
+supply approval; do not re-ask settled choices or invent an allowance.
 
 Approve an envelope, not a roster: choose direct work, staffing, independent review and
 repair within it. Supervised is the default; unsupervised means deciding in-scope

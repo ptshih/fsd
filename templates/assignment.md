@@ -14,6 +14,7 @@ worker_tab: "REPLACE"
 worker_terminal: "REPLACE"
 worker_session: "REPLACE_WITH_NATIVE_SESSION_ID_OR_PATH_OR_UNKNOWN"
 worker_kind: "REPLACE_WITH_APPROVED_HARNESS"
+selection_source: "REPLACE_WITH_ROLES_ENTRY_OR_OWNER_DIRECTION"
 cwd: "REPLACE_WITH_CANONICAL_PATH"
 branch_and_base: "REPLACE"
 role: "REPLACE_WITH_ROLE_NAME_OR_WRITER_OR_READ_ONLY"
@@ -35,8 +36,9 @@ pane/terminal binding, then reconcile the actual session once available. Never i
 ## Outcome
 
 - Focused result, scope/non-goals and current directive location:
-- Approved effective harness, model and effort with their source (`roles.<name>` in
-  preferences, or the owner's direction), plus tools and authority:
+- Approved effective harness, model and effort (never a harness default) with their
+  source (`roles.<name>` in preferences, or the owner's direction), plus tools and
+  authority:
 - Dependencies, verified artifact references and integration owner:
 - Minimal task read list and entry points, without the coordinator's entire transcript:
 - Checks and acceptance criteria; explicitly omit unnecessary repository-wide checks:

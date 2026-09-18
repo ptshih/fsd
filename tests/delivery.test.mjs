@@ -7,8 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 
-const cache = new Map();
-const read = path => cache.get(path) ?? cache.set(path, readFileSync(new URL(`../${path}`, import.meta.url), 'utf8')).get(path);
+const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const text = path => read(path).replace(/\s+/g, ' ');
 
 test('one Herdr/filesystem/native-wakeup path prescribes no extension beyond Pi background dispatch', () => {
@@ -42,31 +41,37 @@ test('pi coordinators require the background-dispatch extension and never wait t
   assert.match(pi, /Pi's built-in shell tool returns only when its command exits/);
   assert.match(pi, /owner installs once with `pi install npm:pi-interactive-shell`/);
   assert.match(pi, /direct work and Pi workers do not/);
+  assert.match(pi, /Never install, update or change the extension's stored settings/);
+  assert.match(pi, /Check your own tool list for `interactive_shell` each goal/);
   assert.match(pi, /call `enable_interactive_shell` first/);
-  assert.match(pi, /does not stand in for that probe/);
   assert.match(pi, /unattended delegation is \*\*unavailable\*\*/);
+  assert.match(pi, /the request to the owner is the install line above/);
   assert.match(pi, /reloaded or new Pi session/);
+  assert.match(pi, /not a continuation/);
+  assert.match(pi, /Use it only for `herdr agent wait`, the inbox poll and inbox watches/);
   assert.match(pi, /`spawn` parameter offer agent delegation through the shell, which is \[not the FSD route\]/);
+  assert.match(pi, /parameter names as of pi-interactive-shell 0\.15\.2/);
   assert.match(pi, /`mode: "dispatch"` with `background: true`, `handsFree: \{ autoExitOnQuiet: false \}`/);
   assert.match(pi, /`timeout` in milliseconds above the wait's own/);
   assert.match(pi, /Redirect the wait's output to the attempt's evidence directory/);
   assert.match(pi, /returns at once with a `sessionId`/);
+  assert.match(pi, /the handle to record in goal state/);
   assert.match(pi, /`kill: true`, or `dismissBackground` with that id/);
   assert.match(pi, /`monitor` mode with the `file-watch` strategy/);
   assert.match(pi, /an absolute inbox path/);
+  assert.match(pi, /whose expiry is notified/);
   assert.match(pi, /Observed 2026-09-15 with pi-interactive-shell 0\.15\.2/);
-  assert.match(pi, /not any later session's facility/);
-  assert.match(text('references/setup.md'), /a Pi coordinator additionally needs the `pi-interactive-shell` extension \(\[Pi as coordinator\]\(pi\.md\)\)/);
+  assert.match(pi, /This verifies the extension's contract for that run/);
+  assert.match(text('references/setup.md'), /a coordinator only verifies it — a Pi coordinator additionally needs the `pi-interactive-shell` extension \(\[Pi as coordinator\]\(pi\.md\)\)/);
   assert.match(delivery, /disable any output-inactivity auto-exit the facility offers/);
   assert.match(delivery, /Pi's \[background dispatch\]\(pi\.md\)/);
   assert.match(delivery, /Codex has no verified idle-wakeup facility \(as of 2026-09-17\)/);
   assert.match(delivery, /A shell tool that returns only when its command exits is not a facility/);
-  assert.match(delivery, /or a verification recorded in these references/);
   assert.match(delivery, /no native filesystem watcher \(Claude Code on macOS\)/);
   assert.match(delivery, /after any deferred loader the harness offers, is a missing interface/);
-  assert.match(skill, /\[background-dispatch extension\]\(references\/pi\.md\)/);
-  assert.match(skill, /see references\/pi\.md/);
-  assert.match(skill, /a shell tool that returns only when its command exits is not one/);
+  assert.match(skill, /must include the \[background-dispatch extension\]\(references\/pi\.md\)/);
+  assert.match(skill, /must include the pi-interactive-shell extension \(background dispatch; see references\/pi\.md\)/);
+  assert.match(skill, /native wakeup through a facility verified before dispatch \(\[wakeup\]/);
   assert.match(readme, /the first line only where Pi will coordinate; workers do not need it/);
   assert.match(readme, /native in Claude Code; on Pi, from the `pi-interactive-shell` extension/);
   assert.match(readme, /`pi update npm:pi-interactive-shell`/);
@@ -168,12 +173,12 @@ test('workers wake the coordinator through a background settled-state wait, with
 test('the settled-state wait is primary only where qualified; agy and codex pair it with inbox observation', () => {
   const delivery = text('references/delivery.md');
   assert.match(delivery, /stays primary on every harness where it is qualified/);
-  assert.match(delivery, /Qualified so far: Claude Code \(\d{4}-\d\d-\d\d\) and Pi \(\d{4}-\d\d-\d\d, goal `[\w-]+`, Herdr \d+\.\d+\.\d+, Pi \d+\.\d+\.\d+:/);
+  assert.match(delivery, /Qualified so far: Claude Code \(2026-09-17\) and Pi \(2026-09-17, goal `sh-compat-01`, Herdr 0\.9\.1, Pi 0\.85\.1: a builder's wait returned with its report already in the inbox/);
   assert.match(delivery, /on an Antigravity \(`agy`\) worker is now qualified as \*\*unreliable\*\*/);
   assert.match(delivery, /on a `codex` worker \(as of 2026-09-17\), so it remains \*\*unverified\*\*/);
   assert.match(delivery, /not qualified — `agy` \(unreliable\) and `codex` \(unverified\) — always pair the wait/);
   assert.match(delivery, /Proof is this session's own receipt/);
-  assert.match(delivery, /a new coordinator session has none until its harmless probe has run/);
+  assert.match(delivery, /a new coordinator session has none until its harmless probe has run, before its first dispatch/);
   assert.match(delivery, /the inbox poll is the primary completion signal/);
   assert.match(delivery, /a hint to inspect, not proof of settlement/);
   assert.match(delivery, /A harness leaves this list only when its qualifying observation is recorded above/);
@@ -183,13 +188,14 @@ test('the settled-state wait is primary only where qualified; agy and codex pair
 test('worker selections come from the owner\'s preferences roster or direction, and the packet\'s worker_kind is that harness', () => {
   const setup = text('references/setup.md');
   assert.match(text('SKILL.md'), /`\$XDG_CONFIG_HOME\/fsd\/preferences\.json`, else `~\/\.config\/fsd\/preferences\.json`/);
-  assert.match(text('SKILL.md'), /come from it or the owner's direction \(\[role files\]\(references\/setup\.md#role-files\)\)/);
+  assert.match(text('SKILL.md'), /come from that file's `roles\.<name>` entry or the owner's direction \(\[role files\]\(references\/setup\.md#role-files\)\)/);
   assert.match(setup, /`roles\.<name>` in preferences supplies harness, model and effort/);
-  assert.match(setup, /a harness default \("your default model"\) is not a selection, and a packet without one is not ready/);
+  assert.match(setup, /a harness default \("your default model"\) is not a selection, and the packet's `selection_source` names where its selection came from/);
   assert.match(setup, /Read the file itself, not only this page/);
-  assert.match(setup, /approval flags for that harness — the packet's `worker_kind` —/);
+  assert.match(setup, /the packet's `worker_kind`; launching any other harness is a substitution to disclose/);
   assert.match(read('templates/assignment.md'), /^worker_kind: "REPLACE_WITH_APPROVED_HARNESS"$/m);
-  assert.match(text('templates/assignment.md'), /with their source \(`roles\.<name>` in preferences, or the owner's direction\)/);
+  assert.match(read('templates/assignment.md'), /^selection_source: "REPLACE_WITH_ROLES_ENTRY_OR_OWNER_DIRECTION"$/m);
+  assert.match(text('templates/assignment.md'), /\(never a harness default\) with their source \(`roles\.<name>` in preferences, or the owner's direction\)/);
   assert.match(text('references/herdr.md'), /`HARNESS` is the packet's `worker_kind`/);
 });
 

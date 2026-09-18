@@ -97,13 +97,14 @@ harness launch arguments; an owner file at `$XDG_CONFIG_HOME/fsd/agents/<name>.m
 the shipped one by name. Role files never carry model names: `roles.<name>` in preferences
 supplies harness, model and effort, and `executionAgentDefaults` supplies approval policy.
 A selection names all three, from that entry or the owner's current direction; a harness
-default ("your default model") is not a selection, and a packet without one is not ready.
-Before `herdr agent start`, replace `ROLE_FILE` in `launch_args` with the role file's
-absolute path, append the approved model and approval flags for that harness — the
-packet's `worker_kind` — and pass everything after `--`. `hardened_launch_args` remove
-write ability at the harness, so a
-hardened worker reports natively and the coordinator captures the result with
-`herdr agent read`. Check each flag against the installed harness's `--help` once per goal,
+default ("your default model") is not a selection, and the packet's `selection_source`
+names where its selection came from. Before `herdr agent start`, replace `ROLE_FILE` in
+`launch_args` with the role file's absolute path, append the approved model and approval
+flags for that harness — the packet's `worker_kind`; launching any other harness is a
+substitution to disclose — and pass everything after `--`. `hardened_launch_args` remove
+write ability at the harness, so a hardened worker reports natively and the coordinator
+captures the result with `herdr agent read`. Check each flag against the installed
+harness's `--help` once per goal,
 as with other command shapes. Record the exact file used in the assignment's `role_file`.
 A harness with no system-prompt flag (Antigravity's `agy` today) has no `launch_args`
 entry: start it with the approved model and approval flags only and put the role file's
