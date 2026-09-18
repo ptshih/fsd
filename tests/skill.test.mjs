@@ -114,7 +114,7 @@ test('published documents do not include an owner profile or machine paths', () 
     for (const name of readdirSync(join(root, dir))) if (name.endsWith('.md')) docs.push(`${dir}/${name}`);
   for (const name of docs) {
     const text = readFileSync(join(root, name), 'utf8');
-    assert.doesNotMatch(text, /\/Users\/|approvedOn|confirmedOn|gpt-\d|startupPromptApprovals/);
+    assert.doesNotMatch(text, /\/Users\/|approvedOn|confirmedOn|gpt-\d|gemini[ -]?\d|claude-(?:opus|sonnet|haiku)|startupPromptApprovals/i, `${name} names a model or an owner profile`);
   }
 });
 

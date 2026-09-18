@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The `agy` evidence line no longer names a model; the published-document test now
+  rejects Gemini and Claude model names as well as GPT ones.
+
 ## 1.7.0 — 2026-09-18
 
 - Simplification pass over the 1.5.0–1.6.0 material, no rule or fact changed. The Pi
