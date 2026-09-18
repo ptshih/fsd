@@ -79,7 +79,7 @@ later report inspection and cleanup; it did not qualify a wait returning on comp
 A full settled-state wait on an Antigravity (`agy`) worker is now qualified as
 **unreliable**: a wait with `--until idle --until done --until blocked` returned `done`
 repeatedly while the agent was still actively reading files and running commands
-(observed 2026-09-17, Herdr 0.9.1, Antigravity CLI 1.2.5, Gemini 3.8 Flash). The
+(observed 2026-09-17, Herdr 0.9.1, Antigravity CLI 1.2.5). The
 `done` status was transient — the agent reported `done` briefly between tool calls, then
 returned to `working`. Re-arming the wait produced the same false signal each time. The
 agent's visible output showed active tool execution (spinners, "Running command..."
