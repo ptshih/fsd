@@ -174,8 +174,8 @@ herdr agent wait WORKER_NAME --timeout REMAINING_MS
 Its exit is the wake (or the collected Codex tool result): `idle`/`done` means inspect the
 inbox and pane, `blocked` means a dialog needs owner-consented handling, `timeout` means
 reconcile and renew. Record the background task handle or Codex shell `session_id` in
-the attempt. On a harness whose wait is not qualified (`agy`,
-`codex` and `pi` as of 2026-09-17), also arm the inbox observation, or inspect visible
+the attempt. On a harness whose wait is not qualified (`agy` and
+`codex` as of 2026-09-17), also arm the inbox observation, or inspect visible
 output on each wake or collected tool result for a native reporter, as
 [Two wake sources](delivery.md#two-wake-sources) requires, recording any second handle.
 

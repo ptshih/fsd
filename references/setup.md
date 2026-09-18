@@ -92,6 +92,9 @@ identity, UI/draft, authority, ownership and remaining limits; these are never c
 Read the owner's optional `$XDG_CONFIG_HOME/fsd/preferences.json`; when unset, use
 `~/.config/fsd/preferences.json`. An explicitly supplied owner profile can replace that
 location. Preferences express choices, not executable configuration or new task authority.
+Read the file itself, not only this page ([role files](#role-files) say what it supplies):
+observed 2026-09-17, goal `sh-compat-01`, a Pi coordinator that skipped it launched a Pi
+builder with "your default model" in place of the roster's selection.
 
 Preserve approved model, effort, tool, trust, supervision and staffing choices. Worker
 topology is one dedicated tab per worker: `coordinationDefaults` can retain
@@ -133,7 +136,8 @@ harness launch arguments; an owner file at `$XDG_CONFIG_HOME/fsd/agents/<name>.m
 the shipped one by name. Role files never carry model names: `roles.<name>` in preferences
 supplies harness, model and effort, and `executionAgentDefaults` supplies approval policy.
 Before `herdr agent start`, replace `ROLE_FILE` in `launch_args` with the role file's
-absolute path, append the approved model and approval flags for that harness, and pass
+absolute path, append the approved model and approval flags for that harness (the
+packet's `worker_kind` is that harness; anything else is a disclosed substitution), and pass
 everything after `--`. `hardened_launch_args` remove write ability at the harness, so a
 hardened worker reports natively and the coordinator captures the result with
 `herdr agent read`. Check each flag against the installed harness's `--help` once per goal,
