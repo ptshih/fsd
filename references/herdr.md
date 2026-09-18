@@ -101,7 +101,8 @@ Replace placeholders. `LAUNCH_ARGS` are the role file's `launch_args` for that h
 with `ROLE_FILE` resolved, plus the approved model and approval flags; omit the trailing
 `--` when there are none. A harness absent from `launch_args` gets only the approved
 model and approval flags, with the role file first in the packet's read list
-([setup](setup.md#role-files)). `TEXT` is the complete packet as one shell argument.
+([setup](setup.md#role-files)). `TEXT` is the complete packet as one shell argument;
+`HARNESS` is the packet's `worker_kind`.
 
 <!-- fsd-example: herdr-worker-start -->
 ```sh
@@ -174,10 +175,9 @@ herdr agent wait WORKER_NAME --timeout REMAINING_MS
 Its exit is the wake (or the collected Codex tool result): `idle`/`done` means inspect the
 inbox and pane, `blocked` means a dialog needs owner-consented handling, `timeout` means
 reconcile and renew. Record the background task handle or Codex shell `session_id` in
-the attempt. On a harness whose wait is not qualified (`agy` and
-`codex` as of 2026-09-17), also arm the inbox observation, or inspect visible
-output on each wake or collected tool result for a native reporter, as
-[Two wake sources](delivery.md#two-wake-sources) requires, recording any second handle.
+the attempt. On a harness whose wait is [not qualified](delivery.md#two-wake-sources),
+also arm the inbox observation, or inspect visible output on each wake or collected tool
+result for a native reporter, recording any second handle.
 
 `agent prompt` is not an atomic compare-and-submit operation against the coordinator's
 prior screen/identity inspection. Exclusive ownership remains necessary. If identity

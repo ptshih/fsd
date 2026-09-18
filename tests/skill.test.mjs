@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -109,7 +109,10 @@ test('unlisted root configuration cannot silently add host behavior', t => {
 });
 
 test('published documents do not include an owner profile or machine paths', () => {
-  for (const name of ['SKILL.md', 'README.md', 'references/setup.md', 'references/filesystem.md', 'references/herdr.md', 'references/delivery.md', 'references/worker.md', 'references/recipes.md', 'agents/reviewer.md', 'agents/builder.md', 'agents/scout.md', 'agents/judge.md', 'agents/workhorse.md', 'references/example.md']) {
+  const docs = ['SKILL.md', 'README.md'];
+  for (const dir of ['references', 'templates', 'agents'])
+    for (const name of readdirSync(join(root, dir))) if (name.endsWith('.md')) docs.push(`${dir}/${name}`);
+  for (const name of docs) {
     const text = readFileSync(join(root, name), 'utf8');
     assert.doesNotMatch(text, /\/Users\/|approvedOn|confirmedOn|gpt-\d|startupPromptApprovals/);
   }

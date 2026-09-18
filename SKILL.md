@@ -2,7 +2,7 @@
 name: fsd
 description: "Deliver a bounded goal using ordinary tools, Herdr tabs and filesystem handoffs, then stop. Use when the owner requests FSD or outcome-oriented coordination. Loading or updating the skill does not authorize work."
 license: MIT
-compatibility: "Herdr is the only runtime dependency beyond the coding harness and its ordinary file/shell tools; a Pi coordinator's tools must include the pi-interactive-shell extension (background dispatch; see references/setup.md). Use Git where the project requires it. No other extensions, packages, runners or services. Files preserve state but do not wake an idle agent."
+compatibility: "Herdr is the only runtime dependency beyond the coding harness and its ordinary file/shell tools; a Pi coordinator's tools must include the pi-interactive-shell extension (background dispatch; see references/pi.md). Use Git where the project requires it. No other extensions, packages, runners or services. Files preserve state but do not wake an idle agent."
 metadata:
   version: "1.6.0"
 ---
@@ -12,9 +12,9 @@ metadata:
 Deliver the requested outcome, verify it, settle owned work, and stop. FSD is
 instructions, not a runtime. **Herdr is the only runtime dependency** beyond the coding
 harness and its ordinary tools; a Pi coordinator's tools must include the
-[background-dispatch extension](references/setup.md#pi-coordinators). Assume Herdr's
-integration for each coding harness is installed; build or install nothing to make FSD
-run. Loading this skill authorizes no work.
+[background-dispatch extension](references/pi.md). Assume Herdr's integration for each
+coding harness is installed; build or install nothing to make FSD run. Loading this
+skill authorizes no work.
 
 **Already assigned as a worker?** Follow the [worker guide](references/worker.md) and
 your assignment, then stop. Do not repeat coordinator setup or launch other agents.
@@ -33,9 +33,9 @@ your assignment, then stop. Do not repeat coordinator setup or launch other agen
 
 Codex keeps the coordinating turn open and collects bounded terminal-tool waits by
 default; no separate mode approval is needed. This changes neither task authority nor
-worker allowances. Other coordinators default to native wakeup; on Pi that facility is
-the required extension's background dispatch, verified before dispatch — never the
-built-in shell tool, which holds the turn until its command exits.
+worker allowances. Other coordinators default to native wakeup through a facility
+verified before dispatch
+([wakeup](references/delivery.md#establish-the-facility-once-per-goal)).
 
 **Automatic wakeup is required for unattended delegation across idle turns.** Files
 preserve state but do not wake an idle agent. When the owner requires idle resumption,
@@ -47,9 +47,8 @@ launching workers; never silently substitute active-turn waits or manual resumpt
 
 Read [setup](references/setup.md) and the owner's preferences file
 (`$XDG_CONFIG_HOME/fsd/preferences.json`, else `~/.config/fsd/preferences.json`) once per
-goal; a worker's harness, model and effort come from its `roles.<name>` entry there, or
-from the owner's current direction, and go into the packet — "your default model" is not
-a selection. Confirm only
+goal; each worker's harness, model and effort come from that file's `roles.<name>` entry
+or the owner's direction ([role files](references/setup.md#role-files)). Confirm only
 consequential choices that are genuinely missing: outcome, done criteria, scope and
 non-goals, supervision, authorized models/tools/actions, required checks or review, and
 time, attempt, cost and worker limits. A clear request plus standing preferences can
