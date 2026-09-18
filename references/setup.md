@@ -27,7 +27,9 @@ FSD needs. A background dispatch returns at once with a `sessionId` — the hand
 in goal state, query (`sessionId` alone) and stop (`kill: true`, or `dismissBackground`
 with that id) — and its completion (exit, timeout or kill) arrives as a new turn. Its
 `monitor` mode with the `file-watch` strategy is a native inbox watcher with its own
-handle. As of pi-interactive-shell 0.15.2 the wait runs as `mode: "dispatch"` with
+handle: give it an absolute inbox path (a relative one resolves from the cwd),
+`recursive` only where the platform supports it, and the same bounded `timeout`, whose
+expiry is notified. As of pi-interactive-shell 0.15.2 the wait runs as `mode: "dispatch"` with
 `background: true`, `handsFree: { autoExitOnQuiet: false }` (a silent wait is not a
 finished one) and a `timeout` in milliseconds above the wait's own (Herdr's `--timeout`
 is milliseconds; the inbox poll's `REMAINING_S` is seconds). Redirect the wait's output

@@ -41,6 +41,7 @@ test('pi coordinators require the background-dispatch extension and never wait t
   assert.match(setup, /Direct work needs nothing, Pi workers do not need it/);
   assert.match(setup, /returns at once with a `sessionId` — the handle to record in goal state, query \(`sessionId` alone\) and stop \(`kill: true`, or `dismissBackground` with that id\)/);
   assert.match(setup, /`monitor` mode with the `file-watch` strategy is a native inbox watcher/);
+  assert.match(setup, /give it an absolute inbox path \(a relative one resolves from the cwd\), `recursive` only where the platform supports it, and the same bounded `timeout`, whose expiry is notified/);
   assert.match(setup, /`mode: "dispatch"` with `background: true`, `handsFree: \{ autoExitOnQuiet: false \}`/);
   assert.match(setup, /a `timeout` in milliseconds above the wait's own \(Herdr's `--timeout` is milliseconds; the inbox poll's `REMAINING_S` is seconds\)/);
   assert.match(setup, /Redirect the wait's output to the attempt's evidence directory/);
