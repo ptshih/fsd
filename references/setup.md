@@ -92,6 +92,10 @@ identity, UI/draft, authority, ownership and remaining limits; these are never c
 Read the owner's optional `$XDG_CONFIG_HOME/fsd/preferences.json`; when unset, use
 `~/.config/fsd/preferences.json`. An explicitly supplied owner profile can replace that
 location. Preferences express choices, not executable configuration or new task authority.
+Read the file itself, not only this page: a worker selection is its `roles.<name>`
+harness, model and effort, copied into the packet (observed 2026-09-18: a Pi coordinator
+that skipped the file launched a Pi builder with "your default model" in place of the
+roster's selection).
 
 Preserve approved model, effort, tool, trust, supervision and staffing choices. Worker
 topology is one dedicated tab per worker: `coordinationDefaults` can retain

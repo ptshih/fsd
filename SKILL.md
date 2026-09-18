@@ -45,7 +45,10 @@ launching workers; never silently substitute active-turn waits or manual resumpt
 
 ## Establish the envelope
 
-Read [setup](references/setup.md) and the owner's preferences once per goal. Confirm only
+Read [setup](references/setup.md) and the owner's preferences file
+(`$XDG_CONFIG_HOME/fsd/preferences.json`, else `~/.config/fsd/preferences.json`) once per
+goal; a worker's harness, model and effort come from its `roles.<name>` entry there and go
+into the packet — "your default model" is not a selection. Confirm only
 consequential choices that are genuinely missing: outcome, done criteria, scope and
 non-goals, supervision, authorized models/tools/actions, required checks or review, and
 time, attempt, cost and worker limits. A clear request plus standing preferences can

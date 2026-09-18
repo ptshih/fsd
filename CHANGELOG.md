@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+- Pi worker waits are qualified: in a live goal (2026-09-18, Herdr 0.9.1, Pi 0.85.1) a
+  builder's settled-state wait returned on `done` with its report already in the inbox,
+  so `pi` leaves the pair-with-inbox list; `agy` (unreliable) and `codex` (unverified)
+  remain on it. The same goal — the first Pi coordinator on 1.5.0 — used the required
+  extension exactly as documented (background dispatch with quiet auto-exit off, a
+  file-watch monitor on the inbox, no blocking shell waits) but skipped the owner's
+  preferences file and the per-session facility probe. SKILL.md and setup.md now name
+  the preferences path and bind each worker selection to its `roles.<name>` entry (the
+  assignment template's field says so too); delivery.md states that a verification
+  recorded in the references is contract evidence, not the session's proof.
+
 ## 1.5.0 — 2026-09-17
 
 - Pi coordinators require the `pi-interactive-shell` extension, installed once by the

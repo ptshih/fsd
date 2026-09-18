@@ -35,7 +35,8 @@ pane/terminal binding, then reconcile the actual session once available. Never i
 ## Outcome
 
 - Focused result, scope/non-goals and current directive location:
-- Approved effective model, effort, tools and authority:
+- Approved effective harness, model, effort, tools and authority (from preferences
+  `roles.<name>`; never "your default model"):
 - Dependencies, verified artifact references and integration owner:
 - Minimal task read list and entry points, without the coordinator's entire transcript:
 - Checks and acceptance criteria; explicitly omit unnecessary repository-wide checks:

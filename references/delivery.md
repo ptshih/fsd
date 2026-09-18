@@ -67,11 +67,13 @@ The settled-state wait stays primary on every harness where it is qualified: a f
 settled-state wait (one that returns on `idle`, `done` or `blocked`, not a blocked-only
 wait) has been observed returning on a genuine settlement, with the report already in the
 inbox or visible output at the wake, and the observation is recorded here with its date
-and versions. Qualified so far: Claude Code (2026-09-17). On an Antigravity worker only a
-blocked-only wait was first armed, which by construction cannot fire on `idle`/`done`, and
-the inbox observation delivered the report after a fourteen-minute build (2026-09-17). No
-full settled-state wait has been observed to completion on a `codex` or `pi` worker (as
-of 2026-09-17), so both remain **unverified**: proof missing, not failure observed.
+and versions. Qualified so far: Claude Code (2026-09-17) and Pi (2026-09-18: a builder's
+wait returned on `done` with its report already in the inbox; Herdr 0.9.1, Pi 0.85.1). On
+an Antigravity worker only a blocked-only wait was first armed, which by construction
+cannot fire on `idle`/`done`, and the inbox observation delivered the report after a
+fourteen-minute build (2026-09-17). No full settled-state wait has been observed to
+completion on a `codex` worker (as of 2026-09-18), so it remains **unverified**: proof
+missing, not failure observed.
 The [Codex active-turn check](codex.md#turn-boundaries) exercised timeout collection,
 later report inspection and cleanup; it did not qualify a wait returning on completion.
 
@@ -85,8 +87,8 @@ agent's visible output showed active tool execution (spinners, "Running command.
 indicators) throughout, contradicting the reported status. This makes the settled-state
 wait unsuitable as the sole completion signal for `agy` workers.
 
-**On any harness whose settled-state wait is not qualified — `agy` (unreliable), `codex`
-and `pi` (unverified) — always pair the wait with inbox observation or visible output
+**On any harness whose settled-state wait is not qualified — `agy` (unreliable) and
+`codex` (unverified) — always pair the wait with inbox observation or visible output
 inspection.** When the worker reports to a filesystem inbox, the inbox poll is the
 primary completion signal; when the worker reports natively (hardened read-only), inspect
 the visible output for report-shaped text on each wake rather than trusting the status
@@ -119,7 +121,11 @@ readiness, and a wait that returned `idle` can accompany a trust dialog or an ac
    qualify only the missing behavior with a harmless identified event under the approved
    envelope and record the actual receipt. A new goal or worker does not by itself
    invalidate same-session proof; a changed binding, activation or observed failure does.
-   Missing probe authority requires one specific request, not a setup campaign.
+   Missing probe authority requires one specific request, not a setup campaign. A
+   verification recorded in these references (setup's Pi record, for one) is evidence
+   about the facility's contract, not this session's proof: a new coordinator session
+   still runs the harmless probe once before its first dispatch (observed 2026-09-18: a
+   Pi coordinator recorded the facility as verified without one).
 4. Record the facility, binding, proof and handles in goal state. Reusing facility proof
    does not reuse an expired watch or wait: register a current goal-owned handle per
    attempt, with a timeout inside both the original deadline (leaving time for inspection,
