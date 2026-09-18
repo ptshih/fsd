@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.7.0 — 2026-09-18
 
 - Simplification pass over the 1.5.0–1.6.0 material, no rule or fact changed. The Pi
   coordinator page is now `references/pi.md`, shaped like `codex.md` (prerequisite,
