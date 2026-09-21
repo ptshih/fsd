@@ -23,12 +23,12 @@ function changeJson(dir, path, update) {
 
 test('package, links, frontmatter, templates and development scripts validate', () => {
   const result = validate(root);
-  assert.equal(result.version, '1.7.0');
+  assert.equal(result.version, '1.7.1');
   assert(result.links > 20);
 });
 
 test('copied distribution validates without Pi, Claude, Herdr or private preferences', t => {
-  assert.equal(validate(fixture(t)).version, '1.7.0');
+  assert.equal(validate(fixture(t)).version, '1.7.1');
 });
 
 test('release versions must agree', t => {

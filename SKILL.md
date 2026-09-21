@@ -4,7 +4,7 @@ description: "Deliver a bounded goal using ordinary tools, Herdr tabs and filesy
 license: MIT
 compatibility: "Herdr is the only runtime dependency beyond the coding harness and its ordinary file/shell tools; a Pi coordinator's tools must include the pi-interactive-shell extension (background dispatch; see references/pi.md). Use Git where the project requires it. No other extensions, packages, runners or services. Files preserve state but do not wake an idle agent."
 metadata:
-  version: "1.7.0"
+  version: "1.7.1"
 ---
 
 # FSD

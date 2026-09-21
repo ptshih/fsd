@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.7.1 — 2026-09-21
 
 - Codex worker waits are qualified: in goal `fsd-todo68-20260921` (2026-09-21, Herdr 0.9.1,
   Codex CLI 0.155.1) a sandboxed builder's default settled-state wait returned `done` on its
