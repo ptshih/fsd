@@ -86,4 +86,6 @@ turn before verified worker exit and tab cleanup. A 60-second wait expired befor
 roughly 80-second review finished; subsequent inspection recovered the report, and the
 final captured native status was `done`. Separate terminal probes verified timeout
 collection and cancellation. This verifies the bounded observation procedure for that
-run, not a settled-state wait returning on completion or idle wakeup.
+run, not a settled-state wait returning on completion or idle wakeup; a Codex worker's
+wait returning on its genuine completion was observed later
+(2026-09-21, [two wake sources](delivery.md#two-wake-sources)).

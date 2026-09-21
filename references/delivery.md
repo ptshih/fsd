@@ -66,15 +66,16 @@ settled-state wait (one that returns on `idle`, `done` or `blocked`, not a block
 wait) has been observed returning on a genuine settlement, with the report already in the
 inbox or visible output at the wake, and the observation is recorded here with its date
 and versions (local dates; goal ids locate the records). Qualified so far: Claude Code
-(2026-09-17) and Pi (2026-09-17, goal `sh-compat-01`, Herdr 0.9.1, Pi 0.85.1: a builder's
+(2026-09-17), Pi (2026-09-17, goal `sh-compat-01`, Herdr 0.9.1, Pi 0.85.1: a builder's
 wait returned with its report already in the inbox, and a status read three seconds
-later showed `done`). On an Antigravity worker only a blocked-only wait was first armed,
+later showed `done`) and Codex (2026-09-21, goal `fsd-todo68-20260921`, Herdr 0.9.1,
+Codex CLI 0.155.1: a sandboxed builder's default-state wait returned `done` seventeen
+seconds after the inbox poll saw its report, once its final message had rendered, and
+the status stayed `done` on later reads; the earlier
+[active-turn check](codex.md#turn-boundaries) had only exercised timeout collection).
+On an Antigravity worker only a blocked-only wait was first armed,
 which by construction cannot fire on `idle`/`done`, and the inbox observation delivered
-the report after a fourteen-minute build (2026-09-17). No full settled-state wait has
-been observed to completion on a `codex` worker (as of 2026-09-17), so it remains
-**unverified**: proof missing, not failure observed.
-The [Codex active-turn check](codex.md#turn-boundaries) exercised timeout collection,
-later report inspection and cleanup; it did not qualify a wait returning on completion.
+the report after a fourteen-minute build (2026-09-17).
 
 A full settled-state wait on an Antigravity (`agy`) worker is now qualified as
 **unreliable**: a wait with `--until idle --until done --until blocked` returned `done`
@@ -86,9 +87,8 @@ agent's visible output showed active tool execution (spinners, "Running command.
 indicators) throughout, contradicting the reported status. This makes the settled-state
 wait unsuitable as the sole completion signal for `agy` workers.
 
-**On any harness whose settled-state wait is not qualified — `agy` (unreliable) and
-`codex` (unverified) — always pair the wait with inbox observation or visible output
-inspection.** When the worker reports to a filesystem inbox, the inbox poll is the
+**On any harness whose settled-state wait is not qualified — today `agy` (unreliable) —
+always pair the wait with inbox observation or visible output inspection.** When the worker reports to a filesystem inbox, the inbox poll is the
 primary completion signal; when the worker reports natively (hardened read-only), inspect
 the visible output for report-shaped text on each wake rather than trusting the status
 alone. A wait that returns `done` or `idle` on such a worker is a hint to inspect, not

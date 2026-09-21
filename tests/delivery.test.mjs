@@ -170,13 +170,14 @@ test('workers wake the coordinator through a background settled-state wait, with
   assert.match(text('templates/attempt.md'), /settled-state wait handle/);
 });
 
-test('the settled-state wait is primary only where qualified; agy and codex pair it with inbox observation', () => {
+test('the settled-state wait is primary only where qualified; agy pairs it with inbox observation', () => {
   const delivery = text('references/delivery.md');
   assert.match(delivery, /stays primary on every harness where it is qualified/);
-  assert.match(delivery, /Qualified so far: Claude Code \(2026-09-17\) and Pi \(2026-09-17, goal `sh-compat-01`, Herdr 0\.9\.1, Pi 0\.85\.1: a builder's wait returned with its report already in the inbox/);
+  assert.match(delivery, /Qualified so far: Claude Code \(2026-09-17\), Pi \(2026-09-17, goal `sh-compat-01`, Herdr 0\.9\.1, Pi 0\.85\.1: a builder's wait returned with its report already in the inbox/);
   assert.match(delivery, /on an Antigravity \(`agy`\) worker is now qualified as \*\*unreliable\*\*/);
-  assert.match(delivery, /on a `codex` worker \(as of 2026-09-17\), so it remains \*\*unverified\*\*/);
-  assert.match(delivery, /not qualified — `agy` \(unreliable\) and `codex` \(unverified\) — always pair the wait/);
+  assert.match(delivery, /and Codex \(2026-09-21, goal `fsd-todo68-20260921`, Herdr 0\.9\.1, Codex CLI 0\.155\.1: a sandboxed builder's default-state wait returned `done`/);
+  assert.doesNotMatch(delivery, /`codex` \(unverified\)/);
+  assert.match(delivery, /not qualified — today `agy` \(unreliable\) — always pair the wait/);
   assert.match(delivery, /Proof is this session's own receipt/);
   assert.match(delivery, /a new coordinator session has none until its harmless probe has run, before its first dispatch/);
   assert.match(delivery, /the inbox poll is the primary completion signal/);

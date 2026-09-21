@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Codex worker waits are qualified: in goal `fsd-todo68-20260921` (2026-09-21, Herdr 0.9.1,
+  Codex CLI 0.155.1) a sandboxed builder's default settled-state wait returned `done` on its
+  genuine completion, seventeen seconds after the inbox poll had seen the report and with
+  the status staying `done` afterwards, so `codex` leaves the pair-with-inbox list; only
+  `agy` (unreliable) remains on it. codex.md's 2026-09-17 record points at the observation.
 - The `agy` evidence line no longer names a model; the published-document test now
   rejects Gemini and Claude model names as well as GPT ones.
 
