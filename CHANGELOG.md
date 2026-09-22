@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.7.2 — 2026-09-22
+
+- Require explicit owner confirmation before proceeding with each new or changed
+  worker roster, including replacements and fallbacks. Standing preferences and
+  unsupervised mode do not bypass confirmation; unchanged follow-up attempts retain
+  their existing approval and remaining allowance.
+- Require fresh agents for new rosters and `[FSD]` worker tab labels while preserving
+  native agent names. Restore the corresponding documentation checks.
+- Prefer native Herdr worktree workspaces for isolated checkouts, reuse their newly
+  created tabs, and retain checkouts and branches unless deletion is explicitly authorized.
+- Add the skills.sh listing and installation command to the README.
+
 ## 1.7.1 — 2026-09-21
 
 - Codex worker waits are qualified: in goal `fsd-todo68-20260921` (2026-09-21, Herdr 0.9.1,
