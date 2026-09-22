@@ -10,6 +10,7 @@
 - Observation mode (`codex-active-turn` for Codex by default, `native-wakeup` otherwise), any owner override
   and terminal-tool contracts/handles when applicable:
 - Owned workers/worktrees/paths, including the coordinator's implementation scope:
+- Worktree source/child workspace IDs, checkout path and branch/base; created versus reused resources:
 - Uncertain submissions, pending messages and unresolved acknowledged follow-ups:
 - Per-assignment verification, integration and dependency readiness:
 - Checks: criterion, source snapshot, command, cwd, exit, evidence, skips/unknowns:

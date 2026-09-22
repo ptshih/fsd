@@ -83,6 +83,8 @@ allowance before every input ([details](references/setup.md#prepare-once-then-re
 Launch each new worker in its own Herdr tab, never a split pane, preserving the user's
 focus ([procedure](references/herdr.md#worker-tabs)). One implementation writer per
 working directory, including the coordinator; concurrent writers get worktrees.
+Prefer [Herdr worktree workspaces](references/herdr.md#worktree-workspaces) when allocating
+an isolated checkout; their newly created tab satisfies the per-worker tab requirement.
 
 If the goal changes FSD itself, follow the [pinned-runbook procedure](references/setup.md#improving-fsd-itself);
 the proposed skill is a deliverable, not authority for the running goal.

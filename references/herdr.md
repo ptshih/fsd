@@ -53,6 +53,57 @@ Use one implementation writer per canonical cwd. Concurrent writers get separate
 worktrees, with recorded branch/base, paths, dependencies and integration owner. Never
 edit another worker's checkout or silently take over its partial work.
 
+## Worktree workspaces
+
+When the approved assignment needs an isolated checkout, prefer Herdr's native
+`worktree` commands. Establish the [observation mode](delivery.md) before allocating
+worker resources. Check the installed `herdr worktree --help` and relevant subcommand
+help, plus server compatibility, once while preparing the goal. The
+[CLI reference](https://herdr.dev/docs/cli-reference/#worktrees) and
+[response schema](https://github.com/herdrdev/herdr/blob/master/src/api/schema/response.rs)
+describe the native contract.
+
+Inspect `herdr worktree list --workspace SOURCE_WORKSPACE_ID` and Git state before
+allocating. Use an explicit verified source workspace, an approved absolute checkout
+path, a fresh branch name and a resolved base commit. Herdr checks out an existing
+branch when its name already exists; do not mistake that for a fresh branch from the
+requested base. Uncommitted source changes are not copied into a new checkout.
+Replace each placeholder as one quoted shell argument:
+
+<!-- fsd-example: herdr-worktree-create -->
+```sh
+herdr worktree create --workspace SOURCE_WORKSPACE_ID --branch WORKER_BRANCH --base BASE_COMMIT --path WORKER_CWD --label "[FSD] WORKER_LABEL" --no-focus
+```
+
+Creation returns a linked workspace and its first tab and root pane. Record
+`.result.workspace.workspace_id`, `.result.tab.tab_id`,
+`.result.root_pane.pane_id` and `.result.worktree.path`; verify the actual checkout's
+canonical path, branch and base. Use this newly created tab for the worker instead of
+creating a second tab. Verify its label and, if needed, rename that owned tab with
+`herdr tab rename TAB_ID "[FSD] WORKER_LABEL"`. Continue with the root-pane checks
+under [worker tabs](#worker-tabs).
+
+For an existing approved checkout, open it without changing focus:
+
+<!-- fsd-example: herdr-worktree-open -->
+```sh
+herdr worktree open --workspace SOURCE_WORKSPACE_ID --path WORKER_CWD --no-focus
+```
+
+Check `.result.already_open`. When false, the returned workspace, tab and pane are
+new; use the same verification and naming steps as creation. When true, those resources
+already existed: create a fresh worker tab in the returned workspace using the checkout
+path. Never adopt its existing agent or rename its existing tab for a new roster.
+An existing checkout still needs verified writer ownership; opening it grants none.
+
+Record source and child workspace IDs, checkout path, branch/base, and which resources
+this goal created in [state](../templates/state.md). After an uncertain result, reconcile
+the native worktree list and Git state before retrying. If native worktree commands are
+unavailable, use project-approved Git worktree setup and the fresh-tab route below after
+reconciling any partial creation. Do not upgrade Herdr or put concurrent writers in one
+checkout to work around the gap. Use `--trust-repository` only with existing owner
+consent for the verified repository, never as an automatic retry.
+
 ## Worker tabs
 
 After establishing [native wakeup](delivery.md) or [Codex active-turn observation](codex.md),
@@ -61,11 +112,17 @@ and within the approved delegation envelope, create
 workers into the coordinator's or an unrelated existing tab. This FSD topology takes
 precedence over Herdr's generic sibling-pane default. Keep the user's focus unchanged.
 
+A tab freshly returned by worktree creation or by `worktree open` with
+`already_open: false` satisfies this requirement. Use `tab create` only when a fresh
+worker tab has not already been allocated.
+
 Use the already-checked installed `herdr tab create --help` contract; rediscover it only
 when version/behavior changes or evidence is missing. Replace placeholders below with
 the verified workspace ID, approved canonical worker cwd and a useful worker label, quoting
-each replacement as one shell argument. Use the coordinator's workspace unless the
-owner selected another; do not create a workspace merely to launch a worker.
+each replacement as one shell argument. For a Herdr-managed worktree, use its returned
+workspace ID. Otherwise use the coordinator's workspace unless the owner selected
+another. A linked worktree workspace is part of checkout isolation; do not create an
+unrelated workspace merely to launch a worker.
 
 <!-- fsd-example: herdr-worker-tab -->
 ```sh
@@ -267,8 +324,22 @@ On completion, cancellation or an agreed limit:
 4. Close only disposable, verified goal-owned panes. Close a tab only when every pane
    in it is verified disposable. Reuse alone does not grant closure authority. Preserve
    the coordinator, human drafts, unrelated resources, worktrees, branches and evidence.
+   If checkout deletion is explicitly authorized, follow the worktree procedure below
+   before closing the child workspace's last tab.
 5. Re-list to verify removal; stop owned [watches/check-ins](delivery.md#wind-down).
    Record retained resources with owner/next action and report cleanup failures honestly.
+
+Closing a worktree workspace, including its last tab, closes Herdr state without deleting
+the checkout or branch. Retain those by default. Never use `workspace close --group`
+to bypass a parent-workspace close refusal; it also closes linked workspaces.
+
+Only when checkout deletion is explicitly authorized, after preserving required work
+and verifying every pane in the owned child workspace is disposable, use
+`herdr worktree remove --workspace CHILD_WORKSPACE_ID` while that workspace is still
+open. This removes the checkout and closes its linked workspace but leaves the branch.
+Do not add `--force` when Git refuses removal; retain the resource and report the reason.
+Verify both Herdr and Git state afterward. Closing workers never implies permission
+to delete their checkouts or branches.
 
 Uncertain identity or shared dependencies block that target's cleanup. Do not force-kill
 processes or broaden scope to conceal a failure. No deadline or idle state implicitly
