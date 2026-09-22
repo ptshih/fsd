@@ -21,9 +21,9 @@ readiness.
    else ([goal directory](filesystem.md#establish-one-private-goal-directory)).
 2. Establish the requested outcome and only missing consequential choices: authorized
    actions, done criteria, scope, supervision, checks/review and limits. A clear request
-   plus standing preferences can supply approval. Do not demand a roster or re-ask
-   settled choices.
-3. Verify required model, effort, tool and approval settings without substituting them.
+   plus standing preferences can supply envelope approval. Do not re-ask settled choices.
+3. For delegation, [confirm the roster](#confirm-the-roster), then verify required model,
+   effort, tool and approval settings without substituting them.
 4. Do small work directly. For authorized delegation, use [Codex active-turn waits](codex.md)
    by default for a Codex coordinator and [native wakeup](delivery.md) otherwise, then follow
    [filesystem coordination](filesystem.md), then [Herdr dispatch](herdr.md#dispatch).
@@ -32,6 +32,27 @@ readiness.
 
 Direct execution does not need a worker-completion wakeup. Do not block suitable direct
 work on optional delegation setup, or take over an unsettled worker's checkout.
+
+## Confirm the roster
+
+Always present the concrete proposed roster and wait for the owner's explicit
+confirmation before creating worker tabs or worktrees, starting agents, or dispatching
+assignments. Show each worker's role and task, harness/model/effort, read/write ownership
+and checkout, launch order or parallel grouping, and attempt/time/cost limits. Resolve
+selections from preferences first; do not ask the owner to construct the roster.
+
+Record the confirmed roster and the owner's approving message in `goal.md`, with a
+reference in `state.md`. Explicit approval of that exact roster in the current goal
+already satisfies the gate; do not ask twice. General task approval, standing preferences,
+a prior goal's roster, silence and unsupervised mode do not satisfy it. While awaiting
+confirmation, only continue independent read-only preparation.
+
+Confirm every new roster and any change to membership, roles, selections, ownership,
+launch grouping or limits before proceeding with the affected work. This includes
+replacement agents and fallbacks, even when preferences already permit the selection.
+An unchanged follow-up attempt to a current roster member within its confirmed scope
+and remaining allowance does not need another confirmation. Direct work has no worker
+roster and does not need this gate.
 
 ## Prepare once, then recheck live state
 
@@ -76,6 +97,7 @@ the selected model for usage, quota or rate reasons) or `auth-failure`; an older
 `claude-unavailable` covers all three for that harness. A fallback fires only after the
 attempt is recorded with its [disposition](filesystem.md#dispatch-intent-before-input)
 and disclosed, never silently, whether the refusal came before any work or cut it short.
+Before launching the fallback, obtain [confirmation of the changed roster](#confirm-the-roster).
 
 A missing profile is not an error and does not require creating one. Default to supervised
 work, no automatic launch, no borrowed trust consent and no invented allowance. Named

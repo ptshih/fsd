@@ -47,7 +47,8 @@ and recursive spawning are not the FSD delegation route.
 Verify effective executable/arguments, harness/model/effort, tools and approval mode.
 Preserve the owner's selections. Recognized agent kind and launch flags alone do not
 prove effective settings. An unavailable requirement blocks affected dispatch; disclose
-only approved fallbacks after reconciling unfinished work.
+only approved fallbacks after reconciling unfinished work, and confirm the changed
+roster before launching them ([roster confirmation](setup.md#confirm-the-roster)).
 
 Use one implementation writer per canonical cwd. Concurrent writers get separate Git
 worktrees, with recorded branch/base, paths, dependencies and integration owner. Never
@@ -56,8 +57,9 @@ edit another worker's checkout or silently take over its partial work.
 ## Worktree workspaces
 
 When the approved assignment needs an isolated checkout, prefer Herdr's native
-`worktree` commands. Establish the [observation mode](delivery.md) before allocating
-worker resources. Check the installed `herdr worktree --help` and relevant subcommand
+`worktree` commands. Obtain [roster confirmation](setup.md#confirm-the-roster) and
+establish the [observation mode](delivery.md) before allocating worker resources.
+Check the installed `herdr worktree --help` and relevant subcommand
 help, plus server compatibility, once while preparing the goal. The
 [CLI reference](https://herdr.dev/docs/cli-reference/#worktrees) and
 [response schema](https://github.com/herdrdev/herdr/blob/master/src/api/schema/response.rs)
@@ -106,11 +108,20 @@ consent for the verified repository, never as an automatic retry.
 
 ## Worker tabs
 
+Never reuse, adopt or rename an existing Herdr agent or native agent session into a new
+roster, even when it is idle or came from an earlier roster for the same goal. A
+follow-up attempt to a current roster member is not a new roster launch; use the
+existing attempt rules under [dispatch](#dispatch). Reuse valid setup evidence, not
+worker agents or sessions.
+
 After establishing [native wakeup](delivery.md) or [Codex active-turn observation](codex.md),
-and within the approved delegation envelope, create
+and obtaining [roster confirmation](setup.md#confirm-the-roster) within the approved
+delegation envelope, create
 **one new, goal-owned Herdr tab per worker**. Do not use `herdr pane split` or put new
 workers into the coordinator's or an unrelated existing tab. This FSD topology takes
-precedence over Herdr's generic sibling-pane default. Keep the user's focus unchanged.
+precedence over Herdr's generic sibling-pane default. Prefix every worker tab label with
+`[FSD]`, and keep its native agent name in the `fsd-SLUG-ROLE` form because brackets are
+not valid in agent names. Keep the user's focus unchanged.
 
 A tab freshly returned by worktree creation or by `worktree open` with
 `already_open: false` satisfies this requirement. Use `tab create` only when a fresh
@@ -126,7 +137,7 @@ unrelated workspace merely to launch a worker.
 
 <!-- fsd-example: herdr-worker-tab -->
 ```sh
-herdr tab create --workspace WORKSPACE_ID --cwd WORKER_CWD --label WORKER_LABEL --no-focus
+herdr tab create --workspace WORKSPACE_ID --cwd WORKER_CWD --label "[FSD] WORKER_LABEL" --no-focus
 ```
 
 Retain the returned `.result.tab.tab_id` and `.result.root_pane.pane_id`; verify the new
@@ -139,6 +150,8 @@ Follow [cleanup](#cleanup) for these owned tabs; preserve unrelated resources an
 
 ## Dispatch
 
+Check that the assignment still matches the owner's [confirmed roster](setup.md#confirm-the-roster).
+An unconfirmed change blocks the affected launch or submission.
 Establish the [selected observation mode](delivery.md) once per goal before allocating
 task-worker resources. Prepare the [assignment](../templates/assignment.md) and
 [attempt record](../templates/attempt.md) with filesystem report paths; arm any inbox
@@ -265,7 +278,7 @@ Treat status as a hint, not an input/cleanup gate by itself:
 | `idle`/`done` with a spinner or active tool | Work is not settled; do not resend, integrate or close it as completed. |
 | `working` with a visible trust, question or permission dialog | Treat as blocked, not progressing; resolve only within owner consent, never just wait it out. |
 | Final report or response but conflicting native state/UI | Inspect actual output and owned processes; retain uncertainty until settlement is verified. |
-| Settled within seconds of submission and the screen shows a provider refusal (`reached your … limit`, `/usage-credits`, `credentials_not_configured`, an auth or quota error) | No work happened: capture the screen, record the attempt `not-started` ([uncounted](filesystem.md#dispatch-intent-before-input)), then switch to the role's approved fallback after reconciling and disclose the switch; without one, ask. Do not resubmit the refused selection without owner steering. |
+| Settled within seconds of submission and the screen shows a provider refusal (`reached your … limit`, `/usage-credits`, `credentials_not_configured`, an auth or quota error) | No work happened: capture the screen, record the attempt `not-started` ([uncounted](filesystem.md#dispatch-intent-before-input)), reconcile, and propose the role's approved fallback. Wait for [confirmation of the changed roster](setup.md#confirm-the-roster) before switching; without a fallback, ask. Do not resubmit the refused selection without owner steering. |
 
 Inspect at startup, immediately before input, on wakeups/bounded check-ins, and before
 cleanup—not in a polling loop. If the UI is unavailable or ambiguous, preserve that

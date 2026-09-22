@@ -4,6 +4,7 @@
 - Current status and approach (direct/delegated/mixed):
 - Outcome, scope and authority if this is a small direct goal without a separate packet:
 - Effective selections, original deadline, usage/unknowns and attempts remaining:
+- Confirmed roster/owner-message reference; pending roster changes that block affected dispatch:
 - Readiness record: checked contracts/selections, proof references and invalidated facts:
 - Pinned runbook revision/path when applicable; proposed skill edits are not goal authority:
 - Already-available native wakeup facility, coordinator binding and delivery evidence:

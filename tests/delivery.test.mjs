@@ -84,17 +84,22 @@ test('Herdr harness integrations are an installed baseline, not a setup project'
   assert.match(text('references/herdr.md'), /Assume Herdr's integration for each coding harness is installed/);
 });
 
-test('workers get dedicated Herdr tabs with no split-pane fallback', () => {
+test('new rosters use fresh agents in FSD-labeled dedicated tabs with no split-pane fallback', () => {
   const herdr = text('references/herdr.md');
+  assert.match(text('SKILL.md'), /Every new roster uses fresh agents/);
   assert.match(text('SKILL.md'), /each new worker in its own Herdr tab, never a split pane/);
+  assert.match(herdr, /Never reuse, adopt or rename an existing Herdr agent or native agent session into a new roster/);
+  assert.match(herdr, /A follow-up attempt to a current roster member is not a new roster launch/);
   assert.match(herdr, /one new, goal-owned Herdr tab per worker/);
+  assert.match(herdr, /Prefix every worker tab label with `\[FSD\]`/);
+  assert.match(herdr, /keep its native agent name in the `fsd-SLUG-ROLE` form/);
   assert.match(herdr, /Do not use `herdr pane split`/);
   assert.match(herdr, /Do not fall back to split panes/);
   assert.match(herdr, /generic sibling-pane default/);
   assert.match(herdr, /\.result\.root_pane\.pane_id/);
   assert.match(herdr, /`agent start --pane` targets that tab's root pane; it does not create a split/);
   const command = read('references/herdr.md').match(/<!-- fsd-example: herdr-worker-tab -->\n```sh\n([\s\S]*?)\n```/)?.[1];
-  assert.equal(command, 'herdr tab create --workspace WORKSPACE_ID --cwd WORKER_CWD --label WORKER_LABEL --no-focus');
+  assert.equal(command, 'herdr tab create --workspace WORKSPACE_ID --cwd WORKER_CWD --label "[FSD] WORKER_LABEL" --no-focus');
   for (const choice of ['workerLayout: "tab-per-worker"', 'allowPaneSplits: false', 'preserveFocus: true'])
     assert(text('references/setup.md').includes(choice));
 });

@@ -32,8 +32,9 @@ Claude Code, Pi, Codex) can follow.
 
 > Use FSD: fix the parser regression, run the tests, and stop. No public API changes.
 
-The coordinator confirms only what is genuinely undecided, does small work itself, and
-for anything larger opens one Herdr tab per worker: a `builder` in an isolated worktree,
+The coordinator does small work itself. Before delegation, it presents the proposed
+roster and waits for your explicit confirmation, including for replacements or fallbacks.
+It then opens one `[FSD]`-labeled Herdr tab per fresh worker: a `builder` in an isolated worktree,
 fresh `reviewer`s with distinct angles, a `scout` when the code is unfamiliar. Each worker
 gets a role file and a short packet, publishes an immutable report, and the coordinator is
 woken when it finishes rather than polling for it. Results are verified by the coordinator, not taken

@@ -25,6 +25,8 @@ max_attempts: REPLACE_WITH_APPROVED_DISPATCH_LIMIT
 - Scope and non-goals:
 - Authority basis (owner request and applicable standing choices):
 - Authorized actions, models, effort, tools and fallbacks:
+- Confirmed roster (each worker's role/task, harness/model/effort, read/write ownership,
+  checkout, launch grouping and limits); owner's approving message and applicable revision:
 - Required independent review:
 - Time/cost/attempt limits and accounting; mark unknown usage:
 - Stop conditions, including repeated failure/no progress:

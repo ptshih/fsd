@@ -1,7 +1,10 @@
 # Worked example: one hardened reviewer
 
 A real goal run by a Claude Code coordinator inside Herdr, condensed. Placeholders
-replace machine paths and the approved model.
+replace machine paths and the approved model. This historical run predates mandatory
+[roster confirmation](setup.md#confirm-the-roster) and `[FSD]` tab labels. A new run must
+confirm its roster before launch and use the current label convention; the trace below
+preserves what actually happened.
 
 ## Envelope
 

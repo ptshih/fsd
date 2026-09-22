@@ -22,7 +22,8 @@ your assignment, then stop. Do not repeat coordinator setup or launch other agen
 ## One usage path
 
 1. Establish the outcome and an approved operating envelope.
-2. Do small work directly. For authorized delegation, default to
+2. Do small work directly. Before delegation, present the proposed roster and wait for
+   the owner's explicit confirmation. For confirmed delegation, default to
    [Codex active-turn waits](references/codex.md) when the coordinator is Codex;
    otherwise establish an already-available native host facility for wakeup.
    Then open one Herdr tab per worker.
@@ -52,12 +53,15 @@ or the owner's direction ([role files](references/setup.md#role-files)). Confirm
 consequential choices that are genuinely missing: outcome, done criteria, scope and
 non-goals, supervision, authorized models/tools/actions, required checks or review, and
 time, attempt, cost and worker limits. A clear request plus standing preferences can
-supply approval; do not re-ask settled choices or invent an allowance.
+supply envelope approval; do not re-ask settled choices or invent an allowance.
 
-Approve an envelope, not a roster: choose direct work, staffing, independent review and
-repair within it. Supervised is the default; unsupervised means deciding in-scope
-questions without asking, not new authority. Limits never reset on replacement or resume;
-only an attempt with no model work (`not-sent`, `not-started`, or `cancelled` with no
+Choose direct work, staffing, independent review and repair within the envelope, but
+**always confirm each new or changed roster with the owner before proceeding with it**
+([roster confirmation](references/setup.md#confirm-the-roster)). Standing preferences and
+unsupervised mode do not replace this confirmation. Supervised is the default;
+unsupervised means deciding other in-scope questions without asking, not new authority.
+Limits never reset on replacement or resume; only an attempt with no model work
+(`not-sent`, `not-started`, or `cancelled` with no
 work product) goes uncounted ([rule](references/filesystem.md#dispatch-intent-before-input)).
 Then name yourself in Herdr: rename your agent to `fsd-<slug>` and, when your tab is
 dedicated to the goal, your tab to `FSD <slug>` ([procedure](references/herdr.md#name-the-coordinator)).
@@ -80,9 +84,13 @@ so the packet carries only the task. Read references only for the current step. 
 and wakeup proof in goal state, but recheck live identity, UI, authority and remaining
 allowance before every input ([details](references/setup.md#prepare-once-then-recheck-live-state)).
 
-Launch each new worker in its own Herdr tab, never a split pane, preserving the user's
-focus ([procedure](references/herdr.md#worker-tabs)). One implementation writer per
-working directory, including the coordinator; concurrent writers get worktrees.
+Every new roster uses fresh agents. Never populate a new roster with an existing Herdr
+agent or native agent session, including an idle agent from an earlier roster for the
+same goal. A follow-up attempt to a current roster member is not a new roster. Launch
+each new worker in its own Herdr tab, never a split pane, preserving the user's focus.
+Prefix each worker tab label with `[FSD]`; keep its native agent name in the
+`fsd-SLUG-ROLE` form ([procedure](references/herdr.md#worker-tabs)). One implementation
+writer per working directory, including the coordinator; concurrent writers get worktrees.
 Prefer [Herdr worktree workspaces](references/herdr.md#worktree-workspaces) when allocating
 an isolated checkout; their newly created tab satisfies the per-worker tab requirement.
 
@@ -112,8 +120,8 @@ Direct work: do it, run the checks, finish. Delegation (a complete trace:
    receipt separately from acceptance; accept only on inspected artifacts and checks
    actually run. Repair within the envelope; stop or ask when attempts are exhausted or
    failures show no progress. A provider refusal before any work follows the
-   [refusal row](references/herdr.md#inspect-results-and-prompts): record it, then fall
-   back or ask.
+   [refusal row](references/herdr.md#inspect-results-and-prompts): record it, then confirm
+   any proposed fallback roster before proceeding.
 5. **Integrate deliberately.** One destination writer. Verify worker quiescence,
    integrate per project policy, and rerun affected checks on the combined tree.
    Worker-branch success does not prove the integrated result. If the owner waives

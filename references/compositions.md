@@ -2,7 +2,9 @@
 
 Named shapes for delegated work, built from the shipped [role files](setup.md#role-files).
 Each is an envelope choice, not a mandatory pipeline: use the smallest shape that earns its
-cost. Every worker still gets its own tab, packet, attempt record and settled-state wait
+cost. Present the concrete roster for [owner confirmation](setup.md#confirm-the-roster)
+before launching any shape, and reconfirm new or changed rosters in later rounds.
+Every worker still gets its own tab, packet, attempt record and settled-state wait
 ([dispatch](herdr.md#dispatch)); on every wake, inspect all workers, not only the one named.
 This file contains no executable examples.
 

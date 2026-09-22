@@ -93,9 +93,10 @@ reset it. Three dispositions are uncounted because no model work happened: `not-
 a failed submission command), `not-started` (the delivered prompt was refused before any
 model work: usage cap, missing credentials, outage) and `cancelled` by owner steering
 before any work product. The allowance guards against runaway retries, not against
-outages or the owner's decisions. After a refusal, record and disclose it, then switch
-to the approved fallback or ask; do not resubmit the refused selection without owner
-steering. A limit or failure after work began is `incomplete` and counts, whatever the
+outages or the owner's decisions. After a refusal, record and disclose it, then propose
+the approved fallback and wait for [roster confirmation](setup.md#confirm-the-roster);
+without a fallback, ask. Do not resubmit the refused selection without owner steering.
+A limit or failure after work began is `incomplete` and counts, whatever the
 cause. These records guide recovery but do not enforce idempotency automatically.
 
 ## Publish a message
