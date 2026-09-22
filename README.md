@@ -52,6 +52,15 @@ corrected, see the [worked example](references/example.md).
 
 Install once per harness. Installing grants no authority and launches nothing.
 
+FSD is available on [skills.sh](https://skills.sh/ptshih/fsd/fsd). Install with the
+skills CLI:
+
+```sh
+npx skills add ptshih/fsd --skill fsd
+```
+
+Alternatively, use your harness's native package manager:
+
 ```sh
 # Pi — the first line only where Pi will coordinate; workers do not need it
 pi install npm:pi-interactive-shell
