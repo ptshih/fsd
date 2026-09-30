@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.8.1 — 2026-09-30
+
+- Record a live check of both messaging routes, run outside any goal: `codex queue`
+  reached an idle interactive Codex session, which started a turn and ran the requested
+  command, and a test channel carried that session's message into a fresh Claude Code
+  session, which answered through the channel's reply tool. The channel's development
+  flag found its server only in a project `.mcp.json`, and that launch showed two dialogs.
+- A Codex worker's thread can be bound through a session record naming a directory only
+  that worker uses; a zero-exit `codex queue` line means accepted, not delivered; treating
+  a `--no-daemon` worker as unreachable is marked untested.
+
 ## 1.8.0 — 2026-09-30
 
 - Only an assignment's first submission types into a worker's pane. A follow-up attempt,
