@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.9.0 — 2026-09-30
+
+- A Codex coordinator, or any other coordinator with a shell, reaches a Claude Code worker
+  through a one-shot `claude -p` relay limited to `ListAgents` and `SendMessage`, with a
+  receipt written like dispatch's, instead of the pane fallback. The relay is judged from its
+  own `SendMessage` call: the exact recipient and packet with a successful result is
+  `observing`; `No agent named` or no call is `not-sent`; changed text, a changed recipient
+  or a second send is `uncertain`. It runs from the attempt's evidence directory with an
+  approved small model and counts against the goal's cost allowance.
+- Corrects 1.8.1, which said no documented route carried a Codex session's message into a
+  running Claude Code session. The 2026-09-30 relay check is recorded: text delivered
+  exactly, about 4 seconds and $0.018–0.037 a message, and a `SendMessage` reply to the
+  exited relay fails.
+
 ## 1.8.1 — 2026-09-30
 
 - Record a live check of both messaging routes, run outside any goal: `codex queue`
