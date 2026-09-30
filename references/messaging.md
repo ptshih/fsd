@@ -29,13 +29,16 @@ appears. Send the bare name; add the listing's `[ref]` only when two rows share 
 
 **Codex.** `codex queue` adds the message to the thread's queue through Codex's shared app
 server. In Codex CLI 0.159.2 the interactive CLI uses that server by default
-(`daemon_auto_start` is on), and a worker started with `--no-daemon` is out of reach. `THREAD` is the session UUID or exact
+(`daemon_auto_start` is on); a worker started with `--no-daemon` runs without that server,
+so treat its inbox as out of reach (untested). `THREAD` is the session UUID or exact
 session name; an ambiguous name is rejected. Herdr exposes no Codex session ID, so resolve
-the thread from evidence that binds it to the worker's pane; a session-index entry matched
-only by directory and start time is not proof (on 2026-09-30 the newest matching entry
-predated the pane's process). Without that binding the inbox is out of reach. The send
-writes its own receipt, as dispatch does; replace `GOAL_DIR`, `ATTEMPT_ID`, `THREAD` and
-`TEXT`, each as one shell argument:
+the thread from evidence that binds it to the worker's pane. A session record whose
+directory only that worker uses binds it, such as the first record of a Codex session file
+naming the worker's own worktree (an undocumented local format, read as evidence only);
+an entry matched only by a shared directory and start time is not proof (on 2026-09-30
+the newest matching entry predated the pane's process). Without that binding the inbox is
+out of reach. The send writes its own receipt, as dispatch does; replace `GOAL_DIR`,
+`ATTEMPT_ID`, `THREAD` and `TEXT`, each as one shell argument:
 
 <!-- fsd-example: codex-queue-receipt -->
 ```sh
@@ -43,9 +46,10 @@ writes its own receipt, as dispatch does; replace `GOAL_DIR`, `ATTEMPT_ID`, `THR
 ```
 
 **No inbox.** Pi and Antigravity workers have no inbox that FSD has verified, and only a
-Claude Code coordinator can reach a Claude Code worker's ([below](#codex-to-claude-code)). Fall back to `herdr agent
-prompt` only after the pane shows an empty prompt and no open dialog, with the
-[dispatch receipt](herdr.md#dispatch), and record why the inbox was out of reach.
+Claude Code coordinator can reach a Claude Code worker's ([below](#codex-to-claude-code)).
+Fall back to `herdr agent prompt` only after the pane shows an empty prompt and no open
+dialog, with the [dispatch receipt](herdr.md#dispatch), and record why the inbox was out
+of reach.
 
 Startup dialogs, permission-mode keys and harness exit keys are not messages: they stay
 Herdr input on goal-owned panes under the [dispatch](herdr.md#dispatch) and
@@ -63,10 +67,11 @@ Herdr input on goal-owned panes under the [dispatch](herdr.md#dispatch) and
   hold or refusal to the sender. A held message is `uncertain` until its notice resolves
   it; never fall back to pane input while it could still be delivered. A refusal is
   `not-sent`. FSD never changes the owner's inbound settings to get a message through.
-- **Codex.** A loaded idle thread starts a turn from its queue; an unloaded thread keeps the
-  message pending and is not resumed
+- **Codex.** A loaded idle thread starts a turn from its queue (seen in the live check
+  below); an unloaded thread keeps the message pending and is not resumed
   ([openai/codex#44491](https://github.com/openai/codex/issues/44491), closed as not
-  planned). Queue acceptance alone is not delivery: classify from the receipt, the
+  planned). A zero exit with `Queued message MESSAGE_ID for thread THREAD_ID.` means the
+  queue accepted it. Queue acceptance alone is not delivery: classify from the receipt, the
   settled-state wait and the pane.
 
 Claude Code's `SendMessage` also takes `notify_when_idle`, a one-shot notice when a local
@@ -81,8 +86,10 @@ session. Claude Code's channels push events from an MCP server into a session, b
 into one started with that channel's flag, and a custom channel needs the research-preview
 development flag, which opens a warning dialog at startup. Each session's inbox socket
 (`CLAUDE_CODE_MESSAGING_SOCKET`) is documented for scripts and hooks, but its message
-format is not. A Codex coordinator therefore uses the pane fallback for Claude Code
-workers, and Codex workers keep reporting through files.
+format is not. A live check (below) delivered a Codex session's message this way, so the
+channel route works, but it needs a channel server and launch-time setup for every
+receiving session. FSD adds neither: a Codex coordinator uses the pane fallback for
+Claude Code workers, and Codex workers keep reporting through files.
 
 ## Evidence
 
@@ -95,3 +102,15 @@ reference does not list `codex queue`. Herdr's agent list showed a native sessio
 each Claude Code pane and none for a Codex pane. No FSD goal has sent an inbox follow-up
 yet; the first one records its receipt and outcome here, as
 [delivery](delivery.md#two-wake-sources) does for waits.
+
+Live check on 2026-09-30, outside any FSD goal, with a fresh Claude Code session and a
+throwaway Codex session in new Herdr tabs. `codex queue` to the idle Codex session printed
+`Queued message MESSAGE_ID for thread THREAD_ID.` and exited 0 into its receipt; the idle
+thread started a turn within seconds and ran the requested command, a POST to a test
+channel. The channel delivered that message into the Claude Code session, which started a
+turn and answered through the channel's reply tool 47 seconds after the first send. The
+development flag found the server only in the project's `.mcp.json`; with `--mcp-config`
+it reported "no MCP server configured with that name". The `.mcp.json` launch showed two
+dialogs: MCP server consent, which defaults to "Continue without using this MCP server",
+then the development-channel warning. The account was an individual plan, to which no
+organization channel policy applies.

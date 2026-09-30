@@ -35,9 +35,10 @@ test('each harness pairing names its route and the pane fallback keeps its readi
   assert.match(messaging, /Start every Claude Code worker with `--name WORKER_NAME`/);
   assert.match(messaging, /a session started in bare mode binds no inbox/);
   assert.match(messaging, /`codex queue --thread THREAD --message TEXT`/);
-  assert.match(messaging, /a worker started with `--no-daemon` is out of reach/);
+  assert.match(messaging, /a worker started with `--no-daemon` runs without that server, so treat its inbox as out of reach \(untested\)/);
   assert.match(messaging, /Herdr exposes no Codex session ID/);
-  assert.match(messaging, /a session-index entry matched only by directory and start time is not proof/);
+  assert.match(messaging, /A session record whose directory only that worker uses binds it/);
+  assert.match(messaging, /an entry matched only by a shared directory and start time is not proof/);
   assert.match(messaging, /Pi and Antigravity workers have no inbox/);
   assert.match(messaging, /Fall back to `herdr agent prompt` only after the pane shows an empty prompt and no open dialog/);
   assert.match(text('references/herdr.md'), /plus `--name WORKER_NAME` for Claude Code/);
@@ -50,7 +51,9 @@ test('delivery outcomes are classified from evidence, never assumed from a sent 
   assert.match(messaging, /held for the owner's approval and dropped after `dialogExpiry`/);
   assert.match(messaging, /A held message is `uncertain` until its notice resolves it; never fall back to pane input while it could still be delivered/);
   assert.match(messaging, /FSD never changes the owner's inbound settings/);
+  assert.match(messaging, /A loaded idle thread starts a turn from its queue \(seen in the live check below\)/);
   assert.match(messaging, /an unloaded thread keeps the message pending/);
+  assert.match(messaging, /A zero exit with `Queued message MESSAGE_ID for thread THREAD_ID\.` means the queue accepted it/);
   assert.match(messaging, /Queue acceptance alone is not delivery/);
   const attempt = text('templates/attempt.md');
   assert.match(attempt, /Delivery route: first-assignment Herdr prompt, worker inbox and its address, or pane fallback and why/);
@@ -61,6 +64,7 @@ test('launch keys and dialogs stay Herdr input, and Codex-to-Claude has no docum
   const messaging = text('references/messaging.md');
   assert.match(messaging, /Startup dialogs, permission-mode keys and harness exit keys are not messages/);
   assert.match(messaging, /No documented route delivers a Codex session's message into a running Claude Code session/);
+  assert.match(messaging, /A live check \(below\) delivered a Codex session's message this way/);
   assert.match(messaging, /a custom channel needs the research-preview development flag/);
   assert.match(messaging, /`CLAUDE_CODE_MESSAGING_SOCKET`\) is documented for scripts and hooks, but its message format is not/);
   assert.match(messaging, /`notify_when_idle`/);
@@ -75,6 +79,11 @@ test('the evidence record is dated, versioned and says what no goal has exercise
   assert.match(messaging, /openai\/codex#44491/);
   assert.match(messaging, /OpenAI's CLI reference does not list `codex queue`/);
   assert.match(messaging, /No FSD goal has sent an inbox follow-up yet/);
+  assert.match(messaging, /Live check on 2026-09-30, outside any FSD goal/);
+  assert.match(messaging, /the idle thread started a turn within seconds and ran the requested command/);
+  assert.match(messaging, /answered through the channel's reply tool/);
+  assert.match(messaging, /The development flag found the server only in the project's `\.mcp\.json`; with `--mcp-config` it reported "no MCP server configured with that name"/);
+  assert.match(messaging, /MCP server consent, which defaults to "Continue without using this MCP server"/);
 });
 
 test('the Codex queue receipt keeps stdout, stderr and exit status, refuses to overwrite, and propagates the status', posix, t => {
