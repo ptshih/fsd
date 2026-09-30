@@ -19,7 +19,8 @@ pane.
 | --- | --- |
 | Claude Code → Claude Code | `SendMessage` to the worker's session name, found with `ListAgents` |
 | Any coordinator with a shell → Codex | `codex queue --thread THREAD --message TEXT` |
-| Any other coordinator → Claude Code; any → Pi or Antigravity | No inbox: the pane fallback below |
+| Codex or another coordinator with a shell → Claude Code | A one-shot `claude -p` relay that calls `SendMessage` (below) |
+| Any coordinator → Pi or Antigravity | No inbox: the pane fallback below |
 
 **Claude Code.** Start every Claude Code worker with `--name WORKER_NAME`, its Herdr agent
 name, so the session answers to the same name in `ListAgents`. Confirm the row before the
@@ -45,11 +46,9 @@ out of reach. The send writes its own receipt, as dispatch does; replace `GOAL_D
 ( umask 077; set -C; r="GOAL_DIR/evidence/ATTEMPT_ID.receipt"; test ! -e "$r.err" && { codex queue --thread THREAD --message TEXT; s=$?; echo "exit $s" >&2; exit $s; } > "$r.out" 2> "$r.err" )
 ```
 
-**No inbox.** Pi and Antigravity workers have no inbox that FSD has verified, and only a
-Claude Code coordinator can reach a Claude Code worker's ([below](#codex-to-claude-code)).
-Fall back to `herdr agent prompt` only after the pane shows an empty prompt and no open
-dialog, with the [dispatch receipt](herdr.md#dispatch), and record why the inbox was out
-of reach.
+**No inbox.** Pi and Antigravity workers have no inbox that FSD has verified. Fall back to
+`herdr agent prompt` only after the pane shows an empty prompt and no open dialog, with the
+[dispatch receipt](herdr.md#dispatch), and record why the inbox was out of reach.
 
 Startup dialogs, permission-mode keys and harness exit keys are not messages: they stay
 Herdr input on goal-owned panes under the [dispatch](herdr.md#dispatch) and
@@ -79,17 +78,56 @@ session next goes idle (both sessions on v2.1.236 or later; the subscription lap
 12 hours). It is not a qualified FSD wake source; the settled-state wait stays primary
 ([wakeup](delivery.md#two-wake-sources)).
 
-## Codex to Claude Code
+## Claude Code from another coordinator
 
-No documented route delivers a Codex session's message into a running Claude Code
-session. Claude Code's channels push events from an MCP server into a session, but only
-into one started with that channel's flag, and a custom channel needs the research-preview
-development flag, which opens a warning dialog at startup. Each session's inbox socket
+A one-shot `claude -p` relay delivers a Codex session's message into a running Claude Code
+session: print mode limited to `ListAgents` and `SendMessage` calls `SendMessage` once, and
+the worker receives it like any cross-session message, with no restart or launch change.
+Run it with an approved small model (`RELAY_MODEL`, from the owner's preferences or
+direction) and a per-call cap (`BUDGET_USD`). Count each relay against the goal's cost
+allowance: it is a model call. The receipt runs from the attempt's evidence directory,
+which carries no project instructions (a relay run inside a repository read its
+instructions and cost twice as much); replace `GOAL_DIR`, `ATTEMPT_ID`, `RELAY_MODEL`,
+`BUDGET_USD` and `PROMPT`, each as one shell argument:
+
+<!-- fsd-example: claude-relay-receipt -->
+```sh
+( umask 077; set -C; r="GOAL_DIR/evidence/ATTEMPT_ID.receipt"; test ! -e "$r.err" && { cd "${r%/*}" && claude -p --model RELAY_MODEL --tools ListAgents,SendMessage --allowedTools "ListAgents SendMessage" --strict-mcp-config --no-session-persistence --output-format stream-json --verbose --max-budget-usd BUDGET_USD --name fsd-relay PROMPT < /dev/null; s=$?; echo "exit $s" >&2; exit $s; } > "$r.out" 2> "$r.err" )
+```
+
+`PROMPT` asks for exactly one `SendMessage` and no other tool, with the worker's session
+name and the packet each copied from its own block between marker lines whose nonce does
+not occur in the packet:
+
+```text
+You are a message relay. Call SendMessage exactly once and call no other tool. Set to to the
+text between TO-BEGIN-NONCE and TO-END-NONCE and message to the text between BEGIN-NONCE and
+END-NONCE, each copied exactly, character for character, including line breaks. Then reply
+with just the word done.
+TO-BEGIN-NONCE
+WORKER_SESSION_NAME
+TO-END-NONCE
+BEGIN-NONCE
+PACKET
+END-NONCE
+```
+
+The text passes through a model, so judge the relay from its own call in `.receipt.out`:
+the one `SendMessage` call's `to` and `message` must equal the worker's session name and
+the packet exactly, and its result must report `"success":true`; that is `observing` once
+the settled-state wait is armed. `No agent named` or no `SendMessage` call is `not-sent`.
+Changed text, a changed recipient or a second send is `uncertain`: the worker may have
+received it, so inspect the worker before any further input. The worker sees a
+cross-session message from `fsd-relay` and still reports through its inbox; a
+`SendMessage` reply to the relay cannot arrive, because the relay has exited.
+
+Claude Code's channels also push events from an MCP server into a session, but only into
+one started with that channel's flag, and a custom channel needs the research-preview
+development flag, which opens a warning dialog at startup. A live check (below) delivered
+a Codex session's message this way, but it needs a channel server and launch-time setup
+for every receiving session, so FSD uses the relay. Each session's inbox socket
 (`CLAUDE_CODE_MESSAGING_SOCKET`) is documented for scripts and hooks, but its message
-format is not. A live check (below) delivered a Codex session's message this way, so the
-channel route works, but it needs a channel server and launch-time setup for every
-receiving session. FSD adds neither: a Codex coordinator uses the pane fallback for
-Claude Code workers, and Codex workers keep reporting through files.
+format is not. Codex workers keep reporting through files.
 
 ## Evidence
 
@@ -114,3 +152,13 @@ it reported "no MCP server configured with that name". The `.mcp.json` launch sh
 dialogs: MCP server consent, which defaults to "Continue without using this MCP server",
 then the development-channel warning. The account was an individual plan, to which no
 organization channel policy applies.
+
+Relay check on 2026-09-30, outside any FSD goal: from a shell and from a Codex session, a
+one-shot `claude -p` (the `haiku` alias, only `ListAgents` and `SendMessage`) delivered the
+text into a normally started Claude Code session, confirmed once byte for byte against that
+session's transcript and once from the relay's own `SendMessage` input; the receiver
+answered through `codex queue`, and Codex received the reply. A relay cost $0.018 from a
+directory without project instructions and $0.037 from inside a repository, with about 4
+seconds of model time; without `< /dev/null`, `claude -p` also waited 3 seconds for stdin.
+A `SendMessage` reply to the relay failed (ENOENT) once it had exited. `--plugin-dir`
+plugins cannot carry a channel ("plugin not installed").

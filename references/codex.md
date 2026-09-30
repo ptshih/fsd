@@ -25,7 +25,9 @@ state, not just in a JavaScript variable that disappears between cells.
 wakeup facility. Do not treat it or notification hooks as an automatic substitute. Queue
 acceptance alone does not establish delivery to a loaded coordinator on the same app
 server, or resumption after idle. A native-wakeup goal still needs the
-[facility proof](delivery.md#establish-the-facility-once-per-goal).
+[facility proof](delivery.md#establish-the-facility-once-per-goal). A Codex coordinator
+reaches a Claude Code worker through the
+[`claude -p` relay](messaging.md#claude-code-from-another-coordinator), not the pane.
 
 ## Dispatch and collect
 

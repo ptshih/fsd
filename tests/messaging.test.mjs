@@ -2,7 +2,7 @@
 // example runs against a stub `codex`; no session, agent or host facility is contacted.
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -39,6 +39,8 @@ test('each harness pairing names its route and the pane fallback keeps its readi
   assert.match(messaging, /Herdr exposes no Codex session ID/);
   assert.match(messaging, /A session record whose directory only that worker uses binds it/);
   assert.match(messaging, /an entry matched only by a shared directory and start time is not proof/);
+  assert.match(messaging, /\| Codex or another coordinator with a shell → Claude Code \| A one-shot `claude -p` relay that calls `SendMessage` \(below\) \|/);
+  assert.match(messaging, /\| Any coordinator → Pi or Antigravity \| No inbox: the pane fallback below \|/);
   assert.match(messaging, /Pi and Antigravity workers have no inbox/);
   assert.match(messaging, /Fall back to `herdr agent prompt` only after the pane shows an empty prompt and no open dialog/);
   assert.match(text('references/herdr.md'), /plus `--name WORKER_NAME` for Claude Code/);
@@ -60,16 +62,30 @@ test('delivery outcomes are classified from evidence, never assumed from a sent 
   assert.match(attempt, /or the `SendMessage` result and any delivery notice/);
 });
 
-test('launch keys and dialogs stay Herdr input, and Codex-to-Claude has no documented inbox', () => {
+test('launch keys and dialogs stay Herdr input, and a relay reaches Claude Code from other coordinators', () => {
   const messaging = text('references/messaging.md');
   assert.match(messaging, /Startup dialogs, permission-mode keys and harness exit keys are not messages/);
-  assert.match(messaging, /No documented route delivers a Codex session's message into a running Claude Code session/);
+  assert.match(messaging, /A one-shot `claude -p` relay delivers a Codex session's message into a running Claude Code session/);
   assert.match(messaging, /A live check \(below\) delivered a Codex session's message this way/);
   assert.match(messaging, /a custom channel needs the research-preview development flag/);
   assert.match(messaging, /`CLAUDE_CODE_MESSAGING_SOCKET`\) is documented for scripts and hooks, but its message format is not/);
   assert.match(messaging, /`notify_when_idle`/);
   assert.match(messaging, /It is not a qualified FSD wake source/);
   assert.match(text('references/codex.md'), /`codex queue` is the inbox route to a Codex worker \(\[messaging\]\(messaging\.md\)\), not a wakeup facility/);
+  assert.match(text('references/codex.md'), /reaches a Claude Code worker through the \[`claude -p` relay\]\(messaging\.md#claude-code-from-another-coordinator\)/);
+});
+
+test('the relay is judged from its own SendMessage call, costs are counted, and replies stay in files', () => {
+  const messaging = text('references/messaging.md');
+  assert.match(messaging, /with an approved small model \(`RELAY_MODEL`, from the owner's preferences or direction\)/);
+  assert.match(messaging, /Count each relay against the goal's cost allowance/);
+  assert.match(messaging, /runs from the attempt's evidence directory, which carries no project instructions/);
+  assert.match(messaging, /the one `SendMessage` call's `to` and `message` must equal the worker's session name and the packet exactly, and its result must report `"success":true`/);
+  assert.match(messaging, /`No agent named` or no `SendMessage` call is `not-sent`/);
+  assert.match(messaging, /Changed text, a changed recipient or a second send is `uncertain`/);
+  assert.match(messaging, /a `SendMessage` reply to the relay cannot arrive/);
+  assert.match(messaging, /Relay check on 2026-09-30, outside any FSD goal/);
+  assert.match(messaging, /confirmed once byte for byte against that session's transcript/);
 });
 
 test('the evidence record is dated, versioned and says what no goal has exercised', () => {
@@ -84,6 +100,36 @@ test('the evidence record is dated, versioned and says what no goal has exercise
   assert.match(messaging, /answered through the channel's reply tool/);
   assert.match(messaging, /The development flag found the server only in the project's `\.mcp\.json`; with `--mcp-config` it reported "no MCP server configured with that name"/);
   assert.match(messaging, /MCP server consent, which defaults to "Continue without using this MCP server"/);
+});
+
+test('the relay receipt runs claude -p from the evidence directory and keeps stdout, stderr and exit status', posix, t => {
+  const block = example('references/messaging.md', 'claude-relay-receipt');
+  assert(block, 'claude relay receipt example required');
+  assert.equal(spawnSync('/bin/sh', ['-n'], { input: block, encoding: 'utf8', timeout: 5000 }).status, 0);
+  assert.match(block, /^\( umask 077; set -C; /);
+  assert.match(block, /claude -p --model RELAY_MODEL --tools ListAgents,SendMessage --allowedTools "ListAgents SendMessage"/);
+  assert.match(block, /--output-format stream-json --verbose/);
+  assert.match(block, /--name fsd-relay PROMPT < \/dev\/null;/);
+  const root = mkdtempSync(join(tmpdir(), 'fsd relay-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  mkdirSync(join(root, 'bin'));
+  writeFileSync(join(root, 'bin', 'claude'), '#!/bin/sh\nprintf \'%s|%s\\n\' "$(pwd -P)" "$*" >> "$FSD_TEST_LOG"\necho \'{"type":"result"}\'\necho "stub: note" >&2\nexit "$FSD_TEST_EXIT"\n', { mode: 0o700 });
+  const env = { ...process.env, PATH: `${join(root, 'bin')}:${process.env.PATH ?? '/usr/bin:/bin'}`, FSD_TEST_LOG: join(root, 'calls') };
+  const calls = () => { try { return readFileSync(join(root, 'calls'), 'utf8').trim().split('\n'); } catch { return []; } };
+  const goal = join(root, 'goal dir');
+  mkdirSync(join(goal, 'evidence'), { recursive: true });
+  const script = block.replace('GOAL_DIR', goal).replace('ATTEMPT_ID', 'A3');
+  const receipt = suffix => join(goal, 'evidence', `A3.receipt.${suffix}`);
+  const send = exit => spawnSync('/bin/sh', ['-c', script], { encoding: 'utf8', timeout: 5000, env: { ...env, FSD_TEST_EXIT: String(exit) } });
+  assert.equal(send(3).status, 3, "the relay's own exit status is the command's");
+  const [call] = calls();
+  assert.equal(call.split('|')[0], realpathSync(join(goal, 'evidence')), 'the relay runs from the evidence directory');
+  assert.match(call, /-p --model RELAY_MODEL/);
+  assert.equal(readFileSync(receipt('out'), 'utf8'), '{"type":"result"}\n');
+  assert.equal(readFileSync(receipt('err'), 'utf8'), 'stub: note\nexit 3\n');
+  for (const suffix of ['out', 'err']) assert.equal(statSync(receipt(suffix)).mode & 0o777, 0o600);
+  assert.equal(send(0).status, 1, 'an existing receipt must be refused');
+  assert.equal(calls().length, 1, 'a refused rerun must not send');
 });
 
 test('the Codex queue receipt keeps stdout, stderr and exit status, refuses to overwrite, and propagates the status', posix, t => {
