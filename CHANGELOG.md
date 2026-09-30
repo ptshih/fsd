@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.8.0 — 2026-09-30
+
+- Only an assignment's first submission types into a worker's pane. A follow-up attempt,
+  a reply to a worker's `question` or a report request goes through the worker harness's
+  own inbox where the coordinator can reach it: Claude Code's `SendMessage` after
+  `ListAgents`, or `codex queue` with a receipt written the same way as dispatch's. Pi and
+  Antigravity workers, and Claude Code workers of any other coordinator, keep the pane
+  fallback with its empty-prompt and no-dialog checks.
+- Claude Code workers start with `--name WORKER_NAME`, so the inbox answers to the Herdr
+  agent name.
+- New `references/messaging.md` records the routes, how to classify held, refused and
+  pending deliveries, why no documented route yet carries a Codex session's message into
+  a running Claude Code session, and the sources checked on 2026-09-30 (Claude Code
+  2.1.286, Codex CLI 0.159.2, Herdr 0.9.1). No goal has exercised an inbox follow-up yet.
+- Role files and the worker guide wait for the coordinator's reply rather than a typed
+  prompt; the attempt template records the delivery route and inbox receipts.
+
 ## 1.7.2 — 2026-09-22
 
 - Require explicit owner confirmation before proceeding with each new or changed
