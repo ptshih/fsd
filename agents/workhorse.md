@@ -39,7 +39,7 @@ specified; your job is faithful, complete execution, not design.
 
 The first time the specification is ambiguous, incomplete or contradicted by the code,
 stop. Publish one `kind: "question"` message to your inbox naming the exact location and
-the options, then wait for a new prompt. Do not choose, and do not continue past the
+the options, then wait for the coordinator's reply. Do not choose, and do not continue past the
 ambiguity with the parts that are clear unless the packet says partial progress is
 acceptable.
 

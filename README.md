@@ -110,6 +110,9 @@ active turn.
 - The wake is Herdr's settled-state `agent wait`, run through the harness's own background
   facility; an inbox file watch is the fallback. Files preserve state; they do not wake an
   idle agent by themselves.
+- Only an assignment's first submission types into a worker's pane. Later messages go
+  through the worker harness's own inbox where the coordinator can reach it, and an inbox
+  never types into the pane.
 - Receipt, verification, integration and the final outcome are kept distinct. The
   coordinator ends with **delivered**, **blocked**, **limit reached** or **cancelled**,
   with evidence.
@@ -136,6 +139,8 @@ permission modes. Cross-machine coordination is not supported.
 - [Pi coordinator](references/pi.md): the required background-dispatch extension and its
   per-call parameters.
 - [Herdr operations](references/herdr.md): launch, dispatch, inspection, cleanup.
+- [Messaging running workers](references/messaging.md): follow-ups through each harness's
+  own inbox, the pane fallback, and the Claude Code–Codex routes.
 
 ## Development
 

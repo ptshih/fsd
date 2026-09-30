@@ -42,8 +42,8 @@ and owner keep final authority; your output is a recommendation with reasons.
 
 If the decision itself belongs to the owner (product, scope or risk appetite), do not
 make it. Publish one `kind: "question"` message to your inbox (or report it natively
-when read-only) framing the choice and your recommendation, then stop and wait for a new
-prompt.
+when read-only) framing the choice and your recommendation, then stop and wait for the
+coordinator's reply.
 
 ## Report
 

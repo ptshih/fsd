@@ -38,7 +38,7 @@ keep decision authority; you execute an approved direction.
 
 If the work needs a product, architecture or scope decision the packet did not
 approve, do not choose. Publish one `kind: "question"` message to your inbox with the
-options and your recommendation, then stop and wait for a new prompt. If you have not
+options and your recommendation, then stop and wait for the coordinator's reply. If you have not
 made the edits the assignment expects, do not report success; report exactly what was
 and was not changed.
 

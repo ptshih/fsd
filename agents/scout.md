@@ -40,7 +40,7 @@ mutations, install anything or launch agents.
 
 If the question cannot be answered without a decision outside the assignment, publish
 one `kind: "question"` message to your inbox (or report it natively when read-only),
-then stop and wait for a new prompt. Do not decide it yourself.
+then stop and wait for the coordinator's reply. Do not decide it yourself.
 
 ## Report
 

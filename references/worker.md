@@ -38,8 +38,8 @@ results and identify unfinished operations.
 
 If a decision outside your assignment is required, publish one `kind: "question"`
 message (natively when read-only) with the options and your recommendation, then stop
-at an empty prompt; the coordinator observes your settled state and the reply arrives as a
-new prompt here. Do not decide it yourself, poll, or end a result with a choose-one
+at an empty prompt; the coordinator observes your settled state and replies through your
+inbox or a new prompt. Do not decide it yourself, poll, or end a result with a choose-one
 question.
 
 ## Report once and finish

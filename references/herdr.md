@@ -168,8 +168,10 @@ interactive UI or human draft is visible.
 
 The launch sequence for one worker, after its tab exists, uses these checked commands.
 Replace placeholders. `LAUNCH_ARGS` are the role file's `launch_args` for that harness
-with `ROLE_FILE` resolved, plus the approved model and approval flags; omit the trailing
-`--` when there are none. A harness absent from `launch_args` gets only the approved
+with `ROLE_FILE` resolved, plus the approved model and approval flags, plus
+`--name WORKER_NAME` for Claude Code so its inbox answers to the same name
+([messaging](messaging.md#choose-the-route)); omit the trailing `--` when there are
+none. A harness absent from `launch_args` gets only the approved
 model and approval flags, with the role file first in the packet's read list
 ([setup](setup.md#role-files)). `TEXT` is the complete packet as one shell argument;
 `HARNESS` is the packet's `worker_kind`.
@@ -291,10 +293,11 @@ or final line; capture anything wider only when diagnosing a defect.
 Require reports to identify assignment/attempt, affected paths, actual checks/results,
 skips/unknowns and remaining work. Preserve them in authorized evidence paths. A truly
 read-only worker uses native reporting, not an unapproved temporary-file fallback.
-If a report is incomplete, recover available output first; any follow-up prompt is a
-new bounded attempt, only after verified readiness. A reply to a worker's `question`
-message is likewise a new attempt on the same assignment: persist intent, prompt once,
-then re-arm that worker's settled-state wait.
+If a report is incomplete, recover available output first; any follow-up is a new
+bounded attempt, sent through the worker's native inbox where reachable
+([messaging](messaging.md)) and otherwise prompted only after verified readiness. A reply
+to a worker's `question` message is likewise a new attempt on the same assignment:
+persist intent, send once, then re-arm that worker's settled-state wait.
 
 Inspect every actual trust/question/permission UI before responding. Apply only the
 owner's existing consent to its stated path/action; use supported navigation, read back

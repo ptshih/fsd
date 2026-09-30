@@ -15,6 +15,8 @@ deadline: REPLACE
 
 - Assignment packet and exact native identity/cwd:
 - Prompt or private immutable prompt reference:
+- Delivery route: first-assignment Herdr prompt, worker inbox and its address, or pane
+  fallback and why ([messaging](../references/messaging.md)):
 - Armed native watch handle and settled-state wait handle, assigned inbox paths and
   owning coordinator session:
 - For Codex active-turn observation: shell `session_id`, any code-mode `cell_id`,
@@ -25,8 +27,9 @@ deadline: REPLACE
 
 ## Native result
 
-- Receipt files read back after submission (`evidence/<attempt>.receipt.json`,
-  `.receipt.err` with stderr and exit status):
+- Receipt files read back after submission (`evidence/<attempt>.receipt.json`, or
+  `.receipt.out` for `codex queue`, and `.receipt.err` with stderr and exit status), or
+  the `SendMessage` result and any delivery notice:
 - Post-submission native activity from the bounded startup acknowledgment:
 - Worker completion/report evidence, distinct from the startup receipt and watch registration:
 - Observing, confirmed not-sent, or uncertain; basis:

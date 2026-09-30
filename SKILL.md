@@ -27,9 +27,11 @@ your assignment, then stop. Do not repeat coordinator setup or launch other agen
    [Codex active-turn waits](references/codex.md) when the coordinator is Codex;
    otherwise establish an already-available native host facility for wakeup.
    Then open one Herdr tab per worker.
-3. Submit each assignment once. Workers publish immutable reports to assigned inboxes,
-   or report natively when hardened read-only; native wakeups tell the coordinator to
-   inspect them, or Codex collects the wait result in its active turn.
+3. Submit each assignment once; later messages to a running worker go through its native
+   inbox where reachable ([messaging](references/messaging.md)). Workers publish
+   immutable reports to assigned inboxes, or report natively when hardened read-only;
+   native wakeups tell the coordinator to inspect them, or Codex collects the wait
+   result in its active turn.
 4. Verify, integrate deliberately, clean up owned workers, report the outcome, stop.
 
 Codex keeps the coordinating turn open and collects bounded terminal-tool waits by

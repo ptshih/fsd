@@ -21,7 +21,8 @@ collects a yielded `functions.exec` cell by `cell_id`; `write_stdin` collects a 
 process by `session_id`. Keep those handles distinct and retain shell handles in goal
 state, not just in a JavaScript variable that disappears between cells.
 
-Do not treat `codex queue` or notification hooks as an automatic substitute. Queue
+`codex queue` is the inbox route to a Codex worker ([messaging](messaging.md)), not a
+wakeup facility. Do not treat it or notification hooks as an automatic substitute. Queue
 acceptance alone does not establish delivery to a loaded coordinator on the same app
 server, or resumption after idle. A native-wakeup goal still needs the
 [facility proof](delivery.md#establish-the-facility-once-per-goal).

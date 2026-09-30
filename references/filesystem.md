@@ -82,7 +82,9 @@ claim isolation from untrusted workers.
    receipt. Record the separately armed native watch handle (or the Codex terminal wait
    handle in Codex active-turn mode), then `observing`, confirmed
    `not-sent`, or `uncertain` according to the evidence. Neither sent bytes nor an armed
-   watch prove worker startup or completion.
+   watch prove worker startup or completion. A later message to a running worker follows
+   [messaging](messaging.md): `codex queue` writes receipt files the same way, and a
+   `SendMessage` result and any delivery notice go into the attempt record.
 
 A crash with `dispatch-started` is uncertain even if input may never have occurred.
 A timeout or absent receipt does not prove nondelivery. Never blindly repeat a prompt.
